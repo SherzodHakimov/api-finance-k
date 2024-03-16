@@ -4,7 +4,8 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  // url      = env("DATABASE_URL")
+  url      = "postgresql://gen_user:zuhzO%40%3D1)N%3Dx%40%3C@147.45.107.206:5432/db_finance_k"
 }
 
 model dba_expense_operation {
