@@ -1,0 +1,278 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model dba_expense_operation {
+  id                   Int           @id @default(autoincrement())
+  expense_operation_id Int
+  outcome_operation_id Int
+  dbm_expense          dbm_expense   @relation(fields: [expense_operation_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  dbm_operation        dbm_operation @relation(fields: [outcome_operation_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([id, expense_operation_id, outcome_operation_id])
+}
+
+model dba_transfer_operation {
+  id                                                                       Int           @id @default(autoincrement())
+  outcome_operation_id                                                     Int
+  income_operation_id                                                      Int
+  dbm_operation_dba_transfer_operation_income_operation_idTodbm_operation  dbm_operation @relation("dba_transfer_operation_income_operation_idTodbm_operation", fields: [income_operation_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  dbm_operation_dba_transfer_operation_outcome_operation_idTodbm_operation dbm_operation @relation("dba_transfer_operation_outcome_operation_idTodbm_operation", fields: [outcome_operation_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([id, outcome_operation_id, income_operation_id])
+}
+
+model dba_user_roles {
+  id              Int             @id @default(autoincrement())
+  user_role       Int
+  action_id       Int
+  set_user_action set_user_action @relation(fields: [action_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  set_user_role   set_user_role   @relation(fields: [user_role], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([id, user_role, action_id])
+}
+
+model dbm_currency_value {
+  id            Int           @id @default(autoincrement())
+  currency_id   Int
+  buy_value     Decimal       @db.Decimal
+  sell_value    Decimal       @db.Decimal
+  value_date    DateTime      @db.Date
+  created_at    DateTime      @default(now()) @db.Timestamp(6)
+  list_currency list_currency @relation(fields: [currency_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([id, currency_id])
+}
+
+model dbm_expense {
+  id                    Int                     @id @default(autoincrement())
+  expense_group_id      Int
+  expense_id            Int
+  payment_doc_id        Int
+  measure_id            Int
+  account_type_id       Int
+  currency_id           Int
+  status_id             Int
+  count                 Decimal                 @db.Decimal
+  ammount               Decimal                 @db.Decimal
+  comment               String?
+  operation_date        DateTime                @db.Date
+  created_at            DateTime                @default(now()) @db.Timestamp(6)
+  dba_expense_operation dba_expense_operation[]
+  set_account_type      set_account_type        @relation(fields: [account_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  list_currency         list_currency           @relation(fields: [currency_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  list_expense_group    list_expense_group      @relation(fields: [expense_group_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  list_expense          list_expense            @relation(fields: [expense_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  list_measure          list_measure            @relation(fields: [measure_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  set_payment_doc       set_payment_doc         @relation(fields: [payment_doc_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  set_operation_status  set_operation_status    @relation(fields: [status_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([id, expense_group_id, expense_id, payment_doc_id, measure_id, account_type_id, currency_id, status_id])
+}
+
+model dbm_operation {
+  id                                                                                Int                      @id @default(autoincrement())
+  operation_id                                                                      Int
+  account_id                                                                        Int
+  account_type_id                                                                   Int
+  currency_id                                                                       Int
+  status_id                                                                         Int
+  ammount_in                                                                        Decimal?                 @db.Decimal
+  ammount_out                                                                       Decimal?                 @db.Decimal
+  comment                                                                           String?
+  operation_date                                                                    DateTime                 @db.Date
+  created_at                                                                        DateTime                 @default(now()) @db.Timestamp(6)
+  dba_expense_operation                                                             dba_expense_operation[]
+  dba_transfer_operation_dba_transfer_operation_income_operation_idTodbm_operation  dba_transfer_operation[] @relation("dba_transfer_operation_income_operation_idTodbm_operation")
+  dba_transfer_operation_dba_transfer_operation_outcome_operation_idTodbm_operation dba_transfer_operation[] @relation("dba_transfer_operation_outcome_operation_idTodbm_operation")
+  list_account                                                                      list_account             @relation(fields: [account_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  set_account_type                                                                  set_account_type         @relation(fields: [account_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  list_currency                                                                     list_currency            @relation(fields: [currency_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  set_operation                                                                     set_operation            @relation(fields: [operation_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  set_operation_status                                                              set_operation_status     @relation(fields: [status_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([id, operation_id, account_type_id, currency_id, status_id])
+}
+
+model dbm_user {
+  id              Int             @id @default(autoincrement())
+  login           String          @db.VarChar(100)
+  name1           String          @db.VarChar(100)
+  name2           String          @db.VarChar(100)
+  password        String          @db.VarChar(100)
+  user_role       Int
+  status_id       Int
+  last_auth_at    DateTime        @db.Timestamp(6)
+  created_at      DateTime        @default(now()) @db.Timestamp(6)
+  set_user_status set_user_status @relation(fields: [status_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  set_user_role   set_user_role   @relation(fields: [user_role], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([id, user_role, status_id])
+}
+
+model list_account {
+  id              Int             @id @default(autoincrement())
+  name            String          @db.VarChar(100)
+  currency_id     Int
+  bank_id         Int
+  status_id       Int
+  dbm_operation   dbm_operation[]
+  list_bank       list_bank       @relation(fields: [bank_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  list_currency   list_currency   @relation(fields: [currency_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  set_list_status set_list_status @relation(fields: [status_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([id, currency_id, bank_id, status_id])
+}
+
+model list_bank {
+  id           Int            @id @default(autoincrement())
+  name         String         @db.VarChar(100)
+  list_account list_account[]
+
+  @@index([id])
+}
+
+model list_currency {
+  id                 Int                  @id @default(autoincrement())
+  name               String               @db.VarChar(100)
+  currency_type_id   Int
+  dbm_currency_value dbm_currency_value[]
+  dbm_expense        dbm_expense[]
+  dbm_operation      dbm_operation[]
+  list_account       list_account[]
+  set_currency_type  set_currency_type    @relation(fields: [currency_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([id, currency_type_id])
+}
+
+model list_expense {
+  id                 Int                @id @default(autoincrement())
+  name               String             @db.VarChar(100)
+  expense_group_id   Int
+  status_id          Int
+  dbm_expense        dbm_expense[]
+  list_expense_group list_expense_group @relation(fields: [expense_group_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  set_list_status    set_list_status    @relation(fields: [status_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([id, expense_group_id, status_id])
+}
+
+model list_expense_group {
+  id           Int            @id @default(autoincrement())
+  name         String         @db.VarChar(100)
+  dbm_expense  dbm_expense[]
+  list_expense list_expense[]
+
+  @@index([id])
+}
+
+model list_measure {
+  id          Int           @id @default(autoincrement())
+  name        String        @db.VarChar(100)
+  name_short  String        @db.VarChar(10)
+  dbm_expense dbm_expense[]
+
+  @@index([id])
+}
+
+model list_payer {
+  id              Int             @id @default(autoincrement())
+  name            String          @db.VarChar(100)
+  status_id       Int
+  set_list_status set_list_status @relation(fields: [status_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([id, status_id])
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model set_account_type {
+  id            Int             @id @default(autoincrement())
+  name          String          @db.VarChar(100)
+  dbm_expense   dbm_expense[]
+  dbm_operation dbm_operation[]
+
+  @@index([id])
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model set_currency_type {
+  id            Int             @id @default(autoincrement())
+  name          String          @db.VarChar(100)
+  list_currency list_currency[]
+
+  @@index([id])
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model set_list_status {
+  id           Int            @id @default(autoincrement())
+  name         String         @db.VarChar(100)
+  list_account list_account[]
+  list_expense list_expense[]
+  list_payer   list_payer[]
+
+  @@index([id])
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model set_operation {
+  id            Int             @id @default(autoincrement())
+  name          String          @db.VarChar(100)
+  bank          Boolean         @default(true)
+  cash          Boolean         @default(true)
+  dbm_operation dbm_operation[]
+
+  @@index([id])
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model set_operation_status {
+  id            Int             @id @default(autoincrement())
+  name          String          @db.VarChar(100)
+  dbm_expense   dbm_expense[]
+  dbm_operation dbm_operation[]
+
+  @@index([id])
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model set_payment_doc {
+  id          Int           @id @default(autoincrement())
+  name        String        @db.VarChar(100)
+  dbm_expense dbm_expense[]
+
+  @@index([id])
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model set_user_action {
+  id             Int              @id @default(autoincrement())
+  name           String           @db.VarChar(100)
+  dba_user_roles dba_user_roles[]
+
+  @@index([id])
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model set_user_role {
+  id             Int              @id @default(autoincrement())
+  name           String           @db.VarChar(100)
+  dba_user_roles dba_user_roles[]
+  dbm_user       dbm_user[]
+
+  @@index([id])
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model set_user_status {
+  id       Int        @id @default(autoincrement())
+  name     String     @db.VarChar(100)
+  dbm_user dbm_user[]
+
+  @@index([id])
+}
