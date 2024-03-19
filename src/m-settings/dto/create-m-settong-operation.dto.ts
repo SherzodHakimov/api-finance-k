@@ -2,11 +2,12 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsBoolean, IsString } from 'class-validator';
 
 export class CreateMSettingOperationDto {
+  
   @IsString()
   @ApiProperty({
     default: 'Название',
   })
-  name!: string;
+  name: string;
 
   @IsBoolean()
   @ApiProperty({

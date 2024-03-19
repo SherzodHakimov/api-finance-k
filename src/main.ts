@@ -6,7 +6,9 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.enableCors({ credentials: true, origin: true });
-  app.setGlobalPrefix('api');
+  if (process.env.NODE_ENV === 'development'){
+   app.setGlobalPrefix('api');
+  }
 
   const config = new DocumentBuilder()
     .setTitle('API Finance-k')

@@ -3,97 +3,99 @@ import { CreateMSettingDto } from './dto/create-m-setting.dto';
 import { UpdateMSettingDto } from './dto/update-m-setting.dto';
 import { PrismaService } from 'src/prisma-service';
 import { CreateMSettingOperationDto } from './dto/create-m-settong-operation.dto';
+import { DataMSettingsDto } from './dto/data-m-settings.dto';
+import { DataMSettingsOperationDto } from './dto/data-m-settings-operation.dto';
 
 @Injectable()
 export class MSettingsService {
   constructor(private prismaService: PrismaService) {}
 
   // set_user_status
-  findAllUserStatus() {
-    return this.prismaService.set_user_status.findMany();
+  async findAllUserStatus(): Promise<DataMSettingsDto[]> {
+    return await this.prismaService.set_user_status.findMany();
   }
-  createUserStatus(createMSettingDto: CreateMSettingDto) {
-    return this.prismaService.set_user_status.create({
+  async createUserStatus(createMSettingDto: CreateMSettingDto): Promise<DataMSettingsDto> {
+    return await this.prismaService.set_user_status.create({
       data: createMSettingDto,
     });
   }
 
   // set_list_status
-  findAllListStatus() {
-    return this.prismaService.set_list_status.findMany();
+  async findAllListStatus(): Promise<DataMSettingsDto[]> {
+    return await this.prismaService.set_list_status.findMany();
   }
-  createListStatus(createMSettingDto: CreateMSettingDto) {
-    return this.prismaService.set_list_status.create({
+  async createListStatus(createMSettingDto: CreateMSettingDto): Promise<DataMSettingsDto> {
+    return await this.prismaService.set_list_status.create({
       data: createMSettingDto,
     });
   }
 
   // set_operation_status
-  findAllOperationStatus() {
-    return this.prismaService.set_operation_status.findMany();
+  async findAllOperationStatus(): Promise<DataMSettingsDto[]> {
+    return await this.prismaService.set_operation_status.findMany();
   }
-  createOperationStatus(createMSettingDto: CreateMSettingDto) {
-    return this.prismaService.set_operation_status.create({
+  async createOperationStatus(createMSettingDto: CreateMSettingDto): Promise<DataMSettingsDto> {
+    return await this.prismaService.set_operation_status.create({
       data: createMSettingDto,
     });
   }
 
   // set_currency_type
-  findAllCurrencyType() {
-    return this.prismaService.set_currency_type.findMany();
+   async findAllCurrencyType(): Promise<DataMSettingsDto[]> {
+    return await this.prismaService.set_currency_type.findMany();
   }
-  createCurrencyType(createMSettingDto: CreateMSettingDto) {
-    return this.prismaService.set_currency_type.create({
+  async createCurrencyType(createMSettingDto: CreateMSettingDto): Promise<DataMSettingsDto> {
+    return await this.prismaService.set_currency_type.create({
       data: createMSettingDto,
     });
   }
 
   // set_user_role
-  findAllUserRole() {
-    return this.prismaService.set_user_role.findMany();
+  async findAllUserRole(): Promise<DataMSettingsDto[]> {
+    return await this.prismaService.set_user_role.findMany();
   }
-  createUserRole(createMSettingDto: CreateMSettingDto) {
-    return this.prismaService.set_user_role.create({
+  async createUserRole(createMSettingDto: CreateMSettingDto): Promise<DataMSettingsDto> {
+    return await this.prismaService.set_user_role.create({
       data: createMSettingDto,
     });
   }
 
   // set_user_action
-  findAllUserAction() {
-    return this.prismaService.set_user_action.findMany();
+  async findAllUserAction(): Promise<DataMSettingsDto[]> {
+    return await this.prismaService.set_user_action.findMany();
   }
-  createUserAction(createMSettingDto: CreateMSettingDto) {
-    return this.prismaService.set_user_action.create({
+  async createUserAction(createMSettingDto: CreateMSettingDto): Promise<DataMSettingsDto> {
+    return await this.prismaService.set_user_action.create({
       data: createMSettingDto,
     });
   }
 
   // set_payment_doc
-  findAllPaymentDoc() {
-    return this.prismaService.set_payment_doc.findMany();
+  async findAllPaymentDoc(): Promise<DataMSettingsDto[]> {
+    return await this.prismaService.set_payment_doc.findMany();
   }
-  createPaymentDoc(createMSettingDto: CreateMSettingDto) {
-    return this.prismaService.set_payment_doc.create({
+  async createPaymentDoc(createMSettingDto: CreateMSettingDto): Promise<DataMSettingsDto> {
+    return await this.prismaService.set_payment_doc.create({
       data: createMSettingDto,
     });
   }
 
   // set_operation
-  findAllOperation() {
-    return this.prismaService.set_operation.findMany();
+  async findAllOperation(): Promise<DataMSettingsOperationDto[]> {
+    return await this.prismaService.set_operation.findMany();
   }
-  createOperation(createMSettingOperationDto: CreateMSettingOperationDto) {
-    return this.prismaService.set_operation.create({
+  async createOperation(createMSettingOperationDto: CreateMSettingOperationDto): Promise<DataMSettingsOperationDto> {
+    return await this.prismaService.set_operation.create({
       data: createMSettingOperationDto,
     });
   }
 
   // set_account_type
-  findAllAccountType() {
-    return this.prismaService.set_account_type.findMany();
+  async findAllAccountType(): Promise<DataMSettingsDto[]> {
+    return await this.prismaService.set_account_type.findMany();
   }
-  createAccountType(createMSettingDto: CreateMSettingDto) {
-    return this.prismaService.set_account_type.create({
+  async createAccountType(createMSettingDto: CreateMSettingDto): Promise<DataMSettingsDto> {
+    return await this.prismaService.set_account_type.create({
       data: createMSettingDto,
     });
   }
