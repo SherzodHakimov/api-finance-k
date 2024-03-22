@@ -6,6 +6,7 @@ import { PrismaService } from 'src/prisma-service';
 
 @Injectable()
 export class MListBankService {
+  
   constructor(private prismaService: PrismaService) {}
   
   async create(createMListsBankDto: CreateMListBankDto): Promise<DataMListBankDto> {
@@ -15,7 +16,7 @@ export class MListBankService {
   }
 
   async findAll(): Promise<DataMListBankDto[]> {
-    return await this.prismaService.list_bank.findMany();
+    return await (await this.prismaService.list_bank.findMany()).sort((a, b) => a.id - b.id);
   }
 
   async findOne(id: number): Promise<DataMListBankDto> {

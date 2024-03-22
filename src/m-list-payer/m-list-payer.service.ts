@@ -16,7 +16,11 @@ export class MListPayerService {
   }
 
   async findAll(): Promise<DataMListPayerDto[]> {
-    return await this.prismaService.list_payer.findMany();
+    return await this.prismaService.list_payer.findMany({
+      include: {
+        set_list_status: true
+      }
+    });
   }
 
   async findOne(id: number): Promise<DataMListPayerDto> {
@@ -33,7 +37,7 @@ export class MListPayerService {
   }
 
   async remove(id: number): Promise<DataMListPayerDto> {
-    return await this.prismaService.list_expense.delete({
+    return await this.prismaService.list_payer.delete({
       where:{id: +id}
   });
   }

@@ -1,39 +1,44 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateMListCurrrencyDto } from './dto/create-m-list-currrency.dto';
-import { UpdateMListCurrrencyDto } from './dto/update-m-list-currrency.dto';
+import { CreateMListCurrencyDto } from './dto/create-m-list-currency.dto';
+import { UpdateMListCurrencyDto } from './dto/update-m-list-currency.dto';
 import { PrismaService } from 'src/prisma-service';
-import { DataMListCurrrencyDto } from './dto/data-m-list-currrency.dto';
+import { DataMListCurrencyDto } from './dto/data-m-list-currency.dto';
 
 
 @Injectable()
-export class MListCurrrencyService {
+export class MListCurrencyService {
 
   constructor(private prismaService: PrismaService) {}
   
-  async create(createMListCurrrencyDto: CreateMListCurrrencyDto): Promise<DataMListCurrrencyDto> {
+  async create(createMListCurrrencyDto: CreateMListCurrencyDto): Promise<DataMListCurrencyDto> {
     return await this.prismaService.list_currency.create({
       data: createMListCurrrencyDto
     });
   }
 
-  async findAll(): Promise<DataMListCurrrencyDto[]> {
-    return await this.prismaService.list_currency.findMany();
+  async findAll(): Promise<DataMListCurrencyDto[]> {
+    return await this.prismaService.list_currency.findMany({
+      include: {
+        set_currency_type: true
+      }
+    });
+
   }
 
-  async findOne(id: number): Promise<DataMListCurrrencyDto> {
+  async findOne(id: number): Promise<DataMListCurrencyDto> {
     return await this.prismaService.list_currency.findUnique({
       where: {id: +id}
     });
   }
 
-  async update(id: number, updateMListCurrrencyDto: UpdateMListCurrrencyDto): Promise<DataMListCurrrencyDto> {
+  async update(id: number, updateMListCurrrencyDto: UpdateMListCurrencyDto): Promise<DataMListCurrencyDto> {
     return await this.prismaService.list_currency.update({
       where: {id: +id},
       data: updateMListCurrrencyDto
     });
   }
 
-  async remove(id: number): Promise<DataMListCurrrencyDto> {
+  async remove(id: number): Promise<DataMListCurrencyDto> {
     const r = await this.prismaService.list_account.findMany({ 
       where: {currency_id: +id}
     });
