@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNumber, IsString } from "class-validator";
+import { IsNumber, IsObject, IsString } from "class-validator";
 
 export class DataMListCurrencyDto {
 
@@ -20,4 +20,14 @@ export class DataMListCurrencyDto {
       default: 1,
     })
     currency_type_id: number;
+
+    @IsObject()
+    @ApiProperty({
+      default: {
+        name: 'Название'
+      }
+    })
+    set_currency_type: {
+      name: string
+    }
 }

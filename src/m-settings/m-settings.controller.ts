@@ -19,113 +19,144 @@ import { DataMSettingsDto } from './dto/data-m-settings.dto';
 import { DataMSettingsOperationDto } from './dto/data-m-settings-operation.dto';
 
 @Controller('m-settings')
+@UsePipes(new ValidationPipe())
 @ApiTags('Settings')
+// @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: "Error", type: DataMListExpenseGroupDto })
 export class MSettingsController {
+
   constructor(private readonly mSettingsService: MSettingsService) {}
 
-
-  @Get('/user-status')
   // @ApiTags('user-status')
-  @ApiOperation({ summary: 'Get user status list' })
+  @Post('/user-status/create')
+  @ApiOperation({ summary: 'Create item' })
+  @ApiResponse({ status: HttpStatus.OK, description: "Success", type: [DataMSettingsDto] })
+  async createUserStatus(@Body() createMSettingDto: CreateMSettingDto): Promise<DataMSettingsDto> {
+    return await this.mSettingsService.createUserStatus(createMSettingDto);
+  }
+  @Get('/user-status/list')
+  @ApiOperation({ summary: 'Get all items' })
   @ApiResponse({ status: HttpStatus.OK, description: "Success", type: [DataMSettingsDto] })
   async findAllUserStatus(): Promise<DataMSettingsDto[]> {
     return await this.mSettingsService.findAllUserStatus();
   }
-  @Post('/user-status')
-  @UsePipes(new ValidationPipe())
-  // @ApiTags('user-status')
-  @ApiOperation({ summary: 'Create user status' })
-  @ApiResponse({ status: HttpStatus.OK, description: "Success", type: DataMSettingsDto })
-  async createUserStatus(@Body() createMSettingDto: CreateMSettingDto): Promise<DataMSettingsDto> {
-    return await this.mSettingsService.createUserStatus(createMSettingDto);
-  }
 
   // @ApiTags('list-status')
-  @Get('/list-status')
-  async findAllListStatus(): Promise<DataMSettingsDto[]> {
-    return await this.mSettingsService.findAllListStatus();
-  }
-  // @ApiTags('list-status')
-  @Post('/list-status')
+  @Post('/list-status/create')
+  @ApiOperation({ summary: 'Create item' })
+  @ApiResponse({ status: HttpStatus.OK, description: "Success", type: [DataMSettingsDto] })
   async createListStatus(@Body() createMSettingDto: CreateMSettingDto): Promise<DataMSettingsDto> {
     return await this.mSettingsService.createListStatus(createMSettingDto);
   }
+  @Get('/list-status/list')
+  @ApiOperation({ summary: 'Get all items' })
+  @ApiResponse({ status: HttpStatus.OK, description: "Success", type: [DataMSettingsDto] })
+  async findAllListStatus(): Promise<DataMSettingsDto[]> {
+    return await this.mSettingsService.findAllListStatus();
+  }
+
 
   // @ApiTags('operation-status')
-  @Get('/operation-status')
-  async findAllOperationStatus(): Promise<DataMSettingsDto[]> {
-    return await this.mSettingsService.findAllOperationStatus();
-  }
-  // @ApiTags('operation-status')
-  @Post('/operation-status')
+  @Post('/operation-status/create')
+  @ApiOperation({ summary: 'Create item' })
+  @ApiResponse({ status: HttpStatus.OK, description: "Success", type: [DataMSettingsDto] })
   async createOperationStatus(@Body() createMSettingDto: CreateMSettingDto): Promise<DataMSettingsDto> {
     return await this.mSettingsService.createOperationStatus(createMSettingDto);
   }
+  @Get('/operation-status/list')
+  @ApiOperation({ summary: 'Get all items' })
+  @ApiResponse({ status: HttpStatus.OK, description: "Success", type: [DataMSettingsDto] })
+  async findAllOperationStatus(): Promise<DataMSettingsDto[]> {
+    return await this.mSettingsService.findAllOperationStatus();
+  }
+
 
   // @ApiTags('currency-type')
-  @Get('/currency-type')
-  async findAllCurrencyType(): Promise<DataMSettingsDto[]> {
-    return await this.mSettingsService.findAllCurrencyType();
-  }
-  // @ApiTags('currency-type')
-  @Post('/currency-type')
+  @Post('/currency-type/create')
+  @ApiOperation({ summary: 'Create item' })
+  @ApiResponse({ status: HttpStatus.OK, description: "Success", type: [DataMSettingsDto] })
   async createCurrencyType(@Body() createMSettingDto: CreateMSettingDto): Promise<DataMSettingsDto> {
     return await this.mSettingsService.createCurrencyType(createMSettingDto);
   }
+  @Get('/currency-type/list')
+  @ApiOperation({ summary: 'Get all items' })
+  @ApiResponse({ status: HttpStatus.OK, description: "Success", type: [DataMSettingsDto] })
+  async findAllCurrencyType(): Promise<DataMSettingsDto[]> {
+    return await this.mSettingsService.findAllCurrencyType();
+  }
+
 
   // @ApiTags('user-role')
-  @Get('/user-role')
-  async findAllUserRole(): Promise<DataMSettingsDto[]> {
-    return await this.mSettingsService.findAllUserRole();
-  }
-  // @ApiTags('user-role')
-  @Post('/user-role')
+  @Post('/user-role/create')
+  @ApiOperation({ summary: 'Create item' })
+  @ApiResponse({ status: HttpStatus.OK, description: "Success", type: [DataMSettingsDto] })
   async createUserRole(@Body() createMSettingDto: CreateMSettingDto): Promise<DataMSettingsDto> {
     return await this.mSettingsService.createUserRole(createMSettingDto);
   }
+  @Get('/user-role/list')
+  @ApiOperation({ summary: 'Get all items' })
+  @ApiResponse({ status: HttpStatus.OK, description: "Success", type: [DataMSettingsDto] })
+  async findAllUserRole(): Promise<DataMSettingsDto[]> {
+    return await this.mSettingsService.findAllUserRole();
+  }
+
 
   // @ApiTags('user-action')
-  @Get('/user-action')
-  async findAllUserAction(): Promise<DataMSettingsDto[]> {
-    return await this.mSettingsService.findAllUserAction();
-  }
-  // @ApiTags('user-action')
-  @Post('/user-action')
+  @Post('/user-action/create')
+  @ApiOperation({ summary: 'Create item' })
+  @ApiResponse({ status: HttpStatus.OK, description: "Success", type: [DataMSettingsDto] })
   async createUserAction(@Body() createMSettingDto: CreateMSettingDto): Promise<DataMSettingsDto> {
     return await this.mSettingsService.createUserAction(createMSettingDto);
   }
+  @Get('/user-action/list')
+  @ApiOperation({ summary: 'Get all items' })
+  @ApiResponse({ status: HttpStatus.OK, description: "Success", type: [DataMSettingsDto] })
+  async findAllUserAction(): Promise<DataMSettingsDto[]> {
+    return await this.mSettingsService.findAllUserAction();
+  }
+
 
   // @ApiTags('payment-doc')
-  @Get('/payment-doc')
-  async findAllPaymentDoc(): Promise<DataMSettingsDto[]> {
-    return await this.mSettingsService.findAllPaymentDoc();
-  }
-  // @ApiTags('payment-doc')
-  @Post('/payment-doc')
+  @Post('/payment-doc/create')
+  @ApiOperation({ summary: 'Create item' })
+  @ApiResponse({ status: HttpStatus.OK, description: "Success", type: [DataMSettingsDto] })
   async createPaymentDoc(@Body() createMSettingDto: CreateMSettingDto): Promise<DataMSettingsDto> {
     return await this.mSettingsService.createPaymentDoc(createMSettingDto);
   }
+  @Get('/payment-doc/list')
+  @ApiOperation({ summary: 'Get all items' })
+  @ApiResponse({ status: HttpStatus.OK, description: "Success", type: [DataMSettingsDto] })
+  async findAllPaymentDoc(): Promise<DataMSettingsDto[]> {
+    return await this.mSettingsService.findAllPaymentDoc();
+  }
+
 
   // @ApiTags('operation')
-  @Get('/operation')
-  async findAllOperation(): Promise<DataMSettingsOperationDto[]> {
-    return await this.mSettingsService.findAllOperation();
-  }
-  // @ApiTags('operation')
-  @Post('/operation')
+  @Post('/operation/create')
+  @ApiOperation({ summary: 'Create item' })
+  @ApiResponse({ status: HttpStatus.OK, description: "Success", type: [DataMSettingsDto] })
   async createOperation(@Body() createMSettingOperationDto: CreateMSettingOperationDto): Promise<DataMSettingsOperationDto> {
     return await this.mSettingsService.createOperation(createMSettingOperationDto);
   }
+  @Get('/operation/list')
+  @ApiOperation({ summary: 'Get all items' })
+  @ApiResponse({ status: HttpStatus.OK, description: "Success", type: [DataMSettingsDto] })
+  async findAllOperation(): Promise<DataMSettingsOperationDto[]> {
+    return await this.mSettingsService.findAllOperation();
+  }
+
 
   // @ApiTags('account-type')
-  @Get('/account-type')
-  async findAllAccountType(): Promise<DataMSettingsDto[]> {
-    return await this.mSettingsService.findAllAccountType();
-  }
-  // @ApiTags('account-type')
-  @Post('/account-type')
+  @Post('/account-type/create')
+  @ApiOperation({ summary: 'Create item' })
+  @ApiResponse({ status: HttpStatus.OK, description: "Success", type: [DataMSettingsDto] })
   async createAccountType(@Body() createMSettingDto: CreateMSettingDto): Promise<DataMSettingsDto> {
     return await this.mSettingsService.createAccountType(createMSettingDto);
+  }
+  @Get('/account-type/list')
+  @ApiOperation({ summary: 'Get all items' })
+  @ApiResponse({ status: HttpStatus.OK, description: "Success", type: [DataMSettingsDto] })
+  async findAllAccountType(): Promise<DataMSettingsDto[]> {
+    return await this.mSettingsService.findAllAccountType();
   }
 
   // @Get(':id')

@@ -12,14 +12,17 @@ export class MListCurrencyService {
   
   async create(createMListCurrrencyDto: CreateMListCurrencyDto): Promise<DataMListCurrencyDto> {
     return await this.prismaService.list_currency.create({
-      data: createMListCurrrencyDto
+      data: createMListCurrrencyDto,
+      include: {
+        set_currency_type: {select: {name: true}}
+      }
     });
   }
 
   async findAll(): Promise<DataMListCurrencyDto[]> {
     return await this.prismaService.list_currency.findMany({
       include: {
-        set_currency_type: true
+        set_currency_type: {select: {name: true}}
       }
     });
 
@@ -27,14 +30,20 @@ export class MListCurrencyService {
 
   async findOne(id: number): Promise<DataMListCurrencyDto> {
     return await this.prismaService.list_currency.findUnique({
-      where: {id: +id}
+      where: {id: +id},
+      include: {
+        set_currency_type: {select: {name: true}}
+      }
     });
   }
 
   async update(id: number, updateMListCurrrencyDto: UpdateMListCurrencyDto): Promise<DataMListCurrencyDto> {
     return await this.prismaService.list_currency.update({
       where: {id: +id},
-      data: updateMListCurrrencyDto
+      data: updateMListCurrrencyDto,
+      include: {
+        set_currency_type: {select: {name: true}}
+      }
     });
   }
 
@@ -59,7 +68,10 @@ export class MListCurrencyService {
     if (c.length > 0) throw new NotFoundException('Delete not allowed!')
 
     return await this.prismaService.list_currency.delete({
-        where:{id: +id}
+        where:{id: +id},
+        include: {
+          set_currency_type: {select: {name: true}}
+        }
     });
   }
 }

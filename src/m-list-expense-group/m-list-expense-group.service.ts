@@ -38,7 +38,7 @@ export class MListExpenseGroupService {
       where: {expense_group_id: +id}
     });
 
-    if (r.length > 0) throw new NotFoundException('Delete not allowed!')
+    if (r.length > 0) throw new  NotFoundException('Delete not allowed!')
 
 
     const b = await this.prismaService.list_expense.findMany({ 

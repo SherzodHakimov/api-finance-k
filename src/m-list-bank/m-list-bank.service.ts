@@ -16,7 +16,7 @@ export class MListBankService {
   }
 
   async findAll(): Promise<DataMListBankDto[]> {
-    return await (await this.prismaService.list_bank.findMany()).sort((a, b) => a.id - b.id);
+    return await this.prismaService.list_bank.findMany();
   }
 
   async findOne(id: number): Promise<DataMListBankDto> {

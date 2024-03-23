@@ -1,8 +1,10 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNumber, IsString } from "class-validator";
+import { IsNumber, IsString, MaxLength, MinLength } from "class-validator";
 
 export class CreateMListCurrencyDto {
     @IsString()
+    @MinLength(3)
+    @MaxLength(100)
     @ApiProperty({
       default: 'Название',
     })

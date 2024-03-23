@@ -10,6 +10,8 @@ import { DataMSettingsOperationDto } from './dto/data-m-settings-operation.dto';
 export class MSettingsService {
   constructor(private prismaService: PrismaService) {}
 
+
+
   // set_user_status
   async findAllUserStatus(): Promise<DataMSettingsDto[]> {
     return await this.prismaService.set_user_status.findMany();

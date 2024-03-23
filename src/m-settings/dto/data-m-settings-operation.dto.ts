@@ -1,20 +1,9 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsBoolean, IsNumber, IsString } from "class-validator"
+import { IsBoolean} from "class-validator"
+import { DataMSettingsDto } from "./data-m-settings.dto";
 
-export class DataMSettingsOperationDto {
+export class DataMSettingsOperationDto extends DataMSettingsDto {
 
-    @IsNumber()
-    @ApiProperty({
-        default: 1,
-      })
-    id: number
-
-    @IsString()
-    @ApiProperty({
-        default: 'Название',
-      })
-    name: string
-    
     @IsBoolean()
     @ApiProperty({
       default: true,

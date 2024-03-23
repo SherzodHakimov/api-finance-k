@@ -11,34 +11,46 @@ export class MListPayerService {
   
    async create(createMListPayerDto: CreateMListPayerDto): Promise<DataMListPayerDto> {
     return await this.prismaService.list_payer.create({
-      data: createMListPayerDto
+      data: createMListPayerDto,
+      include: {
+        set_list_status: {select: {name: true}}
+      }
     });
   }
 
   async findAll(): Promise<DataMListPayerDto[]> {
     return await this.prismaService.list_payer.findMany({
       include: {
-        set_list_status: true
+        set_list_status: {select: {name: true}}
       }
     });
   }
 
   async findOne(id: number): Promise<DataMListPayerDto> {
     return await this.prismaService.list_payer.findUnique({
-      where: {id: +id}
+      where: {id: +id},
+      include: {
+        set_list_status: {select: {name: true}}
+      }
     });
   }
 
   async update(id: number, updateMListPayerDto: UpdateMListPayerDto): Promise<DataMListPayerDto> {
     return await this.prismaService.list_payer.update({
       where: {id: +id},
-      data: updateMListPayerDto
+      data: updateMListPayerDto,
+      include: {
+        set_list_status: {select: {name: true}}
+      }
     });
   }
 
   async remove(id: number): Promise<DataMListPayerDto> {
     return await this.prismaService.list_payer.delete({
-      where:{id: +id}
+      where:{id: +id},
+      include: {
+        set_list_status: {select: {name: true}}
+      }
   });
   }
 }

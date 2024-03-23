@@ -1,14 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsString } from 'class-validator';
+import { IsBoolean} from 'class-validator';
+import { CreateMSettingDto } from './create-m-setting.dto';
 
-export class CreateMSettingOperationDto {
+export class CreateMSettingOperationDto extends CreateMSettingDto {
   
-  @IsString()
-  @ApiProperty({
-    default: 'Название',
-  })
-  name: string;
-
   @IsBoolean()
   @ApiProperty({
     default: true,

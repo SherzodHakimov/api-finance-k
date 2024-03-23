@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNumber, IsString } from "class-validator";
+import { IsNumber, IsObject, IsString } from "class-validator";
 
 export class DataMListPayerDto {
 
@@ -20,4 +20,14 @@ export class DataMListPayerDto {
       default: 1,
     })
     status_id: number;
+
+    @IsObject()
+    @ApiProperty({
+      default: {
+        name: 'Название'
+      },
+    })
+    set_list_status: {
+      name: string
+    }
 }

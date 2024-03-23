@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNumber, IsString } from "class-validator";
+import { IsNumber, IsObject, IsString } from "class-validator";
 
 export class DataMListExpenseDto {
   @IsNumber()
@@ -27,5 +27,27 @@ export class DataMListExpenseDto {
       default: 1,
     })
     status_id: number
+
+
+    @IsObject()
+    @ApiProperty({
+      default: {
+        name: 'Название'
+      }
+    })
+    list_expense_group: {
+      name: string
+    }
+
+
+    @IsObject()
+    @ApiProperty({
+      default: {
+        name: 'Активен'
+      }
+    })
+    set_list_status: {
+      name: string
+    }
 }
 

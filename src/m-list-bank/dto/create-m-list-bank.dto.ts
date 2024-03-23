@@ -1,9 +1,10 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsString, MinLength } from "class-validator";
+import { IsString, MaxLength, MinLength } from "class-validator";
 
 export class CreateMListBankDto {
     @IsString()
     @MinLength(3)
+    @MaxLength(100)
     @ApiProperty({
       default: 'Название',
     })
