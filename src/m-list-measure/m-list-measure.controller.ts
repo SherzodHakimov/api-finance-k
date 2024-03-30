@@ -4,11 +4,12 @@ import { CreateMListMeasureDto } from './dto/create-m-list-measure.dto';
 import { UpdateMListMeasureDto } from './dto/update-m-list-measure.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { DataMListMeasureDto } from './dto/data-m-list-measure.dto';
+import { ErrorDto } from 'src/shared/dto/error.dto';
 
 @Controller('m-list-measure')
 @UsePipes(new ValidationPipe())
 @ApiTags('listMeasure')
-// @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: "Error", type: DataMListExpenseGroupDto })
+@ApiResponse({ status: HttpStatus.BAD_REQUEST, description: "Error", type: ErrorDto })
 export class MListMeasureController {
   constructor(private readonly mListMeasureService: MListMeasureService) {}
 

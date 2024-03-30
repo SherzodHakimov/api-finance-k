@@ -4,11 +4,12 @@ import { CreateMListBankDto } from './dto/create-m-list-bank.dto';
 import { UpdateMListBankDto } from './dto/update-m-list-bank.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { DataMListBankDto } from './dto/data-m-list-bank.dto';
+import { ErrorDto } from 'src/shared/dto/error.dto';
 
 @Controller('m-list-bank')
 @UsePipes(new ValidationPipe())
 @ApiTags('listBank')
-// @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: "Error", type: DataMListExpenseGroupDto })
+@ApiResponse({ status: HttpStatus.BAD_REQUEST, description: "Error", type: ErrorDto })
 export class MListBankController {
   constructor(private readonly mListsBankService: MListBankService) {}
 

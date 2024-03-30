@@ -16,7 +16,9 @@ export class MListMeasureService {
   }
 
   async findAll(): Promise<DataMListMeasureDto[]> {
-    return await this.prismaService.list_measure.findMany();
+    return await this.prismaService.list_measure.findMany({
+      orderBy: {id: 'asc'}
+    });
   }
 
   async findOne(id: number): Promise<DataMListMeasureDto> {
@@ -33,11 +35,11 @@ export class MListMeasureService {
   }
 
   async remove(id: number): Promise<DataMListMeasureDto> {
-    const b = await this.prismaService.dbm_expense.findMany({ 
+    const b = await this.prismaService.dbm_expense.findFirst({ 
       where: {measure_id: +id}
     });
 
-    if (b.length > 0) throw new NotFoundException('Delete not allowed!')
+    if (b) throw new NotFoundException(['Delete not allowed!'])
 
     return await this.prismaService.list_measure.delete({
         where:{id: +id}

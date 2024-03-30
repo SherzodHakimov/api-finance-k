@@ -1,67 +1,56 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsNumber, IsObject, IsString } from "class-validator";
+import { ApiProperty } from '@nestjs/swagger';
 
 export class DataMListAccountDto {
+  @ApiProperty({
+    example: 1
+  })
+  id: number;
 
-    @IsNumber()
-    @ApiProperty({
-        default: 1,
-      })
-    id: number
-    
-    @IsString()
-    @ApiProperty({
-      default: 'Название',
-    })
+  @ApiProperty({
+    example: 'Название',
+  })
+  name: string;
+
+  @ApiProperty({
+    example: 1,
+  })
+  currency_id: number;
+
+  @ApiProperty({
+    example: 1,
+  })
+  bank_id: number;
+
+  @ApiProperty({
+    example: 1,
+  })
+  status_id: number;
+
+  @ApiProperty({
+    example: {
+      name: 'Название',
+    },
+  })
+  list_currency: {
     name: string;
+  };
 
-    @IsNumber()
-    @ApiProperty({
-      default: 1,
-    })
-    currency_id: number;
+  @ApiProperty({
+    example: {
+      name: 'Название',
+    },
+  })
+  list_bank: {
+    name: string;
+  };
 
-
-    @IsNumber()
-    @ApiProperty({
-      default: 1,
-    })
-    bank_id: number;
-
-    @IsNumber()
-    @ApiProperty({
-      default: 1,
-    })
-    status_id: number;
-
-
-    @IsObject()
-    @ApiProperty({
-      default: {
-        name: 'Название'
-      }
-    })
-    list_currency: {
-      name: string
-    }
-
-    @IsObject()
-    @ApiProperty({
-      default: {
-        name: 'Название'
-      }
-    })
-    list_bank: {
-      name: string
-    }
-
-    @IsObject()
-    @ApiProperty({
-      default: {
-        name: 'Название'
-      }
-    })
-    set_list_status: {
-      name: string
-    }
+  @ApiProperty({
+    example: {
+      name: 'Название',
+    },
+  })
+  set_list_status: {
+    name: string;
+  };
+  
 }

@@ -16,7 +16,9 @@ export class MListExpenseGroupService {
   }
 
   async findAll(): Promise<DataMListExpenseGroupDto[]> {
-    return await this.prismaService.list_expense_group.findMany();
+    return await this.prismaService.list_expense_group.findMany({
+      orderBy: {id: 'asc'}
+    });
   }
 
   async findOne(id: number): Promise<DataMListExpenseGroupDto> {
@@ -34,21 +36,22 @@ export class MListExpenseGroupService {
 
   async remove(id: number): Promise<DataMListExpenseGroupDto> {
 
-    const r = await this.prismaService.dbm_expense.findMany({ 
+    const r = await this.prismaService.dbm_expense.findFirst({ 
       where: {expense_group_id: +id}
     });
 
-    if (r.length > 0) throw new  NotFoundException('Delete not allowed!')
+    if (r) throw new  NotFoundException(['Delete not allowed!'])
 
 
-    const b = await this.prismaService.list_expense.findMany({ 
+    const b = await this.prismaService.list_expense.findFirst({ 
       where: {expense_group_id: +id}
     });
 
-    if (b.length > 0) throw new NotFoundException('Delete not allowed!')
+    if (b) throw new NotFoundException(['Delete not allowed!'])
 
     return await this.prismaService.list_expense_group.delete({
         where:{id: +id}
     });
   }
+
 }

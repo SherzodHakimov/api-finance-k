@@ -44,9 +44,11 @@ model dbm_currency_value {
   sell_value    Decimal       @db.Decimal
   value_date    DateTime      @db.Date
   created_at    DateTime      @default(now()) @db.Timestamp(6)
+  user_id       Int
   list_currency list_currency @relation(fields: [currency_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  dbm_user      dbm_user      @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  @@index([id, currency_id])
+  @@index([id, currency_id, user_id])
 }
 
 model dbm_expense {
@@ -63,16 +65,20 @@ model dbm_expense {
   comment               String?
   operation_date        DateTime                @db.Date
   created_at            DateTime                @default(now()) @db.Timestamp(6)
+  payer_id              Int
+  user_id               Int
   dba_expense_operation dba_expense_operation[]
   set_account_type      set_account_type        @relation(fields: [account_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   list_currency         list_currency           @relation(fields: [currency_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   list_expense_group    list_expense_group      @relation(fields: [expense_group_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   list_expense          list_expense            @relation(fields: [expense_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   list_measure          list_measure            @relation(fields: [measure_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  list_payer            list_payer              @relation(fields: [payer_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   set_payment_doc       set_payment_doc         @relation(fields: [payment_doc_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   set_operation_status  set_operation_status    @relation(fields: [status_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  dbm_user              dbm_user                @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  @@index([id, expense_group_id, expense_id, payment_doc_id, measure_id, account_type_id, currency_id, status_id])
+  @@index([id, expense_group_id, expense_id, payment_doc_id, measure_id, account_type_id, currency_id, status_id, payer_id, user_id])
 }
 
 model dbm_operation {
@@ -87,6 +93,7 @@ model dbm_operation {
   comment                                                                           String?
   operation_date                                                                    DateTime                 @db.Date
   created_at                                                                        DateTime                 @default(now()) @db.Timestamp(6)
+  user_id                                                                           Int
   dba_expense_operation                                                             dba_expense_operation[]
   dba_transfer_operation_dba_transfer_operation_income_operation_idTodbm_operation  dba_transfer_operation[] @relation("dba_transfer_operation_income_operation_idTodbm_operation")
   dba_transfer_operation_dba_transfer_operation_outcome_operation_idTodbm_operation dba_transfer_operation[] @relation("dba_transfer_operation_outcome_operation_idTodbm_operation")
@@ -95,22 +102,26 @@ model dbm_operation {
   list_currency                                                                     list_currency            @relation(fields: [currency_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   set_operation                                                                     set_operation            @relation(fields: [operation_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   set_operation_status                                                              set_operation_status     @relation(fields: [status_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  dbm_user                                                                          dbm_user                 @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  @@index([id, operation_id, account_type_id, currency_id, status_id])
+  @@index([id, operation_id, account_type_id, currency_id, status_id, user_id])
 }
 
 model dbm_user {
-  id              Int             @id @default(autoincrement())
-  login           String          @db.VarChar(100)
-  name1           String          @db.VarChar(100)
-  name2           String          @db.VarChar(100)
-  password        String          @db.VarChar(100)
-  user_role       Int
-  status_id       Int
-  last_auth_at    DateTime        @db.Timestamp(6)
-  created_at      DateTime        @default(now()) @db.Timestamp(6)
-  set_user_status set_user_status @relation(fields: [status_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  set_user_role   set_user_role   @relation(fields: [user_role], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id                 Int                  @id @default(autoincrement())
+  login              String               @db.VarChar(100)
+  name1              String               @db.VarChar(100)
+  name2              String               @db.VarChar(100)
+  password           String               @db.VarChar(200)
+  user_role          Int?
+  status_id          Int
+  last_auth_at       DateTime?            @db.Timestamp(6)
+  created_at         DateTime             @default(now()) @db.Timestamp(6)
+  dbm_currency_value dbm_currency_value[]
+  dbm_expense        dbm_expense[]
+  dbm_operation      dbm_operation[]
+  set_user_status    set_user_status      @relation(fields: [status_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  set_user_role      set_user_role?       @relation(fields: [user_role], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@index([id, user_role, status_id])
 }
@@ -184,6 +195,7 @@ model list_payer {
   id              Int             @id @default(autoincrement())
   name            String          @db.VarChar(100)
   status_id       Int
+  dbm_expense     dbm_expense[]
   set_list_status set_list_status @relation(fields: [status_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@index([id, status_id])

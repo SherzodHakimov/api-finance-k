@@ -4,11 +4,12 @@ import { CreateMListCurrencyDto } from './dto/create-m-list-currency.dto';
 import { UpdateMListCurrencyDto } from './dto/update-m-list-currency.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { DataMListCurrencyDto } from './dto/data-m-list-currency.dto';
+import { ErrorDto } from 'src/shared/dto/error.dto';
 
 @Controller('m-list-currency')
 @UsePipes(new ValidationPipe())
 @ApiTags('listCurrency')
-// @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: "Error", type: DataMListExpenseGroupDto })
+@ApiResponse({ status: HttpStatus.BAD_REQUEST, description: "Error", type: ErrorDto })
 export class MListCurrencyController {
     constructor(private readonly mListCurrrencyService: MListCurrencyService) {}
 

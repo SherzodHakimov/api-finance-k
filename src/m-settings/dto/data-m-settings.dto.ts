@@ -1,18 +1,13 @@
-import { ApiProperty } from "@nestjs/swagger"
-import { IsNumber, IsString } from "class-validator"
+import { ApiProperty } from '@nestjs/swagger';
 
 export class DataMSettingsDto {
+  @ApiProperty({
+    example: 1,
+  })
+  id: number;
 
-    @IsNumber()
-    @ApiProperty({
-        default: 1,
-      })
-    id: number
-
-    @IsString()
-    @ApiProperty({
-        default: 'Название',
-      })
-    name: string
-    
+  @ApiProperty({
+    example: 'Название',
+  })
+  name: string;
 }

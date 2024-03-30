@@ -1,22 +1,18 @@
-import { ApiProperty } from "@nestjs/swagger"
-import { IsNumber, IsString } from "class-validator"
+import { ApiProperty } from '@nestjs/swagger';
 
 export class DataMListMeasureDto {
-    @IsNumber()
-    @ApiProperty({
-        default: 1,
-      })
-    id: number
+  @ApiProperty({
+    example: 1,
+  })
+  id: number;
 
-    @IsString()
-    @ApiProperty({
-        default: 'Название',
-      })
-    name: string
+  @ApiProperty({
+    example: 'Название',
+  })
+  name: string;
 
-    @IsString()
-    @ApiProperty({
-        default: 'Кор. наз.',
-      })
-      name_short: string
+  @ApiProperty({
+    example: 'Кор. наз.',
+  })
+  name_short: string;
 }

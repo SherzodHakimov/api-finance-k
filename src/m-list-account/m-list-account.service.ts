@@ -25,7 +25,8 @@ export class MListAccountService {
         list_currency: {select: {name: true}},
         list_bank: {select: {name: true}},
         set_list_status: {select: {name: true}}
-      }
+      },
+      orderBy: {id: 'asc'}
     });
   }
 
@@ -53,11 +54,11 @@ export class MListAccountService {
   }
 
   async remove(id: number): Promise<DataMListAccountDto> {
-    const bank = await this.prismaService.dbm_operation.findMany({ 
+    const a = await this.prismaService.dbm_operation.findFirst({ 
       where: {account_id: +id},
     });
 
-    if (bank.length > 0) throw new NotFoundException('Delete not allowed!')
+    if (a) throw new NotFoundException(['Delete not allowed!'])
 
     return await this.prismaService.list_account.delete({
         where:{id: +id},

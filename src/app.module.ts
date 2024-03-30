@@ -10,21 +10,23 @@ import { MListExpenseGroupModule } from './m-list-expense-group/m-list-expense-g
 import { MListExpenseModule } from './m-list-expense/m-list-expense.module';
 import { MListPayerModule } from './m-list-payer/m-list-payer.module';
 import { MListMeasureModule } from './m-list-measure/m-list-measure.module';
-
+import { MUserModule } from './m-user/m-user.module';
 
 @Module({
   imports: [
-  ConfigModule.forRoot({ 
-    envFilePath: `.${process.env.NODE_ENV}.env`}),
+    ConfigModule.forRoot({
+      envFilePath: `.${process.env.NODE_ENV}.env`,
+    }),
+    MUserModule,
     MListMeasureModule,
-    MListPayerModule,  
-    MListExpenseModule, 
+    MListPayerModule,
+    MListExpenseModule,
     MListExpenseGroupModule,
-    MListCurrencyModule, 
-    MListAccountModule, 
-    MListBankModule, 
-    MSettingsModule, 
-],
+    MListCurrencyModule,
+    MListAccountModule,
+    MListBankModule,
+    MSettingsModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

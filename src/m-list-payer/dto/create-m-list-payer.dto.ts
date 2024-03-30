@@ -7,14 +7,15 @@ export class CreateMListPayerDto {
   @MinLength(3)
   @MaxLength(100)
   @ApiProperty({
-    default: 'Название',
-    minLength: 3
+    example: 'Название',
+    minLength: 3,
+    maxLength: 100,
   })
   name: string;
 
   @IsNumber()
   @ApiProperty({
-    default: 1,
+    example: 1,
   })
   status_id: number;
 }

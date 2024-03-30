@@ -1,53 +1,41 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsNumber, IsObject, IsString } from "class-validator";
+import { ApiProperty } from '@nestjs/swagger';
 
 export class DataMListExpenseDto {
-  @IsNumber()
   @ApiProperty({
-      default: 1,
-    })
-  id: number
+    example: 1,
+  })
+  id: number;
 
-  @IsString()
   @ApiProperty({
-      default: 'Название',
-    })
-  name: string
+    example: 'Название',
+  })
+  name: string;
 
-
-  @IsNumber()
   @ApiProperty({
-      default: 1,
-    })
-    expense_group_id: number
+    example: 1,
+  })
+  expense_group_id: number;
 
-
-  @IsNumber()
   @ApiProperty({
-      default: 1,
-    })
-    status_id: number
+    example: 1,
+  })
+  status_id: number;
 
+  @ApiProperty({
+    example: {
+      name: 'Название',
+    },
+  })
+  list_expense_group: {
+    name: string;
+  };
 
-    @IsObject()
-    @ApiProperty({
-      default: {
-        name: 'Название'
-      }
-    })
-    list_expense_group: {
-      name: string
-    }
-
-
-    @IsObject()
-    @ApiProperty({
-      default: {
-        name: 'Активен'
-      }
-    })
-    set_list_status: {
-      name: string
-    }
+  @ApiProperty({
+    example: {
+      name: 'Активен',
+    },
+  })
+  set_list_status: {
+    name: string;
+  };
 }
-

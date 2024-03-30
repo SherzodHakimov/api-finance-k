@@ -1,18 +1,14 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsBoolean} from "class-validator"
-import { DataMSettingsDto } from "./data-m-settings.dto";
+import { ApiProperty } from '@nestjs/swagger';
+import { DataMSettingsDto } from './data-m-settings.dto';
 
 export class DataMSettingsOperationDto extends DataMSettingsDto {
+  @ApiProperty({
+    example: true,
+  })
+  bank: boolean;
 
-    @IsBoolean()
-    @ApiProperty({
-      default: true,
-    })
-    bank: boolean;
-  
-    @IsBoolean()
-    @ApiProperty({
-      default: true,
-    })
-    cash: boolean;
+  @ApiProperty({
+    example: true,
+  })
+  cash: boolean;
 }

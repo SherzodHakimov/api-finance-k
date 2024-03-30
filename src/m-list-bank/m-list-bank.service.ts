@@ -16,7 +16,9 @@ export class MListBankService {
   }
 
   async findAll(): Promise<DataMListBankDto[]> {
-    return await this.prismaService.list_bank.findMany();
+    return await this.prismaService.list_bank.findMany({
+      orderBy: {id: 'asc'}
+    });
   }
 
   async findOne(id: number): Promise<DataMListBankDto> {
@@ -33,11 +35,11 @@ export class MListBankService {
   }
 
   async remove(id: number): Promise<UpdateMListBankDto> {
-     const b = await this.prismaService.list_account.findMany({ 
+     const b = await this.prismaService.list_account.findFirst({ 
         where: {bank_id: +id}
       });
   
-      if (b.length > 0) throw new NotFoundException('Delete not allowed!')
+      if (b) throw new NotFoundException(['Delete not allowed!'])
 
       return await this.prismaService.list_bank.delete({
           where:{id: +id}

@@ -10,31 +10,29 @@ import {
   ValidationPipe,
   HttpStatus,
 } from '@nestjs/common';
-import { MListAccountService } from './m-list-account.service';
-import { CreateMListAccountDto } from './dto/create-m-list-account.dto';
-import { UpdateMListAccountDto } from './dto/update-m-list-account.dto';
+import { MUserService } from './m-user.service';
+import { CreateMUserDto } from './dto/create-m-user.dto';
+import { UpdateMUserDto } from './dto/update-m-user.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { DataMListAccountDto } from './dto/data-m-list-account.dto';
+import { DataMUserDto } from './dto/data-m-user.dto';
 import { ErrorDto } from 'src/shared/dto/error.dto';
 
-@Controller('m-list-account')
+@Controller('m-user')
 @UsePipes(new ValidationPipe())
-@ApiTags('listAccount')
+@ApiTags('User')
 @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: "Error", type: ErrorDto })
-export class MListAccountController {
-  
-  constructor(private readonly mListsAccountService: MListAccountService) {}
-
+export class MUserController {
+  constructor(private readonly mUserService: MUserService) {}
 
   @Post('/create')
   @ApiOperation({ summary: 'Create item' })
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Success',
-    type: DataMListAccountDto,
+    type: DataMUserDto,
   })
-  create(@Body() createMListsAccountDto: CreateMListAccountDto) {
-    return this.mListsAccountService.create(createMListsAccountDto);
+  create(@Body() createMUserDto: CreateMUserDto) {
+    return this.mUserService.create(createMUserDto);
   }
 
   @Get('/list')
@@ -42,10 +40,10 @@ export class MListAccountController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Success',
-    type: DataMListAccountDto,
+    type: DataMUserDto,
   })
   findAll() {
-    return this.mListsAccountService.findAll();
+    return this.mUserService.findAll();
   }
 
   @Get('/get/:id')
@@ -53,10 +51,10 @@ export class MListAccountController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Success',
-    type: DataMListAccountDto,
+    type: DataMUserDto,
   })
   findOne(@Param('id') id: string) {
-    return this.mListsAccountService.findOne(+id);
+    return this.mUserService.findOne(+id);
   }
 
   @Patch('/update/:id')
@@ -64,13 +62,10 @@ export class MListAccountController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Success',
-    type: DataMListAccountDto,
+    type: DataMUserDto,
   })
-  update(
-    @Param('id') id: string,
-    @Body() updateMListsAccountDto: UpdateMListAccountDto,
-  ) {
-    return this.mListsAccountService.update(+id, updateMListsAccountDto);
+  update(@Param('id') id: string, @Body() updateMUserDto: UpdateMUserDto) {
+    return this.mUserService.update(+id, updateMUserDto);
   }
 
   @Delete('/remove/:id')
@@ -78,9 +73,9 @@ export class MListAccountController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Success',
-    type: DataMListAccountDto,
+    type: DataMUserDto,
   })
   remove(@Param('id') id: string) {
-    return this.mListsAccountService.remove(+id);
+    return this.mUserService.remove(+id);
   }
 }

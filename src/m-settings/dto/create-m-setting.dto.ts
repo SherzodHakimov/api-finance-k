@@ -7,7 +7,9 @@ export class CreateMSettingDto {
   @MinLength(3)
   @MaxLength(100)
   @ApiProperty({
-    default: 'Название',
+    example: 'Название',
+    minLength: 3,
+    maxLength: 100,
   })
   name: string;
   

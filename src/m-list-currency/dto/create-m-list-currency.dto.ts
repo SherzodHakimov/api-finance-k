@@ -6,13 +6,15 @@ export class CreateMListCurrencyDto {
     @MinLength(3)
     @MaxLength(100)
     @ApiProperty({
-      default: 'Название',
+      example: 'Название',
+      minLength: 3,
+      maxLength: 100,
     })
     name: string;
 
     @IsNumber()
     @ApiProperty({
-      default: 1,
+      example: 1,
     })
     currency_type_id: number;
 }

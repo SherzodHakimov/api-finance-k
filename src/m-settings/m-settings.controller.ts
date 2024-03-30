@@ -17,11 +17,12 @@ import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateMSettingOperationDto } from './dto/create-m-settong-operation.dto';
 import { DataMSettingsDto } from './dto/data-m-settings.dto';
 import { DataMSettingsOperationDto } from './dto/data-m-settings-operation.dto';
+import { ErrorDto } from 'src/shared/dto/error.dto';
 
 @Controller('m-settings')
 @UsePipes(new ValidationPipe())
 @ApiTags('Settings')
-// @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: "Error", type: DataMListExpenseGroupDto })
+@ApiResponse({ status: HttpStatus.BAD_REQUEST, description: "Error", type: ErrorDto })
 export class MSettingsController {
 
   constructor(private readonly mSettingsService: MSettingsService) {}

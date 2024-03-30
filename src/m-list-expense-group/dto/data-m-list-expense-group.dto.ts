@@ -1,17 +1,13 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsNumber, IsString } from "class-validator";
+import { ApiProperty } from '@nestjs/swagger';
 
 export class DataMListExpenseGroupDto {
-  @IsNumber()
   @ApiProperty({
-      default: 1,
-    })
-  id: number
+    example: 1,
+  })
+  id: number;
 
-  @IsString()
   @ApiProperty({
-      default: 'Название',
-    })
-  name: string
+    example: 'Название',
+  })
+  name: string;
 }
-

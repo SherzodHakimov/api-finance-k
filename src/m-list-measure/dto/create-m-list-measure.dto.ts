@@ -6,17 +6,19 @@ export class CreateMListMeasureDto {
     @MinLength(3)
     @MaxLength(100)
     @ApiProperty({
-        default: 'Название',
-        minLength: 3
+      example: 'Название',
+      minLength: 3,
+      maxLength: 100,
       })
     name: string
 
     @IsString()
-    @MinLength(3)
+    @MinLength(1)
     @MaxLength(10)
     @ApiProperty({
-        default: 'Кор. наз.',
-        minLength: 3
+      example: 'Кор. наз.',
+        minLength: 3,
+        maxLength: 10
       })
       name_short: string
 }
