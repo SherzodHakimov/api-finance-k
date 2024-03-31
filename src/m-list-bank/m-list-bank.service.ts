@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { CreateMListBankDto } from './dto/create-m-list-bank.dto';
 import { UpdateMListBankDto } from './dto/update-m-list-bank.dto';
 import { DataMListBankDto } from './dto/data-m-list-bank.dto';
@@ -39,7 +39,7 @@ export class MListBankService {
         where: {bank_id: +id}
       });
   
-      if (b) throw new NotFoundException(['Delete not allowed!'])
+      if (b) throw new ForbiddenException(['Delete not allowed!'])
 
       return await this.prismaService.list_bank.delete({
           where:{id: +id}

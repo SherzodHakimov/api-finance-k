@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { CreateMListMeasureDto } from './dto/create-m-list-measure.dto';
 import { UpdateMListMeasureDto } from './dto/update-m-list-measure.dto';
 import { PrismaService } from 'src/prisma-service';
@@ -39,7 +39,7 @@ export class MListMeasureService {
       where: {measure_id: +id}
     });
 
-    if (b) throw new NotFoundException(['Delete not allowed!'])
+    if (b) throw new ForbiddenException(['Delete not allowed!'])
 
     return await this.prismaService.list_measure.delete({
         where:{id: +id}

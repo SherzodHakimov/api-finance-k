@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { CreateMListPayerDto } from './dto/create-m-list-payer.dto';
 import { UpdateMListPayerDto } from './dto/update-m-list-payer.dto';
 import { PrismaService } from 'src/prisma-service';
@@ -50,7 +50,7 @@ export class MListPayerService {
       where: {payer_id: +id},
     });
 
-    if (b) throw new NotFoundException(['Delete not allowed!']);
+    if (b) throw new ForbiddenException(['Delete not allowed!']);
     
     return await this.prismaService.list_payer.delete({
       where:{id: +id},

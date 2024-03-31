@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { CreateMListExpenseDto } from './dto/create-m-list-expense.dto';
 import { UpdateMListExpenseDto } from './dto/update-m-list-expense.dto';
 import { PrismaService } from 'src/prisma-service';
@@ -6,6 +6,7 @@ import { DataMListExpenseDto } from './dto/data-m-list-expense.dto';
 
 @Injectable()
 export class MListExpenseService {
+  
   constructor(private prismaService: PrismaService) {}
   
   async create(createMListExpenseDto: CreateMListExpenseDto): Promise<DataMListExpenseDto> {
@@ -54,7 +55,7 @@ export class MListExpenseService {
       where: {expense_id: +id},
     });
 
-    if (r) throw new NotFoundException(['Delete not allowed!'])
+    if (r) throw new ForbiddenException(['Delete not allowed!'])
 
     return await this.prismaService.list_expense.delete({
         where:{id: +id},

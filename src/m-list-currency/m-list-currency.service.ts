@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { CreateMListCurrencyDto } from './dto/create-m-list-currency.dto';
 import { UpdateMListCurrencyDto } from './dto/update-m-list-currency.dto';
 import { PrismaService } from 'src/prisma-service';
@@ -64,25 +64,25 @@ export class MListCurrencyService {
       where: { id: +id, currency_type_id: 1 },
     });
 
-    if (l) throw new NotFoundException(['Delete not allowed!']);
+    if (l) throw new ForbiddenException(['Delete not allowed!']);
 
     const r = await this.prismaService.list_account.findFirst({
       where: { currency_id: +id },
     });
 
-    if (r) throw new NotFoundException(['Delete not allowed!']);
+    if (r) throw new ForbiddenException(['Delete not allowed!']);
 
     const b = await this.prismaService.dbm_currency_value.findFirst({
       where: { currency_id: +id },
     });
 
-    if (b) throw new NotFoundException(['Delete not allowed!']);
+    if (b) throw new ForbiddenException(['Delete not allowed!']);
 
     const c = await this.prismaService.dbm_operation.findFirst({
       where: { currency_id: +id },
     });
 
-    if (c) throw new NotFoundException(['Delete not allowed!']);
+    if (c) throw new ForbiddenException(['Delete not allowed!']);
 
     return await this.prismaService.list_currency.delete({
       where: { id: +id },
@@ -107,7 +107,7 @@ export class MListCurrencyService {
       );
 
       if (isSetLocalCurreny.length > 0)
-        throw new NotFoundException(['Allowed only one local currency!']);
+        throw new ForbiddenException(['Allowed only one local currency!']);
     }
   }
 }
