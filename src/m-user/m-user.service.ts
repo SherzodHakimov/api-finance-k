@@ -15,21 +15,26 @@ export class MUserService {
 
     if (u) throw new ConflictException(['Dublicate login not allowed!']);
 
-    return await this.prismaService.dbm_user.create({
-      data: createMUserDto,
-      select: {
-        id: true,
-        login: true,
-        name1: true,
-        name2: true,
-        user_role: true,
-        status_id: true,
-        last_auth_at: true,
-        created_at: true,
-        set_user_role: { select: { name: true } },
-        set_user_status: { select: { name: true } },
-      },
+    const c = await this.prismaService.dbm_user.create({
+      data: createMUserDto?.user_role ?  {
+        login: createMUserDto.login,
+        name1: createMUserDto.name1,
+        name2: createMUserDto.name2,
+        password: createMUserDto.password,
+        status_id: createMUserDto.status_id,
+        user_role: createMUserDto.user_role
+      } : {
+        login: createMUserDto.login,
+        name1: createMUserDto.name1,
+        name2: createMUserDto.name2,
+        password: createMUserDto.password,
+        status_id: createMUserDto.status_id,
+        user_role: null
+      }
     });
+
+    return this.rawFindOne(c.id)
+
   }
 
 
@@ -41,14 +46,18 @@ export class MUserService {
         u.name1,
         u.name2,
         u.user_role,
+		CASE WHEN u.user_role IS NULL 
+		  THEN jsonb 'null' 
+		  ELSE jsonb_build_object('name', r.name) 
+	    END AS set_user_role,
         u.status_id,
+		jsonb_build_object('name', s.name) set_user_status,
         u.last_auth_at,
-        u.created_at,
-      CASE WHEN u.user_role IS NULL THEN jsonb 'null' ELSE jsonb_build_object('name', s.name) END AS set_user_role,
-      CASE WHEN u.status_id IS NULL THEN jsonb 'null' ELSE jsonb_build_object('name', r.name) END AS set_user_status
+        u.created_at
     FROM public.dbm_user u
     LEFT JOIN public.set_user_role r ON u.user_role = r.id
-    LEFT JOIN public.set_user_status s ON u.status_id = s.id`
+    LEFT JOIN public.set_user_status s ON u.status_id = s.id
+    ORDER BY u.id ASC`
   }
 
   async findAll(): Promise<DataMUserDto[]> {
@@ -69,6 +78,29 @@ export class MUserService {
       });
   }
   
+  async rawFindOne(id: number): Promise<DataMUserDto> {
+    return await this.prismaService.$queryRaw<DataMUserDto>`
+    SELECT 
+        u.id,
+        u.login,
+        u.name1,
+        u.name2,
+        u.user_role,
+		CASE WHEN u.user_role IS NULL 
+		  THEN jsonb 'null' 
+		  ELSE jsonb_build_object('name', r.name) 
+	    END AS set_user_role,
+        u.status_id,
+		jsonb_build_object('name', s.name) set_user_status,
+        u.last_auth_at,
+        u.created_at
+    FROM public.dbm_user u
+    LEFT JOIN public.set_user_role r ON u.user_role = r.id
+    LEFT JOIN public.set_user_status s ON u.status_id = s.id 
+    WHERE u.id = ${id}
+    ORDER BY u.id ASC`
+  }
+
   async findOne(id: number): Promise<DataMUserDto> {
     return await this.prismaService.dbm_user.findUnique({
       where: { id: +id },

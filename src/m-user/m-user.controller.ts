@@ -54,7 +54,7 @@ export class MUserController {
     type: DataMUserDto,
   })
   findOne(@Param('id') id: string) {
-    return this.mUserService.findOne(+id);
+    return this.mUserService.rawFindOne(+id);
   }
 
   @Patch('/update/:id')
