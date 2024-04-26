@@ -53,6 +53,8 @@ export class MUserController {
     description: 'Success',
     type: DataMUserDto,
   })
+
+
   findOne(@Param('id') id: string) {
     return this.mUserService.findOne(+id);
   }
