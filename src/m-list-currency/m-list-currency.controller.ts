@@ -11,40 +11,40 @@ import { ErrorDto } from 'src/shared/dto/error.dto';
 @ApiTags('listCurrency')
 @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: "Error", type: ErrorDto })
 export class MListCurrencyController {
-    constructor(private readonly mListCurrrencyService: MListCurrencyService) {}
+    constructor(private readonly mListCurrencyService: MListCurrencyService) {}
 
   @Post('/create')
   @ApiOperation({ summary: 'Create item' })
   @ApiResponse({ status: HttpStatus.OK, description: "Success", type: DataMListCurrencyDto })
-  create(@Body() createMListCurrrencyDto: CreateMListCurrencyDto) {
-    return this.mListCurrrencyService.create(createMListCurrrencyDto);
+  create(@Body() createMListCurrencyDto: CreateMListCurrencyDto) {
+    return this.mListCurrencyService.create(createMListCurrencyDto);
   }
 
   @Get('/list')
   @ApiOperation({ summary: 'Get all items' })
   @ApiResponse({ status: HttpStatus.OK, description: "Success", type: DataMListCurrencyDto })
   findAll() {
-    return this.mListCurrrencyService.findAll();
+    return this.mListCurrencyService.findAll();
   }
 
   @Get('/get/:id')
   @ApiOperation({ summary: 'Get one item by ID' })
   @ApiResponse({ status: HttpStatus.OK, description: "Success", type: DataMListCurrencyDto })
   findOne(@Param('id') id: string) {
-    return this.mListCurrrencyService.findOne(+id);
+    return this.mListCurrencyService.findOne(+id);
   }
 
   @Patch('/update/:id')
   @ApiOperation({ summary: 'Update one item by ID' })
   @ApiResponse({ status: HttpStatus.OK, description: "Success", type: DataMListCurrencyDto })
-  update(@Param('id') id: string, @Body() updateMListCurrrencyDto: UpdateMListCurrencyDto) {
-    return this.mListCurrrencyService.update(+id, updateMListCurrrencyDto);
+  update(@Param('id') id: string, @Body() updateMListCurrencyDto: UpdateMListCurrencyDto) {
+    return this.mListCurrencyService.update(+id, updateMListCurrencyDto);
   }
 
   @Delete('/remove/:id')
   @ApiOperation({ summary: 'Delete one item by ID' })
   @ApiResponse({ status: HttpStatus.OK, description: "Success", type: DataMListCurrencyDto })
   remove(@Param('id') id: string) {
-    return this.mListCurrrencyService.remove(+id);
+    return this.mListCurrencyService.remove(+id);
   }
 }

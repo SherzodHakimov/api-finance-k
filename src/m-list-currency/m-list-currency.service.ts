@@ -9,13 +9,13 @@ export class MListCurrencyService {
   constructor(private prismaService: PrismaService) {}
 
   async create(
-    createMListCurrrencyDto: CreateMListCurrencyDto,
+    createMListCurrencyDto: CreateMListCurrencyDto,
   ): Promise<DataMListCurrencyDto> {
     return this.checkLocalCurrency(
-      createMListCurrrencyDto.currency_type_id,
+      createMListCurrencyDto.currency_type_id,
     ).then(async () => {
-      return await this.prismaService.list_currency.create({
-        data: createMListCurrrencyDto,
+      return this.prismaService.list_currency.create({
+        data: createMListCurrencyDto,
         include: {
           set_currency_type: { select: { name: true } },
         },
@@ -24,16 +24,16 @@ export class MListCurrencyService {
   }
 
   async findAll(): Promise<DataMListCurrencyDto[]> {
-    return await this.prismaService.list_currency.findMany({
+    return this.prismaService.list_currency.findMany({
       include: {
         set_currency_type: { select: { name: true } },
       },
-      orderBy: {id: 'asc'}
+      orderBy: { id: 'asc' }
     });
   }
 
   async findOne(id: number): Promise<DataMListCurrencyDto> {
-    return await this.prismaService.list_currency.findUnique({
+    return this.prismaService.list_currency.findUnique({
       where: { id: +id },
       include: {
         set_currency_type: { select: { name: true } },
@@ -43,15 +43,15 @@ export class MListCurrencyService {
 
   async update(
     id: number,
-    updateMListCurrrencyDto: UpdateMListCurrencyDto,
+    updateMListCurrencyDto: UpdateMListCurrencyDto,
   ): Promise<DataMListCurrencyDto> {
     return this.checkLocalCurrency(
-      updateMListCurrrencyDto.currency_type_id,
+      updateMListCurrencyDto.currency_type_id,
       id
     ).then(async () => {
-      return await this.prismaService.list_currency.update({
+      return this.prismaService.list_currency.update({
         where: { id: +id },
-        data: updateMListCurrrencyDto,
+        data: updateMListCurrencyDto,
         include: {
           set_currency_type: { select: { name: true } },
         },
@@ -84,7 +84,7 @@ export class MListCurrencyService {
 
     if (c) throw new ForbiddenException(['Delete not allowed!']);
 
-    return await this.prismaService.list_currency.delete({
+    return this.prismaService.list_currency.delete({
       where: { id: +id },
       include: {
         set_currency_type: { select: { name: true } },
@@ -100,13 +100,13 @@ export class MListCurrencyService {
       ? { currency_type_id: 1, NOT: { id: id } }
       : { currency_type_id: 1 };
     if (currencyTypeId === 1) {
-      const isSetLocalCurreny = await this.prismaService.list_currency.findMany(
+      const isSetLocalCurrency = await this.prismaService.list_currency.findMany(
         {
           where: w,
         },
       );
 
-      if (isSetLocalCurreny.length > 0)
+      if (isSetLocalCurrency.length > 0)
         throw new ForbiddenException(['Allowed only one local currency!']);
     }
   }

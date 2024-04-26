@@ -10,26 +10,26 @@ export class MListBankService {
   constructor(private prismaService: PrismaService) {}
   
   async create(createMListsBankDto: CreateMListBankDto): Promise<DataMListBankDto> {
-    return await this.prismaService.list_bank.create({
+    return this.prismaService.list_bank.create({
       data: createMListsBankDto
     });
   }
 
   async findAll(): Promise<DataMListBankDto[]> {
-    return await this.prismaService.list_bank.findMany({
-      orderBy: {id: 'asc'}
+    return this.prismaService.list_bank.findMany({
+      orderBy: { id: 'asc' }
     });
   }
 
   async findOne(id: number): Promise<DataMListBankDto> {
-    return await this.prismaService.list_bank.findUnique({
-      where: {id: +id}
+    return this.prismaService.list_bank.findUnique({
+      where: { id: +id }
     });
   }
 
   async update(id: number, updateMListsBankDto: UpdateMListBankDto): Promise<DataMListBankDto> {
-    return await this.prismaService.list_bank.update({
-      where: {id: +id},
+    return this.prismaService.list_bank.update({
+      where: { id: +id },
       data: updateMListsBankDto
     });
   }
@@ -41,8 +41,8 @@ export class MListBankService {
   
       if (b) throw new ForbiddenException(['Delete not allowed!'])
 
-      return await this.prismaService.list_bank.delete({
-          where:{id: +id}
+      return this.prismaService.list_bank.delete({
+        where: { id: +id }
       });
   }
 }

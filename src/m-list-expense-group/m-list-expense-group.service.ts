@@ -10,26 +10,26 @@ export class MListExpenseGroupService {
   constructor(private prismaService: PrismaService) {}
 
   async create(createMListExpenseGroupDto: CreateMListExpenseGroupDto): Promise<DataMListExpenseGroupDto> {
-    return await this.prismaService.list_expense_group.create({
+    return this.prismaService.list_expense_group.create({
       data: createMListExpenseGroupDto
     });
   }
 
   async findAll(): Promise<DataMListExpenseGroupDto[]> {
-    return await this.prismaService.list_expense_group.findMany({
-      orderBy: {id: 'asc'}
+    return this.prismaService.list_expense_group.findMany({
+      orderBy: { id: 'asc' }
     });
   }
 
   async findOne(id: number): Promise<DataMListExpenseGroupDto> {
-    return await this.prismaService.list_expense_group.findUnique({
-      where: {id: +id}
+    return this.prismaService.list_expense_group.findUnique({
+      where: { id: +id }
     });
   }
 
   async update(id: number, updateMListExpenseGroupDto: UpdateMListExpenseGroupDto): Promise<DataMListExpenseGroupDto> {
-    return await this.prismaService.list_expense_group.update({
-      where: {id: +id},
+    return this.prismaService.list_expense_group.update({
+      where: { id: +id },
       data: updateMListExpenseGroupDto
     });
   }
@@ -49,8 +49,8 @@ export class MListExpenseGroupService {
 
     if (b) throw new ForbiddenException(['Delete not allowed!'])
 
-    return await this.prismaService.list_expense_group.delete({
-        where:{id: +id}
+    return this.prismaService.list_expense_group.delete({
+      where: { id: +id }
     });
   }
 

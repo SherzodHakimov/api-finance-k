@@ -113,7 +113,7 @@ model dbm_user {
   name1              String               @db.VarChar(100)
   name2              String               @db.VarChar(100)
   password           String               @db.VarChar(200)
-  user_role          Int?
+  user_role          Int
   status_id          Int
   last_auth_at       DateTime?            @db.Timestamp(6)
   created_at         DateTime             @default(now()) @db.Timestamp(6)
@@ -121,7 +121,7 @@ model dbm_user {
   dbm_expense        dbm_expense[]
   dbm_operation      dbm_operation[]
   set_user_status    set_user_status      @relation(fields: [status_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  set_user_role      set_user_role?       @relation(fields: [user_role], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  set_user_role      set_user_role        @relation(fields: [user_role], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@index([id, user_role, status_id])
 }

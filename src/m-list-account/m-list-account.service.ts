@@ -9,46 +9,46 @@ export class MListAccountService {
   constructor(private prismaService: PrismaService) {}
   
   async create(createMListsAccountDto: CreateMListAccountDto): Promise<DataMListAccountDto> {
-    return await this.prismaService.list_account.create({
+    return this.prismaService.list_account.create({
       data: createMListsAccountDto,
       include: {
-        list_currency: {select: {name: true}},
-        list_bank: {select: {name: true}},
-        set_list_status: {select: {name: true}}
+        list_currency: { select: { name: true } },
+        list_bank: { select: { name: true } },
+        set_list_status: { select: { name: true } }
       }
     });
   }
 
   async findAll(): Promise<DataMListAccountDto[]> {
-    return await this.prismaService.list_account.findMany({
+    return this.prismaService.list_account.findMany({
       include: {
-        list_currency: {select: {name: true}},
-        list_bank: {select: {name: true}},
-        set_list_status: {select: {name: true}}
+        list_currency: { select: { name: true } },
+        list_bank: { select: { name: true } },
+        set_list_status: { select: { name: true } }
       },
-      orderBy: {id: 'asc'}
+      orderBy: { id: 'asc' }
     });
   }
 
   async findOne(id: number): Promise<DataMListAccountDto> {
-    return await this.prismaService.list_account.findUnique({
-      where: {id: +id},
+    return this.prismaService.list_account.findUnique({
+      where: { id: +id },
       include: {
-        list_currency: {select: {name: true}},
-        list_bank: {select: {name: true}},
-        set_list_status: {select: {name: true}}
+        list_currency: { select: { name: true } },
+        list_bank: { select: { name: true } },
+        set_list_status: { select: { name: true } }
       }
     });
   }
 
   async update(id: number, updateMListsAccountDto: UpdateMListAccountDto): Promise<DataMListAccountDto> {
-    return await this.prismaService.list_account.update({
-      where: {id: +id},
+    return this.prismaService.list_account.update({
+      where: { id: +id },
       data: updateMListsAccountDto,
       include: {
-        list_currency: {select: {name: true}},
-        list_bank: {select: {name: true}},
-        set_list_status: {select: {name: true}}
+        list_currency: { select: { name: true } },
+        list_bank: { select: { name: true } },
+        set_list_status: { select: { name: true } }
       }
     });
   }
@@ -60,13 +60,13 @@ export class MListAccountService {
 
     if (a) throw new ForbiddenException(['Delete not allowed!'])
 
-    return await this.prismaService.list_account.delete({
-        where:{id: +id},
-        include: {
-          list_currency: {select: {name: true}},
-          list_bank: {select: {name: true}},
-          set_list_status: {select: {name: true}}
-        }
+    return this.prismaService.list_account.delete({
+      where: { id: +id },
+      include: {
+        list_currency: { select: { name: true } },
+        list_bank: { select: { name: true } },
+        set_list_status: { select: { name: true } }
+      }
     });
   }
 }

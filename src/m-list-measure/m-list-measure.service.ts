@@ -10,26 +10,26 @@ export class MListMeasureService {
   constructor(private prismaService: PrismaService) {}
   
   async create(createMListMeasureDto: CreateMListMeasureDto): Promise<DataMListMeasureDto> {
-    return await this.prismaService.list_measure.create({
+    return this.prismaService.list_measure.create({
       data: createMListMeasureDto
     });
   }
 
   async findAll(): Promise<DataMListMeasureDto[]> {
-    return await this.prismaService.list_measure.findMany({
-      orderBy: {id: 'asc'}
+    return this.prismaService.list_measure.findMany({
+      orderBy: { id: 'asc' }
     });
   }
 
   async findOne(id: number): Promise<DataMListMeasureDto> {
-    return await this.prismaService.list_measure.findUnique({
-      where: {id: +id}
+    return this.prismaService.list_measure.findUnique({
+      where: { id: +id }
     });
   }
 
   async update(id: number, updateMListMeasureDto: UpdateMListMeasureDto): Promise<DataMListMeasureDto> {
-    return await this.prismaService.list_measure.update({
-      where: {id: +id},
+    return this.prismaService.list_measure.update({
+      where: { id: +id },
       data: updateMListMeasureDto
     });
   }
@@ -41,8 +41,8 @@ export class MListMeasureService {
 
     if (b) throw new ForbiddenException(['Delete not allowed!'])
 
-    return await this.prismaService.list_measure.delete({
-        where:{id: +id}
+    return this.prismaService.list_measure.delete({
+      where: { id: +id }
     });
   }
 }

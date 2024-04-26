@@ -10,42 +10,42 @@ export class MListExpenseService {
   constructor(private prismaService: PrismaService) {}
   
   async create(createMListExpenseDto: CreateMListExpenseDto): Promise<DataMListExpenseDto> {
-    return await this.prismaService.list_expense.create({
+    return this.prismaService.list_expense.create({
       data: createMListExpenseDto,
       include: {
-        list_expense_group: {select: {name: true}},
-        set_list_status: {select: {name: true}}
+        list_expense_group: { select: { name: true } },
+        set_list_status: { select: { name: true } }
       }
     });
   }
 
   async findAll(): Promise<DataMListExpenseDto[]> {
-    return await this.prismaService.list_expense.findMany({
+    return this.prismaService.list_expense.findMany({
       include: {
-        list_expense_group: {select: {name: true}},
-        set_list_status: {select: {name: true}}
+        list_expense_group: { select: { name: true } },
+        set_list_status: { select: { name: true } }
       },
-      orderBy: {id: 'asc'}
+      orderBy: { id: 'asc' }
     });
   }
 
   async findOne(id: number): Promise<DataMListExpenseDto> {
-    return await this.prismaService.list_expense.findUnique({
-      where: {id: +id},
+    return this.prismaService.list_expense.findUnique({
+      where: { id: +id },
       include: {
-        list_expense_group: {select: {name: true}},
-        set_list_status: {select: {name: true}}
+        list_expense_group: { select: { name: true } },
+        set_list_status: { select: { name: true } }
       }
     });
   }
 
   async update(id: number, updateMListExpenseDto: UpdateMListExpenseDto): Promise<DataMListExpenseDto> {
-    return await this.prismaService.list_expense.update({
-      where: {id: +id},
+    return this.prismaService.list_expense.update({
+      where: { id: +id },
       data: updateMListExpenseDto,
       include: {
-        list_expense_group: {select: {name: true}},
-        set_list_status: {select: {name: true}}
+        list_expense_group: { select: { name: true } },
+        set_list_status: { select: { name: true } }
       }
     });
   }
@@ -57,12 +57,12 @@ export class MListExpenseService {
 
     if (r) throw new ForbiddenException(['Delete not allowed!'])
 
-    return await this.prismaService.list_expense.delete({
-        where:{id: +id},
-        include: {
-          list_expense_group: {select: {name: true}},
-          set_list_status: {select: {name: true}}
-        }
+    return this.prismaService.list_expense.delete({
+      where: { id: +id },
+      include: {
+        list_expense_group: { select: { name: true } },
+        set_list_status: { select: { name: true } }
+      }
     });
   }
 }

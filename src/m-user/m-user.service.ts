@@ -15,7 +15,7 @@ export class MUserService {
 
     if (u) throw new ConflictException(['Dublicate login not allowed!']);
 
-    return await this.prismaService.dbm_user.create({
+    return this.prismaService.dbm_user.create({
       data: createMUserDto,
       select: {
         id: true,
@@ -34,7 +34,7 @@ export class MUserService {
 
 
   async rawFindAll(): Promise<DataMUserDto[]>{
-    return await this.prismaService.$queryRaw<DataMUserDto[]>`
+    return this.prismaService.$queryRaw<DataMUserDto[]>`
     SELECT 
         u.id,
         u.login,
@@ -48,11 +48,11 @@ export class MUserService {
       CASE WHEN u.status_id IS NULL THEN jsonb 'null' ELSE jsonb_build_object('name', r.name) END AS set_user_status
     FROM public.dbm_user u
     LEFT JOIN public.set_user_role r ON u.user_role = r.id
-    LEFT JOIN public.set_user_status s ON u.status_id = s.id`
+    LEFT JOIN public.set_user_status s ON u.status_id = s.id`;
   }
 
   async findAll(): Promise<DataMUserDto[]> {
-      return await this.prismaService.dbm_user.findMany({
+      return this.prismaService.dbm_user.findMany({
         select: {
           id: true,
           login: true,
@@ -70,7 +70,7 @@ export class MUserService {
   }
   
   async findOne(id: number): Promise<DataMUserDto> {
-    return await this.prismaService.dbm_user.findUnique({
+    return this.prismaService.dbm_user.findUnique({
       where: { id: +id },
       select: {
         id: true,
@@ -91,28 +91,28 @@ export class MUserService {
     id: number,
     updateMUserDto: UpdateMUserDto,
   ): Promise<DataMUserDto> {
-    return await this.prismaService.dbm_user.update({
+    return this.prismaService.dbm_user.update({
       where: { id: +id },
       data: updateMUserDto.password
         ? {
-            login: updateMUserDto.login,
-            name1: updateMUserDto.name1,
-            name2: updateMUserDto.name2,
-            status_id: updateMUserDto.status_id,
-            user_role: updateMUserDto.user_role
-              ? updateMUserDto.user_role
-              : null,
-            password: updateMUserDto.password,
-          }
+          login: updateMUserDto.login,
+          name1: updateMUserDto.name1,
+          name2: updateMUserDto.name2,
+          status_id: updateMUserDto.status_id,
+          user_role: updateMUserDto.user_role
+            ? updateMUserDto.user_role
+            : null,
+          password: updateMUserDto.password,
+        }
         : {
-            login: updateMUserDto.login,
-            name1: updateMUserDto.name1,
-            name2: updateMUserDto.name2,
-            status_id: updateMUserDto.status_id,
-            user_role: updateMUserDto.user_role
-              ? updateMUserDto.user_role
-              : null,
-          },
+          login: updateMUserDto.login,
+          name1: updateMUserDto.name1,
+          name2: updateMUserDto.name2,
+          status_id: updateMUserDto.status_id,
+          user_role: updateMUserDto.user_role
+            ? updateMUserDto.user_role
+            : null,
+        },
       select: {
         id: true,
         login: true,
@@ -147,7 +147,7 @@ export class MUserService {
 
     if (c) throw new ForbiddenException(['Delete not allowed!']);
 
-    return await this.prismaService.dbm_user.delete({
+    return this.prismaService.dbm_user.delete({
       where: { id: +id },
       select: {
         id: true,

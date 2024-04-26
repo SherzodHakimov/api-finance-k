@@ -9,38 +9,38 @@ export class MListPayerService {
   constructor(private prismaService: PrismaService) {}
   
    async create(createMListPayerDto: CreateMListPayerDto): Promise<DataMListPayerDto> {
-    return await this.prismaService.list_payer.create({
+    return this.prismaService.list_payer.create({
       data: createMListPayerDto,
       include: {
-        set_list_status: {select: {name: true}}
+        set_list_status: { select: { name: true } }
       }
     });
   }
 
   async findAll(): Promise<DataMListPayerDto[]> {
-    return await this.prismaService.list_payer.findMany({
+    return this.prismaService.list_payer.findMany({
       include: {
-        set_list_status: {select: {name: true}}
+        set_list_status: { select: { name: true } }
       },
-      orderBy: {id: 'asc'}
+      orderBy: { id: 'asc' }
     });
   }
 
   async findOne(id: number): Promise<DataMListPayerDto> {
-    return await this.prismaService.list_payer.findUnique({
-      where: {id: +id},
+    return this.prismaService.list_payer.findUnique({
+      where: { id: +id },
       include: {
-        set_list_status: {select: {name: true}}
+        set_list_status: { select: { name: true } }
       }
     });
   }
 
   async update(id: number, updateMListPayerDto: UpdateMListPayerDto): Promise<DataMListPayerDto> {
-    return await this.prismaService.list_payer.update({
-      where: {id: +id},
+    return this.prismaService.list_payer.update({
+      where: { id: +id },
       data: updateMListPayerDto,
       include: {
-        set_list_status: {select: {name: true}}
+        set_list_status: { select: { name: true } }
       }
     });
   }
@@ -52,11 +52,11 @@ export class MListPayerService {
 
     if (b) throw new ForbiddenException(['Delete not allowed!']);
     
-    return await this.prismaService.list_payer.delete({
-      where:{id: +id},
+    return this.prismaService.list_payer.delete({
+      where: { id: +id },
       include: {
-        set_list_status: {select: {name: true}}
+        set_list_status: { select: { name: true } }
       }
-  });
+    });
   }
 }
