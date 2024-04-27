@@ -43,7 +43,7 @@ export class MUserController {
     type: DataMUserDto,
   })
   findAll() {
-    return this.mUserService.rawFindAll();
+    return this.mUserService.findAll();
   }
 
   @Get('/get/:id')

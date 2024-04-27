@@ -40,27 +40,25 @@ export class DataMUserDto {
     name: string;
   };
 
-  // NULLABLE FIELDS
-  @ApiPropertyOptional({
-    nullable: true,
+  @ApiProperty({
     example: 1
   })
-  user_role?: number;
+  user_role: number;
 
-  @ApiPropertyOptional({
-    nullable: true,
+  @ApiProperty({
     example: {
       name: 'Название',
     },
   })
-  set_user_role?: {
+  set_user_role: {
     name: string;
   };
 
-  @ApiPropertyOptional({
-    nullable: true,
-    example: new Date().toISOString()
-  })
-  last_auth_at?: Date;
+  // NULLABLE FIELDS
+  // @ApiPropertyOptional({
+  //   nullable: true,
+  //   example: new Date().toISOString()
+  // })
+  // last_auth_at?: Date | null;
   
 }

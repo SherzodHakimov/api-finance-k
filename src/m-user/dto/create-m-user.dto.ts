@@ -54,12 +54,9 @@ export class CreateMUserDto {
   })
   status_id: number;
 
-  // NULLABLE FIELDS
   @IsNumber()
-  @IsOptional()
-  @ApiPropertyOptional({
+  @ApiProperty({
     example: 1,
-    nullable: true,
   })
-  user_role?: number;
+  user_role: number;
 }
