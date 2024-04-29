@@ -79,4 +79,19 @@ export class MOperationsService {
       }
     });
   }
+
+  findAllByAccountType(account_type_id: number): Promise<DataMOperationDto[]> {
+    return this.prismaService.dbm_operation.findMany({
+      where: { account_type_id: +account_type_id },
+      include: {
+        set_operation:  { select: { name: true } },
+        list_account:  { select: { name: true } },
+        set_account_type:  { select: { name: true } },
+        list_currency:  { select: { name: true } },
+        set_operation_status:  { select: { name: true } },
+        dbm_user:  { select: { name1: true, name2: true } }
+      },
+      orderBy: { id: 'asc' }
+    });
+  }
 }

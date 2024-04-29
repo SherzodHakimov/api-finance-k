@@ -58,7 +58,7 @@ export class DataMOperationDto {
   status_id: number;
 
   @ApiProperty({
-    example: 'Веден',
+    example: { name: 'Веден'},
   })
   set_operation_status: {
     name: string;
@@ -70,7 +70,7 @@ export class DataMOperationDto {
   currency_id: number;
 
   @ApiProperty({
-    example: 'USD',
+    example: { name: 'USD'},
   })
   list_currency: {
     name: string;
@@ -82,7 +82,7 @@ export class DataMOperationDto {
   account_type_id: number;
 
   @ApiProperty({
-    example: 'Банк',
+    example: { name: 'Банк'},
   })
   set_account_type: {
     name: string;
@@ -94,7 +94,7 @@ export class DataMOperationDto {
   account_id: number;
 
   @ApiProperty({
-    example: 'Основной',
+    example: { name: 'Основной'},
   })
   list_account: {
     name: string;
@@ -106,7 +106,7 @@ export class DataMOperationDto {
   operation_id: number;
 
   @ApiProperty({
-    example: 'Приход',
+    example: { name: 'Приход'},
   })
   set_operation: {
     name: string;

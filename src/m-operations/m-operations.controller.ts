@@ -79,4 +79,15 @@ export class MOperationsController {
   remove(@Param('id') id: string) {
     return this.mOperationsService.remove(+id);
   }
+
+  @Get('/list/by-account-type/:id')
+  @ApiOperation({ summary: 'Get all items' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Success',
+    type: DataMOperationDto,
+  })
+  findAllByAccountType(@Param('id') id: string) {
+    return this.mOperationsService.findAllByAccountType(+id);
+  }
 }
