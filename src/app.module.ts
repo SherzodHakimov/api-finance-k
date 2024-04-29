@@ -11,12 +11,16 @@ import { MListExpenseModule } from './m-list-expense/m-list-expense.module';
 import { MListPayerModule } from './m-list-payer/m-list-payer.module';
 import { MListMeasureModule } from './m-list-measure/m-list-measure.module';
 import { MUserModule } from './m-user/m-user.module';
+import { MUserRoleActionsModule } from './m-user-role-actions/m-user-role-actions.module';
+import { MOperationsModule } from './m-operations/m-operations.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       envFilePath: `.${process.env.NODE_ENV}.env`,
     }),
+    MOperationsModule,
+    MUserRoleActionsModule,
     MUserModule,
     MListMeasureModule,
     MListPayerModule,
@@ -25,7 +29,7 @@ import { MUserModule } from './m-user/m-user.module';
     MListCurrencyModule,
     MListAccountModule,
     MListBankModule,
-    MSettingsModule,
+    MSettingsModule
   ],
   controllers: [AppController],
   providers: [AppService],

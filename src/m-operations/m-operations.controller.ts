@@ -10,29 +10,30 @@ import {
   ValidationPipe,
   HttpStatus,
 } from '@nestjs/common';
-import { MUserService } from './m-user.service';
-import { CreateMUserDto } from './dto/create-m-user.dto';
-import { UpdateMUserDto } from './dto/update-m-user.dto';
+import { MOperationsService } from './m-operations.service';
+import { CreateMOperationDto } from './dto/create-m-operation.dto';
+import { UpdateMOperationDto } from './dto/update-m-operation.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { DataMUserDto } from './dto/data-m-user.dto';
-import { ErrorDto } from 'src/shared/dto/error.dto';
+import { ErrorDto } from '../shared/dto/error.dto';
+import { DataMOperationDto } from './dto/data-m-operation.dto';
 
-@Controller('m-user')
+@Controller('m-operations')
 @UsePipes(new ValidationPipe())
-@ApiTags('User')
+@ApiTags('Operations')
 @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: "Error", type: ErrorDto })
-export class MUserController {
-  constructor(private readonly mUserService: MUserService) {}
+export class MOperationsController {
+
+  constructor(private readonly mOperationsService: MOperationsService) {}
 
   @Post('/create')
   @ApiOperation({ summary: 'Create item' })
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Success',
-    type: DataMUserDto,
+    type: DataMOperationDto,
   })
-  create(@Body() createMUserDto: CreateMUserDto) {
-    return this.mUserService.create(createMUserDto);
+  create(@Body() createMOperationDto: CreateMOperationDto) {
+    return this.mOperationsService.create(createMOperationDto);
   }
 
   @Get('/list')
@@ -40,10 +41,10 @@ export class MUserController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Success',
-    type: DataMUserDto,
+    type: DataMOperationDto,
   })
   findAll() {
-    return this.mUserService.findAll();
+    return this.mOperationsService.findAll();
   }
 
   @Get('/get/:id')
@@ -51,10 +52,10 @@ export class MUserController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Success',
-    type: DataMUserDto,
+    type: DataMOperationDto,
   })
   findOne(@Param('id') id: string) {
-    return this.mUserService.findOne(+id);
+    return this.mOperationsService.findOne(+id);
   }
 
   @Patch('/update/:id')
@@ -62,10 +63,10 @@ export class MUserController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Success',
-    type: DataMUserDto,
+    type: DataMOperationDto,
   })
-  update(@Param('id') id: string, @Body() updateMUserDto: UpdateMUserDto) {
-    return this.mUserService.update(+id, updateMUserDto);
+  update(@Param('id') id: string, @Body() updateMOperationDto: UpdateMOperationDto) {
+    return this.mOperationsService.update(+id, updateMOperationDto);
   }
 
   @Delete('/remove/:id')
@@ -73,9 +74,9 @@ export class MUserController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Success',
-    type: DataMUserDto,
+    type: DataMOperationDto,
   })
   remove(@Param('id') id: string) {
-    return this.mUserService.remove(+id);
+    return this.mOperationsService.remove(+id);
   }
 }
