@@ -3,6 +3,8 @@ import { CreateMOperationDto } from './dto/create-m-operation.dto';
 import { UpdateMOperationDto } from './dto/update-m-operation.dto';
 import { PrismaService } from '../prisma-service';
 import { DataMOperationDto } from './dto/data-m-operation.dto';
+import { UpdateMOperationStatusDto } from './dto/update-m-operation-status.dto';
+import { DataMOperationStatusDto } from './dto/data-m-operation-status.dto';
 
 @Injectable()
 export class MOperationsService {
@@ -94,4 +96,17 @@ export class MOperationsService {
       orderBy: { id: 'asc' }
     });
   }
+
+  updateStatus(id: number, updateMOperationStatusDto: UpdateMOperationStatusDto): Promise<DataMOperationStatusDto> {
+    return this.prismaService.dbm_operation.update({
+      where: { id: +id },
+      data: {status_id: updateMOperationStatusDto.status_id},
+      select: {
+        id: true,
+        status_id: true,
+        set_operation_status:  { select: { name: true } },
+      }
+    });
+  }
+
 }

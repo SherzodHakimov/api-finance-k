@@ -16,6 +16,8 @@ import { UpdateMOperationDto } from './dto/update-m-operation.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ErrorDto } from '../shared/dto/error.dto';
 import { DataMOperationDto } from './dto/data-m-operation.dto';
+import { UpdateMOperationStatusDto } from './dto/update-m-operation-status.dto';
+import { DataMOperationStatusDto } from './dto/data-m-operation-status.dto';
 
 @Controller('m-operations')
 @UsePipes(new ValidationPipe())
@@ -90,4 +92,16 @@ export class MOperationsController {
   findAllByAccountType(@Param('id') id: string) {
     return this.mOperationsService.findAllByAccountType(+id);
   }
+
+  @Patch('/update/operation-status/:id')
+  @ApiOperation({ summary: 'Change operation status by ID' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Success',
+    type: DataMOperationStatusDto,
+  })
+  updateStatus(@Param('id') id: string, @Body() updateMOperationStatusDto: UpdateMOperationStatusDto) {
+    return this.mOperationsService.updateStatus(+id, updateMOperationStatusDto);
+  }
+
 }
