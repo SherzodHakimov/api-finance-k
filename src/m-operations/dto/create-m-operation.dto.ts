@@ -3,7 +3,7 @@ import { IsDate, IsDecimal, IsNumber, IsOptional, IsString, MaxLength, MinLength
 
 export class CreateMOperationDto {
 
-  @IsDecimal()
+  @IsNumber()
   @IsOptional()
   @ApiPropertyOptional({
     nullable: true,
@@ -11,7 +11,7 @@ export class CreateMOperationDto {
   })
   ammount_in?: number | null;
 
-  @IsDecimal()
+  @IsNumber()
   @IsOptional()
   @ApiPropertyOptional({
     nullable: true,
@@ -21,17 +21,15 @@ export class CreateMOperationDto {
 
   @IsString()
   @IsOptional()
-  @MinLength(3)
   @MaxLength(200)
   @ApiPropertyOptional({
     nullable: true,
     example: 'Комментарии',
-    minLength: 3,
     maxLength: 200,
   })
   comment?: string | null;
 
-  @IsDate()
+  @IsString()
   @ApiProperty({
     example: new Date().toISOString()
   })
