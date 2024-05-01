@@ -111,4 +111,5 @@ export class DataMOperationDto {
   set_operation: {
     name: string;
   };
+
 }

@@ -31,7 +31,7 @@ export class MListAccountService {
   }
 
   async findOne(id: number): Promise<DataMListAccountDto> {
-    return this.prismaService.list_account.findUnique({
+    return this.prismaService.list_account.findFirst({
       where: { id: +id },
       include: {
         list_currency: { select: { name: true } },

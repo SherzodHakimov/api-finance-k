@@ -33,7 +33,7 @@ export class MListCurrencyService {
   }
 
   async findOne(id: number): Promise<DataMListCurrencyDto> {
-    return this.prismaService.list_currency.findUnique({
+    return this.prismaService.list_currency.findFirst({
       where: { id: +id },
       include: {
         set_currency_type: { select: { name: true } },

@@ -18,6 +18,8 @@ import { ErrorDto } from '../shared/dto/error.dto';
 import { DataMOperationDto } from './dto/data-m-operation.dto';
 import { UpdateMOperationStatusDto } from './dto/update-m-operation-status.dto';
 import { DataMOperationStatusDto } from './dto/data-m-operation-status.dto';
+import { DataToCheckMOperationInitDto } from './dto/data-to-check-m-operation-init.dto';
+import { DataMOperationPaginationDto } from './dto/data-m-operation-pagination.dto';
 
 @Controller('m-operations')
 @UsePipes(new ValidationPipe())
@@ -82,15 +84,15 @@ export class MOperationsController {
     return this.mOperationsService.remove(+id);
   }
 
-  @Get('/list/by-account-type/:id')
+  @Post('/list/by-account-type/:id')
   @ApiOperation({ summary: 'Get all items' })
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Success',
     type: DataMOperationDto,
   })
-  findAllByAccountType(@Param('id') id: string) {
-    return this.mOperationsService.findAllByAccountType(+id);
+  findAllByAccountType(@Param('id') id: string, @Body() dataMOperationPaginationDto: DataMOperationPaginationDto) {
+    return this.mOperationsService.findAllByAccountType(+id, dataMOperationPaginationDto);
   }
 
   @Patch('/update/operation-status/:id')
@@ -104,4 +106,14 @@ export class MOperationsController {
     return this.mOperationsService.updateStatus(+id, updateMOperationStatusDto);
   }
 
+  @Post('/check-has-operation')
+  @ApiOperation({ summary: 'Check is has any operation' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Success',
+    type: Boolean,
+  })
+  isHasAnyOperation(@Body() checkMOperationInitDto: DataToCheckMOperationInitDto) {
+    return this.mOperationsService.isHasAnyOperation(checkMOperationInitDto);
+  }
 }

@@ -27,7 +27,7 @@ export class MListPayerService {
   }
 
   async findOne(id: number): Promise<DataMListPayerDto> {
-    return this.prismaService.list_payer.findUnique({
+    return this.prismaService.list_payer.findFirst({
       where: { id: +id },
       include: {
         set_list_status: { select: { name: true } }

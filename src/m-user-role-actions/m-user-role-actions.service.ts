@@ -9,7 +9,7 @@ export class MUserRoleActionsService {
 
   constructor(private prismaService: PrismaService) {}
 
-  create(createMUserRoleActionDto: CreateMUserRoleActionDto): Promise<DataMUserRoleActionDto> {
+  async create(createMUserRoleActionDto: CreateMUserRoleActionDto): Promise<DataMUserRoleActionDto> {
     return this.prismaService.dba_user_roles.create({
       data: createMUserRoleActionDto,
       include: {
@@ -19,7 +19,7 @@ export class MUserRoleActionsService {
     });
   }
 
-  findAll(): Promise<DataMUserRoleActionDto[]> {
+  async findAll(): Promise<DataMUserRoleActionDto[]> {
     return this.prismaService.dba_user_roles.findMany({
       include: {
         set_user_role: { select: { name: true } },
@@ -29,8 +29,8 @@ export class MUserRoleActionsService {
     });
   }
 
-  findOne(id: number): Promise<DataMUserRoleActionDto>  {
-    return this.prismaService.dba_user_roles.findUnique({
+  async findOne(id: number): Promise<DataMUserRoleActionDto>  {
+    return this.prismaService.dba_user_roles.findFirst({
       where: { id: +id },
       include: {
         set_user_role: { select: { name: true } },
@@ -43,7 +43,7 @@ export class MUserRoleActionsService {
   //   return `This action updates a #${id} mUserRoleAction`;
   // }
 
-  remove(id: number): Promise<DataMUserRoleActionDto> {
+  async remove(id: number): Promise<DataMUserRoleActionDto> {
     return this.prismaService.dba_user_roles.delete({
       where: { id: +id },
       include: {

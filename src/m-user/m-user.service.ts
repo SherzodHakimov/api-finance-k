@@ -51,7 +51,7 @@ export class MUserService {
   }
 
   async findOne(id: number): Promise<DataMUserDto> {
-    return this.prismaService.dbm_user.findUnique({
+    return this.prismaService.dbm_user.findFirst({
       where: { id: +id },
       select: {
         id: true,

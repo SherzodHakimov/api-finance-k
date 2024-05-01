@@ -22,7 +22,7 @@ export class MListBankService {
   }
 
   async findOne(id: number): Promise<DataMListBankDto> {
-    return this.prismaService.list_bank.findUnique({
+    return this.prismaService.list_bank.findFirst({
       where: { id: +id }
     });
   }

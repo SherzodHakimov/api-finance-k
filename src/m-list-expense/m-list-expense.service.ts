@@ -30,7 +30,7 @@ export class MListExpenseService {
   }
 
   async findOne(id: number): Promise<DataMListExpenseDto> {
-    return this.prismaService.list_expense.findUnique({
+    return this.prismaService.list_expense.findFirst({
       where: { id: +id },
       include: {
         list_expense_group: { select: { name: true } },

@@ -1,5 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsDate, IsDecimal, IsNumber, IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
+import { DefaultValuePipe } from '@nestjs/common';
 
 export class CreateMOperationDto {
 

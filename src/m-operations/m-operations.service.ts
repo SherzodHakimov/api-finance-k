@@ -5,13 +5,17 @@ import { PrismaService } from '../prisma-service';
 import { DataMOperationDto } from './dto/data-m-operation.dto';
 import { UpdateMOperationStatusDto } from './dto/update-m-operation-status.dto';
 import { DataMOperationStatusDto } from './dto/data-m-operation-status.dto';
+import { DataToCheckMOperationInitDto } from './dto/data-to-check-m-operation-init.dto';
+import { DataMOperationPaginationDto } from './dto/data-m-operation-pagination.dto';
+
 
 @Injectable()
 export class MOperationsService {
 
   constructor(private prismaService: PrismaService) {}
 
-  create(createMOperationDto: CreateMOperationDto): Promise<DataMOperationDto> {
+  async create(createMOperationDto: CreateMOperationDto): Promise<DataMOperationDto> {
+
     return this.prismaService.dbm_operation.create({
       data: createMOperationDto,
       include: {
@@ -25,7 +29,7 @@ export class MOperationsService {
     });
   }
 
-  findAll(): Promise<DataMOperationDto[]> {
+  async findAll(): Promise<DataMOperationDto[]> {
     return this.prismaService.dbm_operation.findMany({
       include: {
         set_operation:  { select: { name: true } },
@@ -39,8 +43,8 @@ export class MOperationsService {
     });
   }
 
-  findOne(id: number): Promise<DataMOperationDto> {
-    return this.prismaService.dbm_operation.findUnique({
+  async findOne(id: number): Promise<DataMOperationDto> {
+    return this.prismaService.dbm_operation.findFirst({
       where: { id: +id },
       include: {
         set_operation:  { select: { name: true } },
@@ -53,7 +57,7 @@ export class MOperationsService {
     });
   }
 
-  update(id: number, updateMOperationDto: UpdateMOperationDto): Promise<DataMOperationDto> {
+  async update(id: number, updateMOperationDto: UpdateMOperationDto): Promise<DataMOperationDto> {
     return this.prismaService.dbm_operation.update({
       where: { id: +id },
       data: updateMOperationDto,
@@ -68,7 +72,7 @@ export class MOperationsService {
     });
   }
 
-  remove(id: number): Promise<DataMOperationDto> {
+  async remove(id: number): Promise<DataMOperationDto> {
     return this.prismaService.dbm_operation.delete({
       where: { id: +id },
       include: {
@@ -82,8 +86,30 @@ export class MOperationsService {
     });
   }
 
-  findAllByAccountType(id: number): Promise<DataMOperationDto[]> {
-    return this.prismaService.dbm_operation.findMany({
+  async findAllByAccountType(id: number, dataMOperationPaginationDto: DataMOperationPaginationDto): Promise<{total: number, data:DataMOperationDto[]}> {
+
+    let orderByObj = {};
+    const tempObj = {};
+    if (dataMOperationPaginationDto.sort_field && dataMOperationPaginationDto.sort_order){
+      const sortOrder = dataMOperationPaginationDto.sort_order == 'ascend' ?  'asc' : 'desc'
+      const sortFields = dataMOperationPaginationDto.sort_field.split('.');
+      if (sortFields.length > 1){
+        tempObj[sortFields[1]] = sortOrder;
+        orderByObj[sortFields[0]] = tempObj;
+      } else {
+        orderByObj[dataMOperationPaginationDto.sort_field] = sortOrder;
+      }
+    } else {
+      orderByObj = { id: 'desc'};
+    }
+
+    const totalCount = await this.prismaService.dbm_operation.count({
+      where: { account_type_id: +id }
+    })
+
+    const response = await this.prismaService.dbm_operation.findMany({
+      skip: (dataMOperationPaginationDto.page_number - 1) * dataMOperationPaginationDto.page_size,
+      take: dataMOperationPaginationDto.page_size,
       where: { account_type_id: +id },
       include: {
         set_operation:  { select: { name: true } },
@@ -91,13 +117,16 @@ export class MOperationsService {
         set_account_type:  { select: { name: true } },
         list_currency:  { select: { name: true } },
         set_operation_status:  { select: { name: true } },
-        dbm_user:  { select: { name1: true, name2: true } }
+        dbm_user:  { select: { name1: true, name2: true } },
+
       },
-      orderBy: { id: 'desc' }
+      orderBy: orderByObj
     });
+
+    return {total: totalCount,data: response};
   }
 
-  updateStatus(id: number, updateMOperationStatusDto: UpdateMOperationStatusDto): Promise<DataMOperationStatusDto> {
+  async updateStatus(id: number, updateMOperationStatusDto: UpdateMOperationStatusDto): Promise<DataMOperationStatusDto> {
     return this.prismaService.dbm_operation.update({
       where: { id: +id },
       data: {status_id: updateMOperationStatusDto.status_id},
@@ -107,6 +136,16 @@ export class MOperationsService {
         set_operation_status:  { select: { name: true } },
       }
     });
+  }
+
+  async isHasAnyOperation(checkMOperationInitDto: DataToCheckMOperationInitDto): Promise<boolean> {
+    const r = await this.prismaService.dbm_operation.findFirst({
+      where: {
+        account_type_id: checkMOperationInitDto.account_type_id,
+        account_id: checkMOperationInitDto.account_id
+      }
+    });
+    return !!r;
   }
 
 }

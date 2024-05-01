@@ -22,7 +22,7 @@ export class MListExpenseGroupService {
   }
 
   async findOne(id: number): Promise<DataMListExpenseGroupDto> {
-    return this.prismaService.list_expense_group.findUnique({
+    return this.prismaService.list_expense_group.findFirst({
       where: { id: +id }
     });
   }

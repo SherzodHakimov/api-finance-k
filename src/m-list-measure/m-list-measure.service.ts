@@ -22,7 +22,7 @@ export class MListMeasureService {
   }
 
   async findOne(id: number): Promise<DataMListMeasureDto> {
-    return this.prismaService.list_measure.findUnique({
+    return this.prismaService.list_measure.findFirst({
       where: { id: +id }
     });
   }
