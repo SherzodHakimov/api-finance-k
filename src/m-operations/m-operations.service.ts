@@ -7,6 +7,7 @@ import { UpdateMOperationStatusDto } from './dto/update-m-operation-status.dto';
 import { DataMOperationStatusDto } from './dto/data-m-operation-status.dto';
 import { DataToCheckMOperationInitDto } from './dto/data-to-check-m-operation-init.dto';
 import { DataMOperationPaginationDto } from './dto/data-m-operation-pagination.dto';
+import { json } from 'express';
 
 
 @Injectable()
@@ -88,6 +89,57 @@ export class MOperationsService {
 
   async findAllByAccountType(id: number, dataMOperationPaginationDto: DataMOperationPaginationDto): Promise<{totals: any, data:DataMOperationDto[]}> {
 
+    // FILTER
+    const whereObj = [];
+    if (dataMOperationPaginationDto.filter){
+      dataMOperationPaginationDto.filter.forEach(el => {
+        const keyNames = el.key.split('.');
+        if (el.value.length > 0){
+          const objName = {};
+          const objType = {};
+          const arr = [];
+          el.value.forEach(v => {
+            objName[keyNames[1]] = v;
+            objType[keyNames[0]] = {...objName}
+            arr.push({...objType})
+          });
+          whereObj.push({OR: arr})
+        }
+      });
+    }
+    whereObj.unshift({account_type_id: +id});
+
+
+    if (dataMOperationPaginationDto.ammount_from && dataMOperationPaginationDto.ammount_to){
+      whereObj.push({
+        OR:[
+          {
+            ammount_in: {
+              gte: dataMOperationPaginationDto.ammount_from,
+              lte: dataMOperationPaginationDto.ammount_to
+            }},
+          {
+            ammount_out: {
+              gte: dataMOperationPaginationDto.ammount_from,
+              lte: dataMOperationPaginationDto.ammount_to
+            }}
+        ]
+
+      });
+    }
+
+    if (dataMOperationPaginationDto.date){
+      console.log(dataMOperationPaginationDto.date);
+      whereObj.push({
+        operation_date: {
+          gte: dataMOperationPaginationDto.date[0], // Start of date range
+          lte: dataMOperationPaginationDto.date[1], // End of date range
+        },
+      })
+    }
+    console.log(JSON.stringify(whereObj));
+
+
     // SORT
     let orderByObj = {};
     const tempObj = {};
@@ -106,22 +158,28 @@ export class MOperationsService {
 
     // COUNT ITEM
     const _count = await this.prismaService.dbm_operation.count({
-      where: { account_type_id: +id }
+      where: {
+        AND: whereObj
+      }
     })
 
     // SUM ITEM
     const totals = await this.prismaService.dbm_operation.aggregate({
-      where: { account_type_id: +id },
+      where: {
+        AND: whereObj
+      },
       _sum:{
         ammount_in: true,
         ammount_out: true
-      }
+      },
     })
 
     const response = await this.prismaService.dbm_operation.findMany({
       skip: (dataMOperationPaginationDto.page_number - 1) * dataMOperationPaginationDto.page_size,
       take: dataMOperationPaginationDto.page_size,
-      where: { account_type_id: +id },
+      where: {
+        AND: whereObj
+      },
       include: {
         set_operation:  { select: { name: true } },
         list_account:  { select: { name: true } },
