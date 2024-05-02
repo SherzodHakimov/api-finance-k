@@ -86,8 +86,9 @@ export class MOperationsService {
     });
   }
 
-  async findAllByAccountType(id: number, dataMOperationPaginationDto: DataMOperationPaginationDto): Promise<{total: number, data:DataMOperationDto[]}> {
+  async findAllByAccountType(id: number, dataMOperationPaginationDto: DataMOperationPaginationDto): Promise<{totals: any, data:DataMOperationDto[]}> {
 
+    // SORT
     let orderByObj = {};
     const tempObj = {};
     if (dataMOperationPaginationDto.sort_field && dataMOperationPaginationDto.sort_order){
@@ -103,8 +104,18 @@ export class MOperationsService {
       orderByObj = { id: 'desc'};
     }
 
-    const totalCount = await this.prismaService.dbm_operation.count({
+    // COUNT ITEM
+    const _count = await this.prismaService.dbm_operation.count({
       where: { account_type_id: +id }
+    })
+
+    // SUM ITEM
+    const totals = await this.prismaService.dbm_operation.aggregate({
+      where: { account_type_id: +id },
+      _sum:{
+        ammount_in: true,
+        ammount_out: true
+      }
     })
 
     const response = await this.prismaService.dbm_operation.findMany({
@@ -123,7 +134,9 @@ export class MOperationsService {
       orderBy: orderByObj
     });
 
-    return {total: totalCount,data: response};
+    // MERGE SUM ITEMS
+    Object.assign(totals, {_count})
+    return {totals, data: response};
   }
 
   async updateStatus(id: number, updateMOperationStatusDto: UpdateMOperationStatusDto): Promise<DataMOperationStatusDto> {
