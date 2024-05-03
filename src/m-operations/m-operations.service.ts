@@ -7,8 +7,6 @@ import { UpdateMOperationStatusDto } from './dto/update-m-operation-status.dto';
 import { DataMOperationStatusDto } from './dto/data-m-operation-status.dto';
 import { DataToCheckMOperationInitDto } from './dto/data-to-check-m-operation-init.dto';
 import { DataMOperationPaginationDto } from './dto/data-m-operation-pagination.dto';
-import { json } from 'express';
-
 
 @Injectable()
 export class MOperationsService {
@@ -109,7 +107,7 @@ export class MOperationsService {
     }
     whereObj.unshift({account_type_id: +id});
 
-
+    // AMOUNT FILTER
     if (dataMOperationPaginationDto.ammount_from && dataMOperationPaginationDto.ammount_to){
       whereObj.push({
         OR:[
@@ -128,16 +126,16 @@ export class MOperationsService {
       });
     }
 
+    // DATE FILTER
     if (dataMOperationPaginationDto.date){
-      console.log(dataMOperationPaginationDto.date);
       whereObj.push({
         operation_date: {
-          gte: dataMOperationPaginationDto.date[0], // Start of date range
-          lte: dataMOperationPaginationDto.date[1], // End of date range
+          gte: new Date(dataMOperationPaginationDto.date[0]), // Start of date range
+          lte: new Date(dataMOperationPaginationDto.date[1]) // End of date range
         },
       })
     }
-    console.log(JSON.stringify(whereObj));
+    // console.log(JSON.stringify(whereObj));
 
 
     // SORT
