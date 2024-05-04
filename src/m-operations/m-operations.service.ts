@@ -7,6 +7,10 @@ import { UpdateMOperationStatusDto } from './dto/update-m-operation-status.dto';
 import { DataMOperationStatusDto } from './dto/data-m-operation-status.dto';
 import { DataToCheckMOperationInitDto } from './dto/data-to-check-m-operation-init.dto';
 import { DataMOperationPaginationDto } from './dto/data-m-operation-pagination.dto';
+import { CreateMOperationAccToAccDto } from './dto/create-m-operation-acc-to-acc.dto';
+import { DataMOperationDoubleDts } from './dto/data-m-operation-double.dts';
+import { CreateMOperationConvertDto } from './dto/create-m-operation-convert.dto';
+import { CreateMOperationBankToCashDto } from './dto/create-m-operation-bank-to-cash.dto';
 
 @Injectable()
 export class MOperationsService {
@@ -93,12 +97,9 @@ export class MOperationsService {
       dataMOperationPaginationDto.filter.forEach(el => {
         const keyNames = el.key.split('.');
         if (el.value.length > 0){
-          const objName = {};
-          const objType = {};
-          const arr = [];
+           const arr = [];
           el.value.forEach(v => {
-            objName[keyNames[1]] = v;
-            objType[keyNames[0]] = {...objName}
+            const objType = {[keyNames[0]] : {[keyNames[1]] : v}}
             arr.push({...objType})
           });
           whereObj.push({OR: arr})
@@ -140,13 +141,11 @@ export class MOperationsService {
 
     // SORT
     let orderByObj = {};
-    const tempObj = {};
     if (dataMOperationPaginationDto.sort_field && dataMOperationPaginationDto.sort_order){
       const sortOrder = dataMOperationPaginationDto.sort_order == 'ascend' ?  'asc' : 'desc'
       const sortFields = dataMOperationPaginationDto.sort_field.split('.');
       if (sortFields.length > 1){
-        tempObj[sortFields[1]] = sortOrder;
-        orderByObj[sortFields[0]] = tempObj;
+        orderByObj = {[sortFields[0]] : {[sortFields[1]] : sortOrder}}
       } else {
         orderByObj[dataMOperationPaginationDto.sort_field] = sortOrder;
       }
@@ -184,8 +183,7 @@ export class MOperationsService {
         set_account_type:  { select: { name: true } },
         list_currency:  { select: { name: true } },
         set_operation_status:  { select: { name: true } },
-        dbm_user:  { select: { name1: true, name2: true } },
-
+        dbm_user:  { select: { name1: true, name2: true } }
       },
       orderBy: orderByObj
     });
@@ -217,4 +215,197 @@ export class MOperationsService {
     return !!r;
   }
 
+  async createAccToAcc(createMOperationAccToAccDto: CreateMOperationAccToAccDto): Promise<[DataMOperationDoubleDts, DataMOperationDoubleDts]> {
+
+    // PREPARE DATA
+    const dataUni = {
+        operation_date: createMOperationAccToAccDto.operation_date,
+        operation_id: createMOperationAccToAccDto.operation_id,
+        comment: createMOperationAccToAccDto.comment,
+        user_id: createMOperationAccToAccDto.user_id,
+        status_id: createMOperationAccToAccDto.status_id,
+        currency_id: createMOperationAccToAccDto.currency_id,
+        account_type_id: createMOperationAccToAccDto.account_type_id,
+    }
+
+    const dataOut = {
+      ammount_out: createMOperationAccToAccDto.ammount,
+      account_id: createMOperationAccToAccDto.out_account_id
+    }
+
+    const dataIn = {
+      ammount_in: createMOperationAccToAccDto.ammount,
+      account_id: createMOperationAccToAccDto.in_account_id
+    }
+
+    // CREATE ITEMS
+    const [out_tr, in_tr] = await this.prismaService.$transaction([
+      this.prismaService.dbm_operation.create({
+        data: Object.assign({...dataUni}, {...dataOut}),
+          include: {
+            set_operation:  { select: { name: true } },
+            list_account:  { select: { name: true } },
+            set_account_type:  { select: { name: true } },
+            list_currency:  { select: { name: true } },
+            set_operation_status:  { select: { name: true } },
+            dbm_user:  { select: { name1: true, name2: true } }
+          }
+      }),
+      this.prismaService.dbm_operation.create({
+        data: Object.assign({...dataUni}, {...dataIn}),
+        include: {
+          set_operation:  { select: { name: true } },
+          list_account:  { select: { name: true } },
+          set_account_type:  { select: { name: true } },
+          list_currency:  { select: { name: true } },
+          set_operation_status:  { select: { name: true } },
+          dbm_user:  { select: { name1: true, name2: true } }
+        }
+      })
+    ]);
+
+    // BIND OPERATION
+    const bindOperation = {
+      outcome_operation_id: out_tr.id,
+      income_operation_id: in_tr.id
+    };
+    const bindId = await this.prismaService.dba_transfer_operation.create({
+      data: bindOperation
+    });
+
+    return [
+      Object.assign(out_tr, {bind_operation: bindId}) as unknown as DataMOperationDoubleDts,
+      Object.assign(in_tr, {bind_operation: bindId}) as unknown as DataMOperationDoubleDts
+    ];
+  }
+
+  async createConvert(createMOperationConvertDto: CreateMOperationConvertDto): Promise<[DataMOperationDoubleDts, DataMOperationDoubleDts]> {
+
+    // PREPARE DATA
+    const dataUni = {
+      operation_date: createMOperationConvertDto.operation_date,
+      operation_id: createMOperationConvertDto.operation_id,
+      comment: createMOperationConvertDto.comment,
+      user_id: createMOperationConvertDto.user_id,
+      status_id: createMOperationConvertDto.status_id,
+      account_type_id: createMOperationConvertDto.account_type_id,
+    }
+
+    const dataOut = {
+      ammount_out: createMOperationConvertDto.ammount_out,
+      currency_id: createMOperationConvertDto.out_currency_id,
+      account_id: createMOperationConvertDto.out_account_id
+    }
+
+    const dataIn = {
+      ammount_in: createMOperationConvertDto.ammount_in,
+      currency_id: createMOperationConvertDto.in_currency_id,
+      account_id: createMOperationConvertDto.in_account_id
+    }
+
+    // CREATE ITEMS
+    const [out_tr, in_tr] = await this.prismaService.$transaction([
+      this.prismaService.dbm_operation.create({
+        data: Object.assign({...dataUni}, {...dataOut}),
+        include: {
+          set_operation:  { select: { name: true } },
+          list_account:  { select: { name: true } },
+          set_account_type:  { select: { name: true } },
+          list_currency:  { select: { name: true } },
+          set_operation_status:  { select: { name: true } },
+          dbm_user:  { select: { name1: true, name2: true } }
+        }
+      }),
+      this.prismaService.dbm_operation.create({
+        data: Object.assign({...dataUni}, {...dataIn}),
+        include: {
+          set_operation:  { select: { name: true } },
+          list_account:  { select: { name: true } },
+          set_account_type:  { select: { name: true } },
+          list_currency:  { select: { name: true } },
+          set_operation_status:  { select: { name: true } },
+          dbm_user:  { select: { name1: true, name2: true } }
+        }
+      })
+    ]);
+
+    // BIND OPERATION
+    const bindOperation = {
+      outcome_operation_id: out_tr.id,
+      income_operation_id: in_tr.id
+    };
+    const bindId = await this.prismaService.dba_transfer_operation.create({
+      data: bindOperation
+    });
+
+    return [
+      Object.assign(out_tr, {bind_operation: bindId}) as unknown as DataMOperationDoubleDts,
+      Object.assign(in_tr, {bind_operation: bindId}) as unknown as DataMOperationDoubleDts
+    ];
+  }
+
+  async createBankToCash(createMOperationBankToCashDto: CreateMOperationBankToCashDto): Promise<[DataMOperationDoubleDts, DataMOperationDoubleDts]> {
+
+    // PREPARE DATA
+    const dataUni = {
+      operation_date: createMOperationBankToCashDto.operation_date,
+      operation_id: createMOperationBankToCashDto.operation_id,
+      comment: createMOperationBankToCashDto.comment,
+      user_id: createMOperationBankToCashDto.user_id,
+      status_id: createMOperationBankToCashDto.status_id,
+      currency_id: createMOperationBankToCashDto.currency_id
+    }
+
+    const dataOut = {
+      ammount_out: createMOperationBankToCashDto.ammount,
+      account_id: createMOperationBankToCashDto.out_account_id,
+      account_type_id: createMOperationBankToCashDto.out_account_type_id
+    }
+
+    const dataIn = {
+      ammount_in: createMOperationBankToCashDto.ammount,
+      account_id: createMOperationBankToCashDto.in_account_id,
+      account_type_id: createMOperationBankToCashDto.in_account_type_id
+    }
+
+    // CREATE ITEMS
+    const [out_tr, in_tr] = await this.prismaService.$transaction([
+      this.prismaService.dbm_operation.create({
+        data: Object.assign({...dataUni}, {...dataOut}),
+        include: {
+          set_operation:  { select: { name: true } },
+          list_account:  { select: { name: true } },
+          set_account_type:  { select: { name: true } },
+          list_currency:  { select: { name: true } },
+          set_operation_status:  { select: { name: true } },
+          dbm_user:  { select: { name1: true, name2: true } }
+        }
+      }),
+      this.prismaService.dbm_operation.create({
+        data: Object.assign({...dataUni}, {...dataIn}),
+        include: {
+          set_operation:  { select: { name: true } },
+          list_account:  { select: { name: true } },
+          set_account_type:  { select: { name: true } },
+          list_currency:  { select: { name: true } },
+          set_operation_status:  { select: { name: true } },
+          dbm_user:  { select: { name1: true, name2: true } }
+        }
+      })
+    ]);
+
+    // BIND OPERATION
+    const bindOperation = {
+      outcome_operation_id: out_tr.id,
+      income_operation_id: in_tr.id
+    };
+    const bindId = await this.prismaService.dba_transfer_operation.create({
+      data: bindOperation
+    });
+
+    return [
+      Object.assign(out_tr, {bind_operation: bindId}) as unknown as DataMOperationDoubleDts,
+      Object.assign(in_tr, {bind_operation: bindId}) as unknown as DataMOperationDoubleDts
+    ];
+  }
 }

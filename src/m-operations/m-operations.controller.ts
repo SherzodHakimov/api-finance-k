@@ -20,6 +20,9 @@ import { UpdateMOperationStatusDto } from './dto/update-m-operation-status.dto';
 import { DataMOperationStatusDto } from './dto/data-m-operation-status.dto';
 import { DataToCheckMOperationInitDto } from './dto/data-to-check-m-operation-init.dto';
 import { DataMOperationPaginationDto } from './dto/data-m-operation-pagination.dto';
+import { CreateMOperationAccToAccDto } from './dto/create-m-operation-acc-to-acc.dto';
+import { CreateMOperationConvertDto } from './dto/create-m-operation-convert.dto';
+import { CreateMOperationBankToCashDto } from './dto/create-m-operation-bank-to-cash.dto';
 
 @Controller('m-operations')
 @UsePipes(new ValidationPipe())
@@ -115,5 +118,38 @@ export class MOperationsController {
   })
   isHasAnyOperation(@Body() checkMOperationInitDto: DataToCheckMOperationInitDto) {
     return this.mOperationsService.isHasAnyOperation(checkMOperationInitDto);
+  }
+
+  @Post('/create/acc-to-acc')
+  @ApiOperation({ summary: 'Create item' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Success',
+    type: DataMOperationDto,
+  })
+  createAccToAcc(@Body() createMOperationAccToAccDto: CreateMOperationAccToAccDto) {
+    return this.mOperationsService.createAccToAcc(createMOperationAccToAccDto);
+  }
+
+  @Post('/create/convert')
+  @ApiOperation({ summary: 'Create item' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Success',
+    type: DataMOperationDto,
+  })
+  createConvert(@Body() createMOperationConvertDto: CreateMOperationConvertDto) {
+    return this.mOperationsService.createConvert(createMOperationConvertDto);
+  }
+
+  @Post('/create/bank-to-cash')
+  @ApiOperation({ summary: 'Create item' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Success',
+    type: DataMOperationDto,
+  })
+  createBankToCash(@Body() createMOperationBankToCashDto: CreateMOperationBankToCashDto) {
+    return this.mOperationsService.createBankToCash(createMOperationBankToCashDto);
   }
 }
