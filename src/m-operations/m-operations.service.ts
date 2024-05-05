@@ -10,7 +10,7 @@ import { DataMOperationPaginationDto } from './dto/data-m-operation-pagination.d
 import { CreateMOperationAccToAccDto } from './dto/create-m-operation-acc-to-acc.dto';
 import { DataMOperationDoubleDts } from './dto/data-m-operation-double.dts';
 import { CreateMOperationConvertDto } from './dto/create-m-operation-convert.dto';
-import { CreateMOperationBankToCashDto } from './dto/create-m-operation-bank-to-cash.dto';
+import { CreateMOperationBankCashCardDto } from './dto/create-m-operation-bank-cash-card.dto';
 
 @Injectable()
 export class MOperationsService {
@@ -369,29 +369,29 @@ export class MOperationsService {
     ];
   }
 
-  async createBankCash(createMOperationBankToCashDto: CreateMOperationBankToCashDto): Promise<[DataMOperationDoubleDts, DataMOperationDoubleDts]> {
+  async createBankCashCard(createMOperationBankCashCardDto: CreateMOperationBankCashCardDto): Promise<[DataMOperationDoubleDts, DataMOperationDoubleDts]> {
 
     // PREPARE DATA
     const dataUni = {
-      operation_date: createMOperationBankToCashDto.operation_date,
-      operation_id: createMOperationBankToCashDto.operation_id,
-      comment: createMOperationBankToCashDto.comment,
-      user_id: createMOperationBankToCashDto.user_id,
-      status_id: createMOperationBankToCashDto.status_id,
-      currency_id: createMOperationBankToCashDto.currency_id,
-      amount: createMOperationBankToCashDto.amount,
+      operation_date: createMOperationBankCashCardDto.operation_date,
+      operation_id: createMOperationBankCashCardDto.operation_id,
+      comment: createMOperationBankCashCardDto.comment,
+      user_id: createMOperationBankCashCardDto.user_id,
+      status_id: createMOperationBankCashCardDto.status_id,
+      currency_id: createMOperationBankCashCardDto.currency_id,
+      amount: createMOperationBankCashCardDto.amount,
     }
 
     const dataOut = {
       operation_direction: 0,
-      account_id: createMOperationBankToCashDto.out_account_id,
-      account_type_id: createMOperationBankToCashDto.out_account_type_id
+      account_id: createMOperationBankCashCardDto.out_account_id,
+      account_type_id: createMOperationBankCashCardDto.out_account_type_id
     }
 
     const dataIn = {
       operation_direction: 1,
-      account_id: createMOperationBankToCashDto.in_account_id,
-      account_type_id: createMOperationBankToCashDto.in_account_type_id
+      account_id: createMOperationBankCashCardDto.in_account_id,
+      account_type_id: createMOperationBankCashCardDto.in_account_type_id
     }
 
     // CREATE ITEMS

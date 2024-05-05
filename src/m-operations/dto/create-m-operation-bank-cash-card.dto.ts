@@ -1,7 +1,7 @@
 import { IsNumber, IsOptional, IsString, MaxLength } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
-export class CreateMOperationBankToCashDto {
+export class CreateMOperationBankCashCardDto {
   @IsString()
   @IsOptional()
   @MaxLength(200)
