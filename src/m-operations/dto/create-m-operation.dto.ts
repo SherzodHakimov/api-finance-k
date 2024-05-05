@@ -1,24 +1,20 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsDate, IsDecimal, IsNumber, IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
-import { DefaultValuePipe } from '@nestjs/common';
+import {IsNumber, IsOptional, IsString, MaxLength} from 'class-validator';
+
 
 export class CreateMOperationDto {
 
   @IsNumber()
-  @IsOptional()
-  @ApiPropertyOptional({
-    nullable: true,
+  @ApiProperty({
     example: 1,
   })
-  ammount_in?: number | null;
+  amount: number;
 
   @IsNumber()
-  @IsOptional()
-  @ApiPropertyOptional({
-    nullable: true,
+  @ApiProperty({
     example: 1,
   })
-  ammount_out?: number | null;
+  operation_direction: number;
 
   @IsString()
   @IsOptional()

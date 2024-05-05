@@ -29,10 +29,18 @@ export class DataMListAccountDto {
   @ApiProperty({
     example: {
       name: 'Название',
+      currency_type_id: 1,
+      set_currency_type: {
+        name: 'Местная'
+      }
     },
   })
   list_currency: {
     name: string;
+    currency_type_id: number;
+    set_currency_type: {
+      name: string
+    }
   };
 
   @ApiProperty({

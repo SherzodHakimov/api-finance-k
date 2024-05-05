@@ -53,7 +53,7 @@ export class CreateMOperationAccToAccDto {
   @ApiProperty({
     example: 1,
   })
-  ammount: number;
+  amount: number;
 
   @IsNumber()
   @ApiProperty({

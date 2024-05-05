@@ -3,7 +3,11 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class DataMOperationDoubleDts extends DataMOperationDto{
   @ApiProperty({
-    example: 1,
+    example: {
+      id: 1,
+      outcome_operation_id: 1,
+      income_operation_id: 1
+    },
   })
   bind_operation: {
     id: number,

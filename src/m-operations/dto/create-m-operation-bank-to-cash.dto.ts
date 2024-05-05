@@ -58,7 +58,7 @@ export class CreateMOperationBankToCashDto {
   @ApiProperty({
     example: 1,
   })
-  ammount: number;
+  amount: number;
 
   @IsNumber()
   @ApiProperty({

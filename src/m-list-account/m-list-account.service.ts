@@ -12,7 +12,7 @@ export class MListAccountService {
     return this.prismaService.list_account.create({
       data: createMListsAccountDto,
       include: {
-        list_currency: { select: { name: true } },
+        list_currency: { select: { name: true, currency_type_id: true, set_currency_type: {select: {name: true}} } },
         list_bank: { select: { name: true } },
         set_list_status: { select: { name: true } }
       }
@@ -22,7 +22,7 @@ export class MListAccountService {
   async findAll(): Promise<DataMListAccountDto[]> {
     return this.prismaService.list_account.findMany({
       include: {
-        list_currency: { select: { name: true } },
+        list_currency: { select: { name: true, currency_type_id: true, set_currency_type: {select: {name: true}} } },
         list_bank: { select: { name: true } },
         set_list_status: { select: { name: true } }
       },
@@ -34,7 +34,7 @@ export class MListAccountService {
     return this.prismaService.list_account.findFirst({
       where: { id: +id },
       include: {
-        list_currency: { select: { name: true } },
+        list_currency: { select: { name: true, currency_type_id: true, set_currency_type: {select: {name: true}} } },
         list_bank: { select: { name: true } },
         set_list_status: { select: { name: true } }
       }
@@ -46,7 +46,7 @@ export class MListAccountService {
       where: { id: +id },
       data: updateMListsAccountDto,
       include: {
-        list_currency: { select: { name: true } },
+        list_currency: { select: { name: true, currency_type_id: true, set_currency_type: {select: {name: true}} } },
         list_bank: { select: { name: true } },
         set_list_status: { select: { name: true } }
       }
@@ -63,7 +63,7 @@ export class MListAccountService {
     return this.prismaService.list_account.delete({
       where: { id: +id },
       include: {
-        list_currency: { select: { name: true } },
+        list_currency: { select: { name: true, currency_type_id: true, set_currency_type: {select: {name: true}} } },
         list_bank: { select: { name: true } },
         set_list_status: { select: { name: true } }
       }

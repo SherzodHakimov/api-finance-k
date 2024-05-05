@@ -8,17 +8,15 @@ export class DataMOperationDto {
   })
   id: number;
 
-  @ApiPropertyOptional({
-    nullable: true,
+  @ApiProperty({
     example: 1,
   })
-  ammount_in: Decimal;
+  amount: Decimal;
 
-  @ApiPropertyOptional({
-    nullable: true,
+  @ApiProperty({
     example: 1,
   })
-  ammount_out: Decimal;
+  operation_direction: number;
 
   @ApiPropertyOptional({
     nullable: true,

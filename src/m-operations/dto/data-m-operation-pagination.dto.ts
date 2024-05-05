@@ -1,8 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { DataMOperationDto } from './data-m-operation.dto';
-import { IsArray, IsNumber, IsObject, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsNumber, IsOptional, IsString } from 'class-validator';
 
-export class DataMOperationPaginationDto extends DataMOperationDto{
+export class DataMOperationPaginationDto{
 
   @IsNumber()
   @ApiProperty({
@@ -35,7 +34,7 @@ export class DataMOperationPaginationDto extends DataMOperationDto{
   @IsArray()
   @IsOptional()
   @ApiProperty({
-    example: 'ascend',
+    example: [],
   })
   filter: {key: string, value: string[]}[];
 
@@ -45,7 +44,7 @@ export class DataMOperationPaginationDto extends DataMOperationDto{
     nullable: true,
     example: '1',
   })
-  ammount_from?: number | null;
+  amount_from?: number | null;
 
   @IsNumber()
   @IsOptional()
@@ -53,13 +52,13 @@ export class DataMOperationPaginationDto extends DataMOperationDto{
     nullable: true,
     example: '1',
   })
-  ammount_to?: number | null;
+  amount_to?: number | null;
 
   @IsArray()
   @IsOptional()
   @ApiPropertyOptional({
     nullable: true,
-    example: '1',
+    example: [],
   })
   date?: string[] | null;
 }

@@ -23,6 +23,7 @@ import { DataMOperationPaginationDto } from './dto/data-m-operation-pagination.d
 import { CreateMOperationAccToAccDto } from './dto/create-m-operation-acc-to-acc.dto';
 import { CreateMOperationConvertDto } from './dto/create-m-operation-convert.dto';
 import { CreateMOperationBankToCashDto } from './dto/create-m-operation-bank-to-cash.dto';
+import { DataMOperationDoubleDts } from './dto/data-m-operation-double.dts';
 
 @Controller('m-operations')
 @UsePipes(new ValidationPipe())
@@ -125,7 +126,7 @@ export class MOperationsController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Success',
-    type: DataMOperationDto,
+    type: DataMOperationDoubleDts,
   })
   createAccToAcc(@Body() createMOperationAccToAccDto: CreateMOperationAccToAccDto) {
     return this.mOperationsService.createAccToAcc(createMOperationAccToAccDto);
@@ -136,20 +137,20 @@ export class MOperationsController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Success',
-    type: DataMOperationDto,
+    type: DataMOperationDoubleDts,
   })
   createConvert(@Body() createMOperationConvertDto: CreateMOperationConvertDto) {
     return this.mOperationsService.createConvert(createMOperationConvertDto);
   }
 
-  @Post('/create/bank-to-cash')
+  @Post('/create/bank-cash')
   @ApiOperation({ summary: 'Create item' })
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Success',
-    type: DataMOperationDto,
+    type: DataMOperationDoubleDts,
   })
-  createBankToCash(@Body() createMOperationBankToCashDto: CreateMOperationBankToCashDto) {
-    return this.mOperationsService.createBankToCash(createMOperationBankToCashDto);
+  createBankCash(@Body() createMOperationBankToCashDto: CreateMOperationBankToCashDto) {
+    return this.mOperationsService.createBankCash(createMOperationBankToCashDto);
   }
 }

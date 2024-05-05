@@ -47,13 +47,13 @@ export class CreateMOperationConvertDto{
   @ApiProperty({
     example: 1,
   })
-  ammount_in: number
+  out_amount: number
 
   @IsNumber()
   @ApiProperty({
     example: 1,
   })
-  ammount_out: number;
+  in_amount: number
 
   @IsNumber()
   @ApiProperty({

@@ -88,8 +88,8 @@ model dbm_operation {
   account_type_id                                                                   Int
   currency_id                                                                       Int
   status_id                                                                         Int
-  ammount_in                                                                        Decimal?                 @db.Decimal
-  ammount_out                                                                       Decimal?                 @db.Decimal
+  amount                                                                            Decimal                  @db.Decimal
+  operation_direction                                                               Int
   comment                                                                           String?
   operation_date                                                                    DateTime                 @db.Date
   created_at                                                                        DateTime                 @default(now()) @db.Timestamp(6)
@@ -104,7 +104,7 @@ model dbm_operation {
   set_operation_status                                                              set_operation_status     @relation(fields: [status_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   dbm_user                                                                          dbm_user                 @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  @@index([id, operation_id, account_type_id, currency_id, status_id, user_id])
+  @@index([id, operation_id, account_type_id, currency_id, status_id, user_id, operation_direction])
 }
 
 model dbm_user {
