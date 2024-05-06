@@ -1,7 +1,7 @@
 import { DataMOperationDto } from './data-m-operation.dto';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class DataMOperationDoubleDts extends DataMOperationDto{
+export class DataMOperationDoubleDts extends DataMOperationDto {
   @ApiProperty({
     example: {
       id: 1,

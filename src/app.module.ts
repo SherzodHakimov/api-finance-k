@@ -13,12 +13,15 @@ import { MListMeasureModule } from './m-list-measure/m-list-measure.module';
 import { MUserModule } from './m-user/m-user.module';
 import { MUserRoleActionsModule } from './m-user-role-actions/m-user-role-actions.module';
 import { MOperationsModule } from './m-operations/m-operations.module';
+import { MExpensesModule } from './m-expenses/m-expenses.module';
+
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       envFilePath: `.${process.env.NODE_ENV}.env`,
     }),
+    MExpensesModule,
     MOperationsModule,
     MUserRoleActionsModule,
     MUserModule,

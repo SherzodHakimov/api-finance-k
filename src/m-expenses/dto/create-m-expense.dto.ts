@@ -1,35 +1,31 @@
 import { IsNumber, IsOptional, IsString, MaxLength } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
-export class CreateMOperationConvertDto {
-
-  @IsString()
-  @IsOptional()
-  @MaxLength(200)
-  @ApiPropertyOptional({
-    nullable: true,
-    example: 'Комментарии',
-    maxLength: 200,
-  })
-  comment?: string | null;
-
-  @IsString()
-  @ApiProperty({
-    example: new Date().toISOString()
-  })
-  operation_date: Date;
+export class CreateMExpenseDto {
 
   @IsNumber()
   @ApiProperty({
     example: 1,
   })
-  user_id: number;
+  expense_group_id: number;
 
   @IsNumber()
   @ApiProperty({
     example: 1,
   })
-  status_id: number;
+  expense_id: number;
+
+  @IsNumber()
+  @ApiProperty({
+    example: 1,
+  })
+  payment_doc_id: number;
+
+  @IsNumber()
+  @ApiProperty({
+    example: 1,
+  })
+  measure_id: number;
 
   @IsNumber()
   @ApiProperty({
@@ -41,41 +37,52 @@ export class CreateMOperationConvertDto {
   @ApiProperty({
     example: 1,
   })
-  operation_id: number;
+  currency_id: number;
 
   @IsNumber()
   @ApiProperty({
     example: 1,
   })
-  out_amount: number
+  status_id: number;
 
   @IsNumber()
   @ApiProperty({
     example: 1,
   })
-  in_amount: number
+  count: number;
 
   @IsNumber()
   @ApiProperty({
     example: 1,
   })
-  out_account_id: number;
+  amount: number;
+
+  @IsString()
+  @IsOptional()
+  @MaxLength(200)
+  @ApiPropertyOptional({
+    nullable: true,
+    example: 'Комментарии',
+    maxLength: 200,
+  })
+  comment?: string | null;
 
   @IsNumber()
   @ApiProperty({
     example: 1,
   })
-  in_account_id: number;
+  payer_id: number;
 
   @IsNumber()
   @ApiProperty({
     example: 1,
   })
-  out_currency_id: number;
+  user_id: number;
 
-  @IsNumber()
+  @IsString()
   @ApiProperty({
-    example: 1,
+    example: new Date().toISOString()
   })
-  in_currency_id: number;
+  operation_date: Date;
+
 }

@@ -1,7 +1,14 @@
 import { IsNumber, IsOptional, IsString, MaxLength } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
-export class CreateMOperationConvertDto {
+export class CreateMOperationExpenseDto {
+
+  // FOR EXPENSE TABLE
+  @IsString()
+  @ApiProperty({
+    example: new Date().toISOString()
+  })
+  operation_date: Date;
 
   @IsString()
   @IsOptional()
@@ -12,12 +19,6 @@ export class CreateMOperationConvertDto {
     maxLength: 200,
   })
   comment?: string | null;
-
-  @IsString()
-  @ApiProperty({
-    example: new Date().toISOString()
-  })
-  operation_date: Date;
 
   @IsNumber()
   @ApiProperty({
@@ -35,7 +36,63 @@ export class CreateMOperationConvertDto {
   @ApiProperty({
     example: 1,
   })
+  amount: number;
+
+  @IsNumber()
+  @ApiProperty({
+    example: 1,
+  })
+  count: number;
+
+  @IsNumber()
+  @ApiProperty({
+    example: 1,
+  })
+  expense_group_id: number;
+
+  @IsNumber()
+  @ApiProperty({
+    example: 1,
+  })
+  expense_id: number;
+
+  @IsNumber()
+  @ApiProperty({
+    example: 1,
+  })
+  payment_doc_id: number;
+
+  @IsNumber()
+  @ApiProperty({
+    example: 1,
+  })
+  measure_id: number;
+
+  @IsNumber()
+  @ApiProperty({
+    example: 1,
+  })
+  payer_id: number;
+
+
+// FOR OPERATION TABLE
+  @IsNumber()
+  @ApiProperty({
+    example: 1,
+  })
+  account_id: number;
+
+  @IsNumber()
+  @ApiProperty({
+    example: 1,
+  })
   account_type_id: number;
+
+  @IsNumber()
+  @ApiProperty({
+    example: 1,
+  })
+  currency_id: number;
 
   @IsNumber()
   @ApiProperty({
@@ -43,39 +100,5 @@ export class CreateMOperationConvertDto {
   })
   operation_id: number;
 
-  @IsNumber()
-  @ApiProperty({
-    example: 1,
-  })
-  out_amount: number
 
-  @IsNumber()
-  @ApiProperty({
-    example: 1,
-  })
-  in_amount: number
-
-  @IsNumber()
-  @ApiProperty({
-    example: 1,
-  })
-  out_account_id: number;
-
-  @IsNumber()
-  @ApiProperty({
-    example: 1,
-  })
-  in_account_id: number;
-
-  @IsNumber()
-  @ApiProperty({
-    example: 1,
-  })
-  out_currency_id: number;
-
-  @IsNumber()
-  @ApiProperty({
-    example: 1,
-  })
-  in_currency_id: number;
 }

@@ -24,6 +24,7 @@ import { CreateMOperationAccToAccDto } from './dto/create-m-operation-acc-to-acc
 import { CreateMOperationConvertDto } from './dto/create-m-operation-convert.dto';
 import { CreateMOperationBankCashCardDto } from './dto/create-m-operation-bank-cash-card.dto';
 import { DataMOperationDoubleDts } from './dto/data-m-operation-double.dts';
+import { CreateMOperationExpenseDto } from './dto/create-m-operation-expense.dto';
 
 @Controller('m-operations')
 @UsePipes(new ValidationPipe())
@@ -152,5 +153,16 @@ export class MOperationsController {
   })
   createBankCashCard(@Body() createMOperationBankCashCardDto: CreateMOperationBankCashCardDto) {
     return this.mOperationsService.createBankCashCard(createMOperationBankCashCardDto);
+  }
+
+  @Post('/create/expense')
+  @ApiOperation({ summary: 'Create item' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Success',
+    type: DataMOperationDoubleDts,
+  })
+  createExpense(@Body() createMOperationExpenseDto: CreateMOperationExpenseDto) {
+    return this.mOperationsService.createExpense(createMOperationExpenseDto);
   }
 }

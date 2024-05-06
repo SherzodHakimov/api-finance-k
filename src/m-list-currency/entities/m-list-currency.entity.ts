@@ -1,1 +1,1 @@
-export class MListCurrrency {}
+export class MListCurrency {}
