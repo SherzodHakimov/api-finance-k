@@ -16,6 +16,9 @@ import { UpdateMExpenseDto } from './dto/update-m-expense.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ErrorDto } from '../shared/dto/error.dto';
 import { DataMExpenseDto } from './dto/data-m-expense.dto';
+import { DataMOperationPaginationDto } from '../m-operations/dto/data-m-operation-pagination.dto';
+import { DataMOperationStatusDto } from '../m-operations/dto/data-m-operation-status.dto';
+import { UpdateMOperationStatusDto } from '../m-operations/dto/update-m-operation-status.dto';
 
 
 @Controller('m-expenses')
@@ -85,5 +88,27 @@ export class MExpensesController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.mExpensesService.remove(+id);
+  }
+
+  @Patch('/update/operation-status/:id')
+  @ApiOperation({ summary: 'Change operation status by ID' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Success',
+    type: DataMOperationStatusDto,
+  })
+  updateStatus(@Param('id') id: string, @Body() updateMExpenseDto: UpdateMExpenseDto) {
+    return this.mExpensesService.updateStatus(+id, updateMExpenseDto);
+  }
+
+  @Post('/list/pagination')
+  @ApiOperation({ summary: 'Get all items' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Success',
+    type: DataMExpenseDto,
+  })
+  listPagination(@Body() dataMOperationPaginationDto: DataMOperationPaginationDto) {
+    return this.mExpensesService.listPagination(dataMOperationPaginationDto);
   }
 }

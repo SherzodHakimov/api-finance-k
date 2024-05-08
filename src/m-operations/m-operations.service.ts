@@ -92,7 +92,7 @@ export class MOperationsService {
     });
   }
 
-  async findAllByAccountType(id: number, dataMOperationPaginationDto: DataMOperationPaginationDto): Promise<{totals: any, data:DataMOperationDto[]}> {
+  async listPagination(id: number, dataMOperationPaginationDto: DataMOperationPaginationDto): Promise<{totals: any, data:DataMOperationDto[]}> {
 
     // FILTER
     const whereObj = [];

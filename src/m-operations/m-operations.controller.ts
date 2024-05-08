@@ -89,15 +89,15 @@ export class MOperationsController {
     return this.mOperationsService.remove(+id);
   }
 
-  @Post('/list/by-account-type/:id')
+  @Post('/list/pagination/:id')
   @ApiOperation({ summary: 'Get all items' })
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Success',
     type: DataMOperationDto,
   })
-  findAllByAccountType(@Param('id') id: string, @Body() dataMOperationPaginationDto: DataMOperationPaginationDto) {
-    return this.mOperationsService.findAllByAccountType(+id, dataMOperationPaginationDto);
+  listPagination(@Param('id') id: string, @Body() dataMOperationPaginationDto: DataMOperationPaginationDto) {
+    return this.mOperationsService.listPagination(+id, dataMOperationPaginationDto);
   }
 
   @Patch('/update/operation-status/:id')
