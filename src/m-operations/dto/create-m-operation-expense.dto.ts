@@ -3,7 +3,6 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateMOperationExpenseDto {
 
-  // FOR EXPENSE TABLE
   @IsString()
   @ApiProperty({
     example: new Date().toISOString()
@@ -74,8 +73,6 @@ export class CreateMOperationExpenseDto {
   })
   payer_id: number;
 
-
-// FOR OPERATION TABLE
   @IsNumber()
   @ApiProperty({
     example: 1,

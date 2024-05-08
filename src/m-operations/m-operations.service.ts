@@ -12,9 +12,8 @@ import { DataMOperationDoubleDts } from './dto/data-m-operation-double.dts';
 import { CreateMOperationConvertDto } from './dto/create-m-operation-convert.dto';
 import { CreateMOperationBankCashCardDto } from './dto/create-m-operation-bank-cash-card.dto';
 import { CreateMOperationExpenseDto } from './dto/create-m-operation-expense.dto';
-import { DataMOperationExpenseDto } from './dto/data-m-operation-expense.dto';
 import { CreateMExpenseDto } from '../m-expenses/dto/create-m-expense.dto';
-import { DataMExpenseDto } from '../m-expenses/dto/data-m-expense.dto';
+import { DataMOperationDoubleExpenseDto } from './dto/data-m-operation-double-expense.dto';
 
 @Injectable()
 export class MOperationsService {
@@ -301,8 +300,8 @@ export class MOperationsService {
     });
 
     return [
-      Object.assign(out_tr, {bind_operation: bindId}) as unknown as DataMOperationDoubleDts,
-      Object.assign(in_tr, {bind_operation: bindId}) as unknown as DataMOperationDoubleDts
+      Object.assign(out_tr, {bind_operation: bindId}) as DataMOperationDoubleDts,
+      Object.assign(in_tr, {bind_operation: bindId}) as DataMOperationDoubleDts
     ];
   }
 
@@ -368,8 +367,8 @@ export class MOperationsService {
     });
 
     return [
-      Object.assign(out_tr, {bind_operation: bindId}) as unknown as DataMOperationDoubleDts,
-      Object.assign(in_tr, {bind_operation: bindId}) as unknown as DataMOperationDoubleDts
+      Object.assign(out_tr, {bind_operation: bindId}) as DataMOperationDoubleDts,
+      Object.assign(in_tr, {bind_operation: bindId}) as DataMOperationDoubleDts
     ];
   }
 
@@ -434,12 +433,12 @@ export class MOperationsService {
     });
 
     return [
-      Object.assign(out_tr, {bind_operation: bindId}) as unknown as DataMOperationDoubleDts,
-      Object.assign(in_tr, {bind_operation: bindId}) as unknown as DataMOperationDoubleDts
+      Object.assign(out_tr, {bind_operation: bindId}) as DataMOperationDoubleDts,
+      Object.assign(in_tr, {bind_operation: bindId}) as DataMOperationDoubleDts
     ];
   }
 
-  async createExpense(createMOperationExpenseDto: CreateMOperationExpenseDto): Promise<[any]> {
+  async createExpense(createMOperationExpenseDto: CreateMOperationExpenseDto): Promise<[DataMOperationDoubleDts, DataMOperationDoubleExpenseDto]> {
 
     // PREPARE DATA
     const dataUni = {
@@ -448,13 +447,13 @@ export class MOperationsService {
       user_id: createMOperationExpenseDto.user_id,
       status_id: createMOperationExpenseDto.status_id,
       amount: createMOperationExpenseDto.amount,
-      account_type_id: createMOperationExpenseDto.account_type_id
+      account_type_id: createMOperationExpenseDto.account_type_id,
+      currency_id: createMOperationExpenseDto.currency_id,
     }
 
     const dataOut = {
       operation_direction: 0,
       account_id: createMOperationExpenseDto.account_id,
-      currency_id: createMOperationExpenseDto.currency_id,
       operation_id: createMOperationExpenseDto.operation_id
     }
 
@@ -464,24 +463,24 @@ export class MOperationsService {
       expense_id: createMOperationExpenseDto.expense_id,
       payment_doc_id: createMOperationExpenseDto.payment_doc_id,
       measure_id: createMOperationExpenseDto.measure_id,
-      payer_id: createMOperationExpenseDto.payer_id
+      payer_id: createMOperationExpenseDto.payer_id,
     }
 
     // CREATE ITEMS
-    const [out_tr] = await this.prismaService.$transaction([
-      // this.prismaService.dbm_operation.create({
-      //   data: Object.assign({...dataOut}, {...dataUni}) as any,
-      //   include: {
-      //     set_operation:  { select: { name: true } },
-      //     list_account:  { select: { name: true } },
-      //     set_account_type:  { select: { name: true } },
-      //     list_currency:  { select: { name: true } },
-      //     set_operation_status:  { select: { name: true } },
-      //     dbm_user:  { select: { name1: true, name2: true } }
-      //   }
-      // }),
-      this.prismaService.dbm_expense.create({
-        data: Object.assign({...dataIn}, {...dataUni}) as any,
+    const [out_tr, in_tr] = await this.prismaService.$transaction([
+      this.prismaService.dbm_operation.create({
+        data: Object.assign({...dataOut}, {...dataUni}) as CreateMOperationDto,
+        include: {
+          set_operation:  { select: { name: true } },
+          list_account:  { select: { name: true } },
+          set_account_type:  { select: { name: true } },
+          list_currency:  { select: { name: true } },
+          set_operation_status:  { select: { name: true } },
+          dbm_user:  { select: { name1: true, name2: true } }
+        }
+      }),
+       this.prismaService.dbm_expense.create({
+        data: Object.assign({...dataIn}, {...dataUni}) as CreateMExpenseDto,
         include: {
           list_expense_group: {select: {name: true}},
           list_expense: {select: {name: true}},
@@ -494,20 +493,21 @@ export class MOperationsService {
           dbm_user: {select: {name1: true, name2: true}},
         }
       })
+
     ]);
 
-    // // BIND OPERATION
-    // const bindOperation = {
-    //   outcome_operation_id: out_tr.id,
-    //   income_operation_id: in_tr.id
-    // };
-    // const bindId = await this.prismaService.dba_transfer_operation.create({
-    //   data: bindOperation
-    // });
+    // BIND OPERATION
+    const bindOperation = {
+      outcome_operation_id: out_tr.id,
+      income_operation_id: in_tr.id
+    };
+    const bindId = await this.prismaService.dba_expense_operation.create({
+      data: bindOperation
+    });
 
     return [
-      Object.assign(out_tr) as any,
-      // Object.assign(in_tr) as any
+      Object.assign(out_tr, {bind_operation: bindId}) as DataMOperationDoubleDts,
+      Object.assign(in_tr, {bind_operation: bindId}) as DataMOperationDoubleExpenseDto
     ];
   }
 }

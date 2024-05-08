@@ -9,12 +9,12 @@ datasource db {
 
 model dba_expense_operation {
   id                   Int           @id @default(autoincrement())
-  expense_operation_id Int
+  income_operation_id  Int
   outcome_operation_id Int
-  dbm_expense          dbm_expense   @relation(fields: [expense_operation_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  dbm_expense          dbm_expense   @relation(fields: [income_operation_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "dba_expense_operation_expense_operation_id_fkey")
   dbm_operation        dbm_operation @relation(fields: [outcome_operation_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  @@index([id, expense_operation_id, outcome_operation_id])
+  @@index([id, income_operation_id, outcome_operation_id], map: "dba_expense_operation_id_expense_operation_id_outcome_opera_idx")
 }
 
 model dba_transfer_operation {
@@ -61,12 +61,12 @@ model dbm_expense {
   currency_id           Int
   status_id             Int
   count                 Decimal                 @db.Decimal
-  amount                Decimal                 @db.Decimal
   comment               String?
   operation_date        DateTime                @db.Date
   created_at            DateTime                @default(now()) @db.Timestamp(6)
   payer_id              Int
   user_id               Int
+  amount                Decimal                 @db.Decimal
   dba_expense_operation dba_expense_operation[]
   set_account_type      set_account_type        @relation(fields: [account_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   list_currency         list_currency           @relation(fields: [currency_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
