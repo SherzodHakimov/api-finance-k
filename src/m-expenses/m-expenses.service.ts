@@ -221,4 +221,16 @@ export class MExpensesService {
     const totals = {count: _count, sum: {amount_out: total._sum.amount, amount_in: 0}};
     return {totals, data: response};
   }
+
+  async confirmItems(arr: number[]): Promise<number> {
+    const updateItems = await this.prismaService.dbm_expense.updateMany({
+      where: {
+        id: {
+          in: arr
+        }
+      },
+      data: {status_id: 2}
+    });
+    return updateItems.count
+  }
 }

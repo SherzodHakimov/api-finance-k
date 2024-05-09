@@ -25,6 +25,7 @@ import { CreateMOperationConvertDto } from './dto/create-m-operation-convert.dto
 import { CreateMOperationBankCashCardDto } from './dto/create-m-operation-bank-cash-card.dto';
 import { DataMOperationDoubleDts } from './dto/data-m-operation-double.dts';
 import { CreateMOperationExpenseDto } from './dto/create-m-operation-expense.dto';
+import { AccountAmountDto } from './dto/data-account-amount.dto';
 
 @Controller('m-operations')
 @UsePipes(new ValidationPipe())
@@ -164,5 +165,27 @@ export class MOperationsController {
   })
   createExpense(@Body() createMOperationExpenseDto: CreateMOperationExpenseDto) {
     return this.mOperationsService.createExpense(createMOperationExpenseDto);
+  }
+
+  @Post('/get-account-amount')
+  @ApiOperation({ summary: 'Get amount of item by ID' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Success',
+    type: Number,
+  })
+  getAccountAmount(@Body() accountAmountDto: AccountAmountDto) {
+    return this.mOperationsService.getAccountAmount(accountAmountDto);
+  }
+
+  @Post('/confirm-items')
+  @ApiOperation({ summary: 'Confirm items array' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Success',
+    type: Number,
+  })
+  confirmItems(@Body() arr: number[]) {
+    return this.mOperationsService.confirmItems(arr);
   }
 }

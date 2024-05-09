@@ -111,4 +111,15 @@ export class MExpensesController {
   listPagination(@Body() dataMOperationPaginationDto: DataMOperationPaginationDto) {
     return this.mExpensesService.listPagination(dataMOperationPaginationDto);
   }
+
+  @Post('/confirm-items')
+  @ApiOperation({ summary: 'Confirm items array' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Success',
+    type: Number,
+  })
+  confirmItems(@Body() arr: number[]) {
+    return this.mExpensesService.confirmItems(arr);
+  }
 }
