@@ -19,7 +19,7 @@ import { ErrorDto } from '../shared/dto/error.dto';
 
 @Controller('m-user-role-actions')
 @UsePipes(new ValidationPipe())
-@ApiTags('User-role-action')
+@ApiTags('UserRoleAction')
 @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: "Error", type: ErrorDto })
 export class MUserRoleActionsController {
   constructor(private readonly mUserRoleActionsService: MUserRoleActionsService) {}

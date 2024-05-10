@@ -14,6 +14,7 @@ import { MUserModule } from './m-user/m-user.module';
 import { MUserRoleActionsModule } from './m-user-role-actions/m-user-role-actions.module';
 import { MOperationsModule } from './m-operations/m-operations.module';
 import { MExpensesModule } from './m-expenses/m-expenses.module';
+import { MCurrencyValueModule } from './m-currency-value/m-currency-value.module';
 
 
 @Module({
@@ -21,6 +22,7 @@ import { MExpensesModule } from './m-expenses/m-expenses.module';
     ConfigModule.forRoot({
       envFilePath: `.${process.env.NODE_ENV}.env`,
     }),
+    MCurrencyValueModule,
     MExpensesModule,
     MOperationsModule,
     MUserRoleActionsModule,

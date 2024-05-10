@@ -72,8 +72,14 @@ export class MListCurrencyService {
 
     if (r) throw new ForbiddenException(['Delete not allowed!']);
 
+    const s = await this.prismaService.dbm_currency_value.findFirst({
+      where: { sell_currency_id: +id },
+    });
+
+    if (s) throw new ForbiddenException(['Delete not allowed!']);
+
     const b = await this.prismaService.dbm_currency_value.findFirst({
-      where: { currency_id: +id },
+      where: { buy_currency_id: +id },
     });
 
     if (b) throw new ForbiddenException(['Delete not allowed!']);

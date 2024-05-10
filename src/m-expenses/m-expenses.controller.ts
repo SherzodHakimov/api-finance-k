@@ -73,7 +73,6 @@ export class MExpensesController {
     type: DataMExpenseDto,
   })
   @Patch(':id')
-
   update(@Param('id') id: string, @Body() updateMExpenseDto: UpdateMExpenseDto) {
     return this.mExpensesService.update(+id, updateMExpenseDto);
   }
