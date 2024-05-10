@@ -550,8 +550,6 @@ export class MOperationsService {
       }),
     ]);
 
-
-    console.log(out_sum, in_sum)
     return (Number(in_sum._sum.amount) - Number(out_sum._sum.amount)) as unknown as number;
   }
 

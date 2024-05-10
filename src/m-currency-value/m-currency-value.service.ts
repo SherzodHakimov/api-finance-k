@@ -4,7 +4,8 @@ import { UpdateMCurrencyValueDto } from './dto/update-m-currency-value.dto';
 import { PrismaService } from '../prisma-service';
 import { DataMCurrencyValueDto } from './dto/data-m-currency-value.dto';
 import { isArray } from 'class-validator';
-import { DataPaginationDto } from '../shared/dto/data-pagination.dto';
+import { PaginationItemsDto } from '../shared/dto/pagination-items.dto';
+import { PaginationTotalsDto } from '../shared/dto/pagination-totals.dto';
 
 @Injectable()
 export class MCurrencyValueService {
@@ -106,14 +107,12 @@ export class MCurrencyValueService {
     return this.configResponseData(query);
   }
 
-  async listPagination(dataPaginationDto: DataPaginationDto): Promise<{totals: any, data:any[]}> {
-
-    console.log(dataPaginationDto)
+  async listPagination(paginationItemsDto: PaginationItemsDto): Promise<{totals: PaginationTotalsDto, data:DataMCurrencyValueDto[]}> {
 
     // FILTER
     const whereObj = [];
-    if (dataPaginationDto.filter){
-      dataPaginationDto.filter.forEach(el => {
+    if (paginationItemsDto.filter){
+      paginationItemsDto.filter.forEach(el => {
         const keyNames = el.key.split('.');
         const arr = [];
         if (el.value.length > 0){
@@ -132,11 +131,11 @@ export class MCurrencyValueService {
     }
 
     // DATE FILTER
-    if (dataPaginationDto.date){
+    if (paginationItemsDto.date){
       whereObj.push({
         value_date: {
-          gte: new Date(dataPaginationDto.date[0]), // Start of date range
-          lte: new Date(dataPaginationDto.date[1]) // End of date range
+          gte: new Date(paginationItemsDto.date[0]), // Start of date range
+          lte: new Date(paginationItemsDto.date[1]) // End of date range
         },
       })
     }
@@ -145,22 +144,13 @@ export class MCurrencyValueService {
 
     // SORT
     let orderByObj = {};
-    if (dataPaginationDto.sort_field && dataPaginationDto.sort_order){
-      const sortOrder = dataPaginationDto.sort_order == 'ascend' ?  'asc' : 'desc'
-      const sortFields = dataPaginationDto.sort_field.split('.');
+    if (paginationItemsDto.sort_field && paginationItemsDto.sort_order){
+      const sortOrder = paginationItemsDto.sort_order == 'ascend' ?  'asc' : 'desc'
+      const sortFields = paginationItemsDto.sort_field.split('.');
       if (sortFields.length > 1){
         orderByObj = {[sortFields[0]] : {[sortFields[1]] : sortOrder}}
       } else {
-        if (dataPaginationDto.sort_field === 'in_amount' || dataPaginationDto.sort_field === 'out_amount'){
-          if (dataPaginationDto.sort_field === 'in_amount'){
-            orderByObj = [{operation_direction:  'desc' },{amount: sortOrder}];
-          }
-          if (dataPaginationDto.sort_field === 'out_amount'){
-            orderByObj = [{operation_direction: 'asc' },{amount: sortOrder}];
-          }
-        } else {
-          orderByObj[dataPaginationDto.sort_field] = sortOrder;
-        }
+        orderByObj[paginationItemsDto.sort_field] = sortOrder;
       }
     } else {
       orderByObj = { id: 'desc'};
@@ -174,8 +164,8 @@ export class MCurrencyValueService {
     })
 
     const response = await this.prismaService.dbm_currency_value.findMany({
-      skip: (dataPaginationDto.page_number - 1) * dataPaginationDto.page_size,
-      take: dataPaginationDto.page_size,
+      skip: (paginationItemsDto.page_number - 1) * paginationItemsDto.page_size,
+      take: paginationItemsDto.page_size,
       where: {
         AND: whereObj
       },
@@ -187,9 +177,9 @@ export class MCurrencyValueService {
       orderBy: orderByObj
     });
 
-    console.log(response)
+
     // MERGE SUM ITEMS
     const totals = {count: _count};
-    return {totals, data: response};
+    return {totals, data: this.configResponseData(response)};
   }
 }

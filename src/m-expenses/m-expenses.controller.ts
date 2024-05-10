@@ -19,6 +19,7 @@ import { DataMExpenseDto } from './dto/data-m-expense.dto';
 import { DataMOperationPaginationDto } from '../m-operations/dto/data-m-operation-pagination.dto';
 import { DataMOperationStatusDto } from '../m-operations/dto/data-m-operation-status.dto';
 import { UpdateMOperationStatusDto } from '../m-operations/dto/update-m-operation-status.dto';
+import { PaginationItemsDto } from '../shared/dto/pagination-items.dto';
 
 
 @Controller('m-expenses')
@@ -107,8 +108,8 @@ export class MExpensesController {
     description: 'Success',
     type: DataMExpenseDto,
   })
-  listPagination(@Body() dataMOperationPaginationDto: DataMOperationPaginationDto) {
-    return this.mExpensesService.listPagination(dataMOperationPaginationDto);
+  listPagination(@Body() paginationItemsDto: PaginationItemsDto) {
+    return this.mExpensesService.listPagination(paginationItemsDto);
   }
 
   @Post('/confirm-items')

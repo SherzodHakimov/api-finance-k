@@ -3,8 +3,9 @@ import { CreateMExpenseDto } from './dto/create-m-expense.dto';
 import { UpdateMExpenseDto } from './dto/update-m-expense.dto';
 import { PrismaService } from '../prisma-service';
 import { DataMExpenseDto } from './dto/data-m-expense.dto';
-import { DataMOperationPaginationDto } from '../m-operations/dto/data-m-operation-pagination.dto';
 import { DataMOperationStatusDto } from '../m-operations/dto/data-m-operation-status.dto';
+import { PaginationItemsDto } from '../shared/dto/pagination-items.dto';
+import { PaginationTotalsDto } from '../shared/dto/pagination-totals.dto';
 
 @Injectable()
 export class MExpensesService {
@@ -109,12 +110,12 @@ export class MExpensesService {
     });
   }
 
-  async listPagination(dataMOperationPaginationDto: DataMOperationPaginationDto): Promise<{totals: any, data:DataMExpenseDto[]}> {
+  async listPagination(paginationItemsDto: PaginationItemsDto): Promise<{totals: PaginationTotalsDto, data:DataMExpenseDto[]}> {
 
     // FILTER
     const whereObj = [];
-    if (dataMOperationPaginationDto.filter){
-      dataMOperationPaginationDto.filter.forEach(el => {
+    if (paginationItemsDto.filter){
+      paginationItemsDto.filter.forEach(el => {
         const keyNames = el.key.split('.');
         const arr = [];
         if (el.value.length > 0){
@@ -133,24 +134,24 @@ export class MExpensesService {
     }
 
     // AMOUNT FILTER
-    if (dataMOperationPaginationDto.amount_from && dataMOperationPaginationDto.amount_to){
+    if (paginationItemsDto.amount_from && paginationItemsDto.amount_to){
       whereObj.push({
         OR:[
           {
             amount: {
-              gte: dataMOperationPaginationDto.amount_from,
-              lte: dataMOperationPaginationDto.amount_to
+              gte: paginationItemsDto.amount_from,
+              lte: paginationItemsDto.amount_to
             }}
         ]
       });
     }
 
     // DATE FILTER
-    if (dataMOperationPaginationDto.date){
+    if (paginationItemsDto.date){
       whereObj.push({
         operation_date: {
-          gte: new Date(dataMOperationPaginationDto.date[0]), // Start of date range
-          lte: new Date(dataMOperationPaginationDto.date[1]) // End of date range
+          gte: new Date(paginationItemsDto.date[0]), // Start of date range
+          lte: new Date(paginationItemsDto.date[1]) // End of date range
         },
       })
     }
@@ -159,23 +160,14 @@ export class MExpensesService {
 
     // SORT
     let orderByObj = {};
-    if (dataMOperationPaginationDto.sort_field && dataMOperationPaginationDto.sort_order){
-      const sortOrder = dataMOperationPaginationDto.sort_order == 'ascend' ?  'asc' : 'desc'
-      const sortFields = dataMOperationPaginationDto.sort_field.split('.');
+    if (paginationItemsDto.sort_field && paginationItemsDto.sort_order){
+      const sortOrder = paginationItemsDto.sort_order == 'ascend' ?  'asc' : 'desc'
+      const sortFields = paginationItemsDto.sort_field.split('.');
       if (sortFields.length > 1){
         orderByObj = {[sortFields[0]] : {[sortFields[1]] : sortOrder}}
       } else {
-        if (dataMOperationPaginationDto.sort_field === 'in_amount' || dataMOperationPaginationDto.sort_field === 'out_amount'){
-          if (dataMOperationPaginationDto.sort_field === 'in_amount'){
-            orderByObj = [{operation_direction:  'desc' },{amount: sortOrder}];
-          }
-          if (dataMOperationPaginationDto.sort_field === 'out_amount'){
-            orderByObj = [{operation_direction: 'asc' },{amount: sortOrder}];
-          }
-        } else {
-          orderByObj[dataMOperationPaginationDto.sort_field] = sortOrder;
-        }
-      }
+          orderByObj[paginationItemsDto.sort_field] = sortOrder;
+     }
     } else {
       orderByObj = { id: 'desc'};
     }
@@ -198,8 +190,8 @@ export class MExpensesService {
     })
 
     const response = await this.prismaService.dbm_expense.findMany({
-      skip: (dataMOperationPaginationDto.page_number - 1) * dataMOperationPaginationDto.page_size,
-      take: dataMOperationPaginationDto.page_size,
+      skip: (paginationItemsDto.page_number - 1) * paginationItemsDto.page_size,
+      take: paginationItemsDto.page_size,
       where: {
         AND: whereObj
       },
@@ -218,7 +210,7 @@ export class MExpensesService {
     });
 
     // MERGE SUM ITEMS
-    const totals = {count: _count, sum: {amount_out: total._sum.amount, amount_in: 0}};
+    const totals = {count: _count, sum: {amount: Number(total._sum.amount)}};
     return {totals, data: response};
   }
 

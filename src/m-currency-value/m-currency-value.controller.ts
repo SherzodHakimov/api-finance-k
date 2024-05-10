@@ -16,7 +16,7 @@ import { UpdateMCurrencyValueDto } from './dto/update-m-currency-value.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ErrorDto } from '../shared/dto/error.dto';
 import { DataMCurrencyValueDto } from './dto/data-m-currency-value.dto';
-import { DataPaginationDto } from '../shared/dto/data-pagination.dto';
+import { PaginationItemsDto } from '../shared/dto/pagination-items.dto';
 
 
 @Controller('m-currency-value')
@@ -92,8 +92,7 @@ export class MCurrencyValueController {
     description: 'Success',
     type: DataMCurrencyValueDto,
   })
-  listPagination(@Body() dataPaginationDto: DataPaginationDto) {
-    console.log(dataPaginationDto);
+  listPagination(@Body() dataPaginationDto: PaginationItemsDto) {
     return this.mCurrencyValueService.listPagination(dataPaginationDto);
   }
 }
