@@ -9,26 +9,31 @@ export class DataMCurrencyValueDto {
   id: number;
 
   @ApiProperty({
+    example: '[1,2]',
+  })
+  ids: string;
+
+  @ApiProperty({
     example: 1,
   })
-  buy_currency_id: number;
+  currency_1_id: number;
 
   @ApiProperty({
     example: { name: 'USD'},
   })
-  buy_list_currency: {
+  list_currency_1: {
     name: string;
   };
 
   @ApiProperty({
     example: 1,
   })
-  sell_currency_id: number;
+  currency_2_id: number;
 
   @ApiProperty({
     example: { name: 'USD'},
   })
-  sell_list_currency: {
+  list_currency_2: {
     name: string;
   };
 

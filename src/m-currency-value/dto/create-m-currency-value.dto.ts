@@ -1,5 +1,5 @@
-import { IsNumber, IsString } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateMCurrencyValueDto {
 
@@ -7,13 +7,13 @@ export class CreateMCurrencyValueDto {
   @ApiProperty({
     example: 1,
   })
-  buy_currency_id: number;
+  currency_1_id: number;
 
   @IsNumber()
   @ApiProperty({
     example: 1,
   })
-  sell_currency_id: number;
+  currency_2_id: number;
 
   @IsNumber()
   @ApiProperty({
@@ -38,4 +38,10 @@ export class CreateMCurrencyValueDto {
     example: 1,
   })
   user_id: number;
+
+  @IsString()
+  @ApiProperty({
+    example: '[1,2]',
+  })
+  ids: number;
 }

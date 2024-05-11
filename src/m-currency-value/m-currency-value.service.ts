@@ -19,23 +19,23 @@ export class MCurrencyValueService {
       const arr: any[] = [];
       query.forEach(el => {
 
-        const sell_list_currency = {...el.list_currency_dbm_currency_value_sell_currency_idTolist_currency};
-        const buy_list_currency = {...el.list_currency_dbm_currency_value_buy_currency_idTolist_currency};
+        const list_currency_1 = {...el.list_currency_dbm_currency_value_currency_1_idTolist_currency};
+        const list_currency_2 = {...el.list_currency_dbm_currency_value_currency_2_idTolist_currency};
 
-        delete el.list_currency_dbm_currency_value_sell_currency_idTolist_currency;
-        delete el.list_currency_dbm_currency_value_buy_currency_idTolist_currency;
+        delete el.list_currency_dbm_currency_value_currency_1_idTolist_currency;
+        delete el.list_currency_dbm_currency_value_currency_2_idTolist_currency;
 
-        arr.push(Object.assign(el, {sell_list_currency}, {buy_list_currency}))
+        arr.push(Object.assign(el, {list_currency_1}, {list_currency_2}))
       });
       return arr;
     } else {
-      const sell_list_currency = {...query.list_currency_dbm_currency_value_sell_currency_idTolist_currency};
-      const buy_list_currency = {...query.list_currency_dbm_currency_value_buy_currency_idTolist_currency};
+      const list_currency_1 = {...query.list_currency_dbm_currency_value_currency_1_idTolist_currency};
+      const list_currency_2 = {...query.list_currency_dbm_currency_value_currency_2_idTolist_currency};
 
-      delete query.list_currency_dbm_currency_value_sell_currency_idTolist_currency;
-      delete query.list_currency_dbm_currency_value_buy_currency_idTolist_currency;
+      delete query.list_currency_dbm_currency_value_currency_1_idTolist_currency;
+      delete query.list_currency_dbm_currency_value_currency_2_idTolist_currency;
 
-      return Object.assign(query, {sell_list_currency}, {buy_list_currency})
+      return Object.assign(query, {list_currency_1}, {list_currency_2})
     }
 
   }
@@ -45,8 +45,8 @@ export class MCurrencyValueService {
     const query = await this.prismaService.dbm_currency_value.create({
       data: createMCurrencyValueDto,
       include:{
-        list_currency_dbm_currency_value_buy_currency_idTolist_currency: {select: {name: true}},
-        list_currency_dbm_currency_value_sell_currency_idTolist_currency: {select: {name: true}},
+        list_currency_dbm_currency_value_currency_1_idTolist_currency: {select: {name: true}},
+        list_currency_dbm_currency_value_currency_2_idTolist_currency: {select: {name: true}},
         dbm_user: {select: {name1: true, name2: true}},
       }
     });
@@ -57,8 +57,8 @@ export class MCurrencyValueService {
   async findAll(): Promise<DataMCurrencyValueDto[]> {
     const query = await this.prismaService.dbm_currency_value.findMany({
       include:{
-        list_currency_dbm_currency_value_buy_currency_idTolist_currency: {select: {name: true}},
-        list_currency_dbm_currency_value_sell_currency_idTolist_currency: {select: {name: true}},
+        list_currency_dbm_currency_value_currency_1_idTolist_currency: {select: {name: true}},
+        list_currency_dbm_currency_value_currency_2_idTolist_currency: {select: {name: true}},
         dbm_user: {select: {name1: true, name2: true}},
       },
       orderBy: { id: 'desc'}
@@ -71,8 +71,8 @@ export class MCurrencyValueService {
     const query = await this.prismaService.dbm_currency_value.findFirst({
       where: { id: +id },
       include:{
-        list_currency_dbm_currency_value_buy_currency_idTolist_currency: {select: {name: true}},
-        list_currency_dbm_currency_value_sell_currency_idTolist_currency: {select: {name: true}},
+        list_currency_dbm_currency_value_currency_1_idTolist_currency: {select: {name: true}},
+        list_currency_dbm_currency_value_currency_2_idTolist_currency: {select: {name: true}},
         dbm_user: {select: {name1: true, name2: true}},
       }
     });
@@ -85,8 +85,8 @@ export class MCurrencyValueService {
       where: { id: +id },
       data: updateMCurrencyValueDto,
       include:{
-        list_currency_dbm_currency_value_buy_currency_idTolist_currency: {select: {name: true}},
-        list_currency_dbm_currency_value_sell_currency_idTolist_currency: {select: {name: true}},
+        list_currency_dbm_currency_value_currency_1_idTolist_currency: {select: {name: true}},
+        list_currency_dbm_currency_value_currency_2_idTolist_currency: {select: {name: true}},
         dbm_user: {select: {name1: true, name2: true}},
       }
     });
@@ -98,8 +98,8 @@ export class MCurrencyValueService {
     const query = await this.prismaService.dbm_currency_value.delete({
       where: { id: +id },
       include:{
-        list_currency_dbm_currency_value_buy_currency_idTolist_currency: {select: {name: true}},
-        list_currency_dbm_currency_value_sell_currency_idTolist_currency: {select: {name: true}},
+        list_currency_dbm_currency_value_currency_1_idTolist_currency: {select: {name: true}},
+        list_currency_dbm_currency_value_currency_2_idTolist_currency: {select: {name: true}},
         dbm_user: {select: {name1: true, name2: true}},
       }
     });
@@ -113,6 +113,25 @@ export class MCurrencyValueService {
     const whereObj = [];
     if (paginationItemsDto.filter){
       paginationItemsDto.filter.forEach(el => {
+
+        // if (el.key === 'ids' && el.value.length > 0){
+        //
+        //   el.key = 'currency_1_id'
+        //
+        //   const arr1: any = [];
+        //   const arr2: any = [];
+        //
+        //   el.value.forEach(v => {
+        //     arr1.push(JSON.parse(v)[0])
+        //     arr2.push(JSON.parse(v)[1])
+        //   })
+        //
+        //   el.value = [...arr1]
+        //   paginationItemsDto.filter.push({key: 'currency_1_id', value: [...arr2]})
+        // }
+
+
+
         const keyNames = el.key.split('.');
         const arr = [];
         if (el.value.length > 0){
@@ -129,6 +148,8 @@ export class MCurrencyValueService {
         }
       });
     }
+
+    // console.log(JSON.stringify(whereObj));
 
     // DATE FILTER
     if (paginationItemsDto.date){
@@ -170,8 +191,8 @@ export class MCurrencyValueService {
         AND: whereObj
       },
       include: {
-        list_currency_dbm_currency_value_buy_currency_idTolist_currency: {select: {name: true}},
-        list_currency_dbm_currency_value_sell_currency_idTolist_currency: {select: {name: true}},
+        list_currency_dbm_currency_value_currency_1_idTolist_currency: {select: {name: true}},
+        list_currency_dbm_currency_value_currency_2_idTolist_currency: {select: {name: true}},
         dbm_user: {select: {name1: true, name2: true}},
       },
       orderBy: orderByObj
