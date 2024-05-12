@@ -1,5 +1,5 @@
-import { IsNumber, IsOptional, IsString } from 'class-validator';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsNumber, IsString } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateMCurrencyValueDto {
 
@@ -43,5 +43,5 @@ export class CreateMCurrencyValueDto {
   @ApiProperty({
     example: '[1,2]',
   })
-  ids: number;
+  ids: string;
 }

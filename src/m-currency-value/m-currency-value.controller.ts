@@ -17,6 +17,7 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ErrorDto } from '../shared/dto/error.dto';
 import { DataMCurrencyValueDto } from './dto/data-m-currency-value.dto';
 import { PaginationItemsDto } from '../shared/dto/pagination-items.dto';
+import { DataForCheckCurrencyDto } from './dto/data-for-check-currency.dto';
 
 
 @Controller('m-currency-value')
@@ -94,5 +95,18 @@ export class MCurrencyValueController {
   })
   listPagination(@Body() dataPaginationDto: PaginationItemsDto) {
     return this.mCurrencyValueService.listPagination(dataPaginationDto);
+  }
+
+
+  @Post('/exist-currency-value')
+  @ApiOperation({ summary: 'Check before add new item' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Success',
+    type: Boolean,
+  })
+  @Patch(':id')
+  isExistCurrencyValue(@Body() dataForCheckCurrencyDto: DataForCheckCurrencyDto) {
+    return this.mCurrencyValueService.isExistCurrencyValue(dataForCheckCurrencyDto);
   }
 }

@@ -6,6 +6,7 @@ import { DataMCurrencyValueDto } from './dto/data-m-currency-value.dto';
 import { isArray } from 'class-validator';
 import { PaginationItemsDto } from '../shared/dto/pagination-items.dto';
 import { PaginationTotalsDto } from '../shared/dto/pagination-totals.dto';
+import { DataForCheckCurrencyDto } from './dto/data-for-check-currency.dto';
 
 @Injectable()
 export class MCurrencyValueService {
@@ -114,24 +115,6 @@ export class MCurrencyValueService {
     if (paginationItemsDto.filter){
       paginationItemsDto.filter.forEach(el => {
 
-        // if (el.key === 'ids' && el.value.length > 0){
-        //
-        //   el.key = 'currency_1_id'
-        //
-        //   const arr1: any = [];
-        //   const arr2: any = [];
-        //
-        //   el.value.forEach(v => {
-        //     arr1.push(JSON.parse(v)[0])
-        //     arr2.push(JSON.parse(v)[1])
-        //   })
-        //
-        //   el.value = [...arr1]
-        //   paginationItemsDto.filter.push({key: 'currency_1_id', value: [...arr2]})
-        // }
-
-
-
         const keyNames = el.key.split('.');
         const arr = [];
         if (el.value.length > 0){
@@ -146,10 +129,10 @@ export class MCurrencyValueService {
           });
           whereObj.push({OR: arr})
         }
+
       });
     }
 
-    // console.log(JSON.stringify(whereObj));
 
     // DATE FILTER
     if (paginationItemsDto.date){
@@ -202,5 +185,16 @@ export class MCurrencyValueService {
     // MERGE SUM ITEMS
     const totals = {count: _count};
     return {totals, data: this.configResponseData(response)};
+  }
+
+  async isExistCurrencyValue (dataForCheckCurrencyDto: DataForCheckCurrencyDto): Promise<boolean> {
+  const check = await this.prismaService.dbm_currency_value.findFirst({
+      where: {
+        value_date: dataForCheckCurrencyDto.value_date,
+        ids: dataForCheckCurrencyDto.ids
+      }
+    })
+
+    return !!check;
   }
 }
