@@ -1,49 +1,62 @@
-import { Body, Controller, HttpStatus, Post } from '@nestjs/common';
+import { Body, Controller, HttpStatus, Post, UsePipes, ValidationPipe } from '@nestjs/common';
 import { MReportsService } from './m-reports.service';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { BetweenDateDto } from './dto/between-date.dto';
 import { DataMainReportDto } from './dto/data-main-report.dto';
 import { DataMainAllReportDto } from './dto/data-main-all-report.dto';
 import { DataMainExpenseReportDto } from './dto/data-main-expense-report.dto';
 import { DataMainCurrencyValuesDto } from './dto/data-main-currency-values.dto';
+import { BetweenDateIdDto } from './dto/between-date-id.dto';
+import { DataMExpenseDto } from '../m-expenses/dto/data-m-expense.dto';
+import { ErrorDto } from '../shared/dto/error.dto';
 
 @Controller('m-reports')
+@UsePipes(new ValidationPipe())
+@ApiTags('Reports')
+@ApiResponse({ status: HttpStatus.BAD_REQUEST, description: "Error", type: ErrorDto })
 export class MReportsController {
 
   constructor(private readonly mReportsService: MReportsService) {}
 
-  @Post('/report-main-local')
+  @Post('/main-local')
   @ApiOperation({ summary: 'Get report' })
   @ApiResponse({ status: HttpStatus.OK, description: "Success", type: DataMainReportDto })
-  reportMainLocal(@Body() reportParams: BetweenDateDto) {
-    return this.mReportsService.reportMainLocal(reportParams);
+  mainLocal(@Body() reportParams: BetweenDateDto) {
+    return this.mReportsService.mainLocal(reportParams);
   }
 
-  @Post('/report-main-convert')
+  @Post('/main-convert')
   @ApiOperation({ summary: 'Get report' })
   @ApiResponse({ status: HttpStatus.OK, description: "Success", type: DataMainReportDto })
-  reportMaiConvert(@Body() reportParams: BetweenDateDto) {
-    return this.mReportsService.reportMainConvert(reportParams);
+  mainConvert(@Body() reportParams: BetweenDateDto) {
+    return this.mReportsService.mainConvert(reportParams);
   }
 
-  @Post('/report-main-all')
+  @Post('/main-all')
   @ApiOperation({ summary: 'Get report' })
   @ApiResponse({ status: HttpStatus.OK, description: "Success", type: DataMainAllReportDto })
-  reportMaiAll(@Body() reportParams: BetweenDateDto) {
-    return this.mReportsService.reportMainAll(reportParams);
+  mainAll(@Body() reportParams: BetweenDateDto) {
+    return this.mReportsService.mainAll(reportParams);
   }
 
-  @Post('/report-main-expenses')
+  @Post('/main-expenses')
   @ApiOperation({ summary: 'Get report' })
   @ApiResponse({ status: HttpStatus.OK, description: "Success", type: DataMainExpenseReportDto })
-  reportMainExpenses(@Body() reportParams: BetweenDateDto) {
-    return this.mReportsService.reportMainExpenses(reportParams);
+  mainExpenses(@Body() reportParams: BetweenDateDto) {
+    return this.mReportsService.mainExpenses(reportParams);
   }
 
-  @Post('/report-currency-values')
+  @Post('/currency-values')
   @ApiOperation({ summary: 'Get report' })
   @ApiResponse({ status: HttpStatus.OK, description: "Success", type: DataMainCurrencyValuesDto })
-  reportCurrencyValues(@Body() reportParams: BetweenDateDto) {
-    return this.mReportsService.reportCurrencyValues(reportParams);
+  currencyValues(@Body() reportParams: BetweenDateDto) {
+    return this.mReportsService.currencyValues(reportParams);
+  }
+
+  @Post('/expense-list')
+  @ApiOperation({ summary: 'Get report' })
+  @ApiResponse({ status: HttpStatus.OK, description: "Success", type: DataMExpenseDto })
+  expenseList(@Body() reportParams: BetweenDateIdDto) {
+    return this.mReportsService.expenseList(reportParams);
   }
 }

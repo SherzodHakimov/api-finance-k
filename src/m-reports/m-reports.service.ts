@@ -5,13 +5,15 @@ import { DataMainReportDto } from './dto/data-main-report.dto';
 import { DataMainAllReportDto } from './dto/data-main-all-report.dto';
 import { DataMainExpenseReportDto } from './dto/data-main-expense-report.dto';
 import { DataMainCurrencyValuesDto } from './dto/data-main-currency-values.dto';
+import { BetweenDateIdDto } from './dto/between-date-id.dto';
+import { DataMExpenseDto } from '../m-expenses/dto/data-m-expense.dto';
 
 @Injectable()
 export class MReportsService {
 
   constructor(private prismaService: PrismaService) {}
 
-  async reportMainLocal(reportParams: BetweenDateDto): Promise<DataMainReportDto> {
+  async mainLocal(reportParams: BetweenDateDto): Promise<DataMainReportDto> {
 
     if (reportParams.date.length < 2) {
       throw new BadRequestException(['Date not found!'])
@@ -91,7 +93,7 @@ export class MReportsService {
                         and o.status_id = 2) r) s) u;`
   }
 
-  async reportMainConvert(reportParams: BetweenDateDto): Promise<DataMainReportDto> {
+  async mainConvert(reportParams: BetweenDateDto): Promise<DataMainReportDto> {
 
     if (reportParams.date.length < 2) {
       throw new BadRequestException(['Date not found!'])
@@ -185,7 +187,7 @@ export class MReportsService {
                         and o.status_id = 2) r) s) u;`
   }
 
-  async reportMainAll(reportParams: BetweenDateDto): Promise<DataMainAllReportDto> {
+  async mainAll(reportParams: BetweenDateDto): Promise<DataMainAllReportDto> {
 
     if (reportParams.date.length < 2) {
       throw new BadRequestException(['Date not found!'])
@@ -222,6 +224,7 @@ export class MReportsService {
                    left join list_currency c on c.id = a.currency_id
                    left join dbm_operation o on o.account_id = a.id
           where o.operation_date < ${date_start}
+          and o.status_id = 2
           group by b.name, c.name, a.name
     
           union all
@@ -242,11 +245,12 @@ export class MReportsService {
                    left join dbm_operation o on o.account_id = a.id
           where o.operation_date >= ${date_start}
             and o.operation_date < ${date_end}
+            and o.status_id = 2
           group by b.name, c.name, a.name) r
     group by r.bank_name, r.currency_name;`
   }
 
-  async reportMainExpenses(reportParams: BetweenDateDto): Promise<DataMainExpenseReportDto> {
+  async mainExpenses(reportParams: BetweenDateDto): Promise<DataMainExpenseReportDto> {
 
     if (reportParams.date.length < 2) {
       throw new BadRequestException(['Date not found!'])
@@ -290,13 +294,13 @@ export class MReportsService {
           order by s.name;`
   }
 
-  async reportCurrencyValues(reportParams: BetweenDateDto): Promise<DataMainCurrencyValuesDto>{
+  async currencyValues(reportParams: BetweenDateDto): Promise<DataMainCurrencyValuesDto>{
 
     if (reportParams.date.length < 2) {
       throw new BadRequestException(['Date not found!'])
     }
 
-    const date_start = new Date(reportParams.date[0]);
+    // const date_start = new Date(reportParams.date[0]);
     const date_end = new Date(reportParams.date[1]);
 
     return this.prismaService.$queryRaw `
@@ -321,5 +325,48 @@ export class MReportsService {
     from dbm_currency_value dcv
              left join list_currency lc1 on lc1.id = dcv.currency_1_id
              left join list_currency lc2 on lc2.id = dcv.currency_2_id`
+  }
+
+  async expenseList(reportParams: BetweenDateIdDto): Promise<DataMExpenseDto[]>{
+
+    if (reportParams.date.length < 2) {
+      throw new BadRequestException(['Date not found!'])
+    }
+
+    if (!reportParams.id) {
+      throw new BadRequestException(['ID not found!'])
+    }
+
+    const date_start = new Date(reportParams.date[0]);
+    const date_end = new Date(reportParams.date[1]);
+    const id = reportParams.id;
+
+    return this.prismaService.dbm_expense.findMany({
+      where: {
+        AND: [
+          {expense_group_id: id},
+          {status_id: 2 },
+          {operation_date: {
+              gte: date_start,
+              lt: date_end,
+            }}
+        ]
+      },
+      include: {
+        list_expense_group: {select: {name: true}},
+        list_expense: {select: {name: true}},
+        set_payment_doc: {select: {name: true}},
+        list_measure: {select: {name: true, name_short: true}},
+        set_account_type: {select: {name: true}},
+        list_currency: {select: {name: true}},
+        set_operation_status: {select: {name: true}},
+        list_payer: {select: {name: true}},
+        dbm_user: {select: {name1: true, name2: true}},
+      },
+      orderBy: {
+        operation_date: 'asc'
+      }
+    })
+
   }
 }

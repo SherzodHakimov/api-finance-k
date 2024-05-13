@@ -1,0 +1,12 @@
+import { BetweenDateDto } from './between-date.dto';
+import { IsNumber } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+
+export class BetweenDateIdDto extends BetweenDateDto{
+
+  @IsNumber()
+  @ApiProperty({
+    example: 1,
+  })
+  id: number;
+}
