@@ -17,6 +17,7 @@ import { MExpensesModule } from './m-expenses/m-expenses.module';
 import { MCurrencyValueModule } from './m-currency-value/m-currency-value.module';
 import { MReportsModule } from './m-reports/m-reports.module';
 import { MDashboardModule } from './m-dashboard/m-dashboard.module';
+import { MAuthModule } from './m-auth/m-auth.module';
 
 
 @Module({
@@ -24,6 +25,7 @@ import { MDashboardModule } from './m-dashboard/m-dashboard.module';
     ConfigModule.forRoot({
       envFilePath: `.${process.env.NODE_ENV}.env`,
     }),
+    MAuthModule,
     MDashboardModule,
     MReportsModule,
     MCurrencyValueModule,
