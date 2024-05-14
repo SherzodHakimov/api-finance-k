@@ -4,10 +4,9 @@ import { MCurrencyValueController } from './m-currency-value.controller';
 import { PrismaService } from '../prisma-service';
 import { MAuthModule } from '../m-auth/m-auth.module';
 
-
 @Module({
   controllers: [MCurrencyValueController],
   providers: [MCurrencyValueService, PrismaService],
-  imports: [], // import for guard
+  imports: [MAuthModule],
 })
 export class MCurrencyValueModule {}

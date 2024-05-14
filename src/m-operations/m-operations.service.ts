@@ -94,7 +94,10 @@ export class MOperationsService {
     });
   }
 
-  async listPagination(id: number, dataMOperationPaginationDto: DataMOperationPaginationDto): Promise<{ totals: any, data: DataMOperationDto[]}> {
+  async listPagination(id: number, dataMOperationPaginationDto: DataMOperationPaginationDto): Promise<{
+    totals: any,
+    data: DataMOperationDto[]
+  }> {
 
     // FILTER
     const whereObj = [];
@@ -223,7 +226,45 @@ export class MOperationsService {
   }
 
   async updateStatus(id: number, updateMOperationStatusDto: UpdateMOperationStatusDto): Promise<DataMOperationStatusDto> {
-    return this.prismaService.dbm_operation.update({
+
+    let contr_id: number | null = null
+    const [expense, oper_in, oper_out] = await this.prismaService.$transaction([
+      this.prismaService.dba_expense_operation.findFirst({
+        where: { outcome_operation_id: +id },
+      }),
+      this.prismaService.dba_transfer_operation.findFirst({
+        where: { income_operation_id: +id },
+      }),
+      this.prismaService.dba_transfer_operation.findFirst({
+        where: { outcome_operation_id: +id },
+      }),
+    ]);
+
+    if (expense){
+      contr_id = expense.income_operation_id;
+      await this.prismaService.dbm_expense.update({
+        where: { id: expense.income_operation_id },
+        data: { status_id: updateMOperationStatusDto.status_id },
+      });
+    }
+
+    if(oper_in) {
+      contr_id = oper_in.outcome_operation_id;
+      await this.prismaService.dbm_operation.update({
+        where: { id: oper_in.outcome_operation_id },
+        data: { status_id: updateMOperationStatusDto.status_id },
+      });
+    }
+
+    if (oper_out){
+      contr_id = oper_out.income_operation_id;
+      await this.prismaService.dbm_operation.update({
+        where: { id: oper_out.income_operation_id },
+        data: { status_id: updateMOperationStatusDto.status_id },
+      });
+    }
+
+    const execute_update = await this.prismaService.dbm_operation.update({
       where: { id: +id },
       data: { status_id: updateMOperationStatusDto.status_id },
       select: {
@@ -232,6 +273,8 @@ export class MOperationsService {
         set_operation_status: { select: { name: true } },
       },
     });
+
+    return Object.assign(execute_update, {contr_id});
   }
 
   async isHasAnyOperation(checkMOperationInitDto: DataToCheckMOperationInitDto): Promise<boolean> {
@@ -518,23 +561,23 @@ export class MOperationsService {
   async getAccountAmount(accountAmountDto: AccountAmountDto): Promise<number> {
 
     const mainWhereArr = [
-      {account_id: accountAmountDto.account_id},
-      {account_type_id: accountAmountDto.account_type_id},
-      {currency_id: accountAmountDto.currency_id},
+      { account_id: accountAmountDto.account_id },
+      { account_type_id: accountAmountDto.account_type_id },
+      { currency_id: accountAmountDto.currency_id },
       {
-        OR:[
-          {status_id: 1},
-          {status_id: 2}
-        ]
-      }
+        OR: [
+          { status_id: 1 },
+          { status_id: 2 },
+        ],
+      },
     ];
-    const outWhere = [...mainWhereArr, {operation_direction: 0 }];
-    const inWhere = [...mainWhereArr, {operation_direction: 1 }];
+    const outWhere = [...mainWhereArr, { operation_direction: 0 }];
+    const inWhere = [...mainWhereArr, { operation_direction: 1 }];
 
     const [out_sum, in_sum] = await this.prismaService.$transaction([
       this.prismaService.dbm_operation.aggregate({
         where: {
-          AND: outWhere
+          AND: outWhere,
         },
         _sum: {
           amount: true,
@@ -542,7 +585,7 @@ export class MOperationsService {
       }),
       this.prismaService.dbm_operation.aggregate({
         where: {
-          AND: inWhere
+          AND: inWhere,
         },
         _sum: {
           amount: true,
@@ -554,14 +597,52 @@ export class MOperationsService {
   }
 
   async confirmItems(arr: number[]): Promise<number> {
+
+    const [expense, oper_in, oper_out] = await this.prismaService.$transaction([
+      this.prismaService.dba_expense_operation.findMany({
+        where: { outcome_operation_id: {in: arr} },
+      }),
+      this.prismaService.dba_transfer_operation.findMany({
+        where: { income_operation_id: {in: arr} },
+      }),
+      this.prismaService.dba_transfer_operation.findMany({
+        where: { outcome_operation_id: {in: arr} },
+      }),
+    ]);
+
+
+    if (expense.length > 0){
+      const contr_arr_expense = [...expense.map(item => item.income_operation_id)]
+      await this.prismaService.dbm_expense.updateMany({
+        where: { id: {in: contr_arr_expense } },
+        data: { status_id: 2 },
+      });
+    }
+
+    if(oper_in.length > 0) {
+      const contr_arr_oper_in = [...oper_in.map(item => item.outcome_operation_id)]
+      await this.prismaService.dbm_operation.updateMany({
+        where: { id: {in: contr_arr_oper_in } },
+        data: { status_id: 2 },
+      });
+    }
+
+    if (oper_out.length > 0){
+      const contr_arr_oper_out = [...oper_out.map(item => item.income_operation_id)]
+      await this.prismaService.dbm_operation.updateMany({
+        where: { id: {in: contr_arr_oper_out } },
+        data: { status_id: 2 },
+      });
+    }
+
     const updateItems = await this.prismaService.dbm_operation.updateMany({
       where: {
         id: {
-          in: arr
-        }
+          in: arr,
         },
-      data: {status_id: 2}
+      },
+      data: { status_id: 2 },
     });
-    return updateItems.count
+    return updateItems.count;
   }
 }

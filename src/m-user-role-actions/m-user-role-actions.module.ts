@@ -7,6 +7,6 @@ import { MAuthModule } from '../m-auth/m-auth.module';
 @Module({
   controllers: [MUserRoleActionsController],
   providers: [MUserRoleActionsService, PrismaService],
-  imports: [MAuthModule], // import for guard
+  imports: [MAuthModule]
 })
 export class MUserRoleActionsModule {}

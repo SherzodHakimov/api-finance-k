@@ -8,7 +8,7 @@ import {
   Delete,
   UsePipes,
   ValidationPipe,
-  HttpStatus, UseGuards,
+  HttpStatus, UseInterceptors, UseGuards,
 } from '@nestjs/common';
 import { MListAccountService } from './m-list-account.service';
 import { CreateMListAccountDto } from './dto/create-m-list-account.dto';
@@ -16,19 +16,18 @@ import { UpdateMListAccountDto } from './dto/update-m-list-account.dto';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { DataMListAccountDto } from './dto/data-m-list-account.dto';
 import { ErrorDto } from 'src/shared/dto/error.dto';
-import { JwtAuthGuard } from '../m-auth/jwt.-auth.guard';
+import { ResponseBodyInterceptor } from '../response-body.interceptor';
+import { JwtAuthGuard } from '../m-auth/jwt-auth.guard';
 
 @Controller('m-list-account')
 @UsePipes(new ValidationPipe())
+@UseInterceptors(ResponseBodyInterceptor)
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
 @ApiTags('listAccount')
 @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: "Error", type: ErrorDto })
-// @UseGuards(JwtAuthGuard) //guard
-// @ApiBearerAuth() //swagger
-
 export class MListAccountController {
-  
   constructor(private readonly mListsAccountService: MListAccountService) {}
-
 
   @Post('/create')
   @ApiOperation({ summary: 'Create item' })

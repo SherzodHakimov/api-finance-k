@@ -8,8 +8,7 @@ import {
   Delete,
   ValidationPipe,
   UsePipes,
-  HttpStatus,
-  UseGuards,
+  HttpStatus, UseInterceptors, UseGuards,
 } from '@nestjs/common';
 import { MListBankService } from './m-list-bank.service';
 import { CreateMListBankDto } from './dto/create-m-list-bank.dto';
@@ -17,15 +16,16 @@ import { UpdateMListBankDto } from './dto/update-m-list-bank.dto';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { DataMListBankDto } from './dto/data-m-list-bank.dto';
 import { ErrorDto } from 'src/shared/dto/error.dto';
-import { JwtAuthGuard } from '../m-auth/jwt.-auth.guard';
+import { ResponseBodyInterceptor } from '../response-body.interceptor';
+import { JwtAuthGuard } from '../m-auth/jwt-auth.guard';
 
 @Controller('m-list-bank')
 @UsePipes(new ValidationPipe())
+@UseInterceptors(ResponseBodyInterceptor)
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
 @ApiTags('listBank')
 @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: "Error", type: ErrorDto })
-// @UseGuards(JwtAuthGuard) //guard
-// @ApiBearerAuth() //swagger
-
 export class MListBankController {
   constructor(private readonly mListsBankService: MListBankService) {}
 

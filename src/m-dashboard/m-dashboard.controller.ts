@@ -1,4 +1,14 @@
-import { Body, Controller, Get, HttpStatus, Post, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpStatus,
+  Post,
+  UseGuards,
+  UseInterceptors,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
 import { MDashboardService } from './m-dashboard.service';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ErrorDto } from '../shared/dto/error.dto';
@@ -7,17 +17,17 @@ import { DataAmountCurrencyTypeDto } from './dto/data-amount-currency-type.dto';
 import { DataMainExpenseReportDto } from '../m-reports/dto/data-main-expense-report.dto';
 import { BetweenDateDto } from '../m-reports/dto/between-date.dto';
 import { DataAmountAccountTypeCurrencyDto } from './dto/data-amount-account-type-currency.dto';
-import { JwtAuthGuard } from '../m-auth/jwt.-auth.guard';
+import { ResponseBodyInterceptor } from '../response-body.interceptor';
+import { JwtAuthGuard } from '../m-auth/jwt-auth.guard';
 
 @Controller('m-dashboard')
 @UsePipes(new ValidationPipe())
+@UseInterceptors(ResponseBodyInterceptor)
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
 @ApiTags('Dashboard')
 @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: "Error", type: ErrorDto })
-// @UseGuards(JwtAuthGuard) //guard
-// @ApiBearerAuth() //swagger
-
 export class MDashboardController {
-
   constructor(private readonly mDashboardService: MDashboardService) {}
 
   @Post('/expenses-currency-type-converted')

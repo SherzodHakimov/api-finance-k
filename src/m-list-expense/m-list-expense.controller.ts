@@ -8,8 +8,7 @@ import {
   Delete,
   ValidationPipe,
   UsePipes,
-  HttpStatus,
-  UseGuards,
+  HttpStatus, UseInterceptors, UseGuards,
 } from '@nestjs/common';
 import { MListExpenseService } from './m-list-expense.service';
 import { CreateMListExpenseDto } from './dto/create-m-list-expense.dto';
@@ -17,15 +16,17 @@ import { UpdateMListExpenseDto } from './dto/update-m-list-expense.dto';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { DataMListExpenseDto } from './dto/data-m-list-expense.dto';
 import { ErrorDto } from 'src/shared/dto/error.dto';
-import { JwtAuthGuard } from '../m-auth/jwt.-auth.guard';
+import { ResponseBodyInterceptor } from '../response-body.interceptor';
+import { JwtAuthGuard } from '../m-auth/jwt-auth.guard';
+
 
 @Controller('m-list-expense')
 @UsePipes(new ValidationPipe())
+@UseInterceptors(ResponseBodyInterceptor)
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
 @ApiTags('listExpense')
 @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: "Error", type: ErrorDto })
-// @UseGuards(JwtAuthGuard) //guard
-// @ApiBearerAuth() //swagger
-
 export class MListExpenseController {
     constructor(private readonly mListExpenseService: MListExpenseService) {}
 

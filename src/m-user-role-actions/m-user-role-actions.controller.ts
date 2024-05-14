@@ -3,28 +3,27 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   HttpStatus,
   UsePipes,
-  ValidationPipe, UseGuards,
+  ValidationPipe, UseInterceptors, UseGuards,
 } from '@nestjs/common';
 import { MUserRoleActionsService } from './m-user-role-actions.service';
 import { CreateMUserRoleActionDto } from './dto/create-m-user-role-action.dto';
-import { UpdateMUserRoleActionDto } from './dto/update-m-user-role-action.dto';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { DataMUserRoleActionDto } from './dto/data-m-user-role-action.dto';
 import { ErrorDto } from '../shared/dto/error.dto';
-import { JwtAuthGuard } from '../m-auth/jwt.-auth.guard';
+import { ResponseBodyInterceptor } from '../response-body.interceptor';
+import { JwtAuthGuard } from '../m-auth/jwt-auth.guard';
 
 @Controller('m-user-role-actions')
 @UsePipes(new ValidationPipe())
+@UseInterceptors(ResponseBodyInterceptor)
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
 @ApiTags('UserRoleAction')
 @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: "Error", type: ErrorDto })
-// @UseGuards(JwtAuthGuard) //guard
-// @ApiBearerAuth() //swagger
-
 export class MUserRoleActionsController {
   constructor(private readonly mUserRoleActionsService: MUserRoleActionsService) {}
 

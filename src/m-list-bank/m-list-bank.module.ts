@@ -7,6 +7,6 @@ import { MAuthModule } from '../m-auth/m-auth.module';
 @Module({
   controllers: [MListBankController],
   providers: [MListBankService, PrismaService],
-  imports: [MAuthModule], // import for guard
+  imports: [MAuthModule]
 })
 export class MListBankModule {}

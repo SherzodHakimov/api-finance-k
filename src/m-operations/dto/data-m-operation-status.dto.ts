@@ -18,4 +18,11 @@ export class DataMOperationStatusDto {
   set_operation_status: {
     name: string;
   };
+
+  @ApiProperty({
+    nullable: true,
+    example: 1,
+  })
+  contr_id?: number | null;
+
 }

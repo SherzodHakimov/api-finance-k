@@ -8,8 +8,7 @@ import {
   Delete,
   UsePipes,
   ValidationPipe,
-  HttpStatus,
-  UseGuards,
+  HttpStatus, UseInterceptors, UseGuards,
 } from '@nestjs/common';
 import { MListMeasureService } from './m-list-measure.service';
 import { CreateMListMeasureDto } from './dto/create-m-list-measure.dto';
@@ -17,15 +16,17 @@ import { UpdateMListMeasureDto } from './dto/update-m-list-measure.dto';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { DataMListMeasureDto } from './dto/data-m-list-measure.dto';
 import { ErrorDto } from 'src/shared/dto/error.dto';
-import { JwtAuthGuard } from '../m-auth/jwt.-auth.guard';
+import { ResponseBodyInterceptor } from '../response-body.interceptor';
+import { JwtAuthGuard } from '../m-auth/jwt-auth.guard';
+
 
 @Controller('m-list-measure')
 @UsePipes(new ValidationPipe())
+@UseInterceptors(ResponseBodyInterceptor)
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
 @ApiTags('listMeasure')
 @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: "Error", type: ErrorDto })
-// @UseGuards(JwtAuthGuard) //guard
-// @ApiBearerAuth() //swagger
-
 export class MListMeasureController {
   constructor(private readonly mListMeasureService: MListMeasureService) {}
 

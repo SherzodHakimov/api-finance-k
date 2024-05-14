@@ -8,7 +8,7 @@ import {
   Delete,
   UsePipes,
   ValidationPipe,
-  HttpStatus, UseGuards,
+  HttpStatus, UseInterceptors, UseGuards,
 } from '@nestjs/common';
 import { MOperationsService } from './m-operations.service';
 import { CreateMOperationDto } from './dto/create-m-operation.dto';
@@ -26,17 +26,17 @@ import { CreateMOperationBankCashCardDto } from './dto/create-m-operation-bank-c
 import { DataMOperationDoubleDts } from './dto/data-m-operation-double.dts';
 import { CreateMOperationExpenseDto } from './dto/create-m-operation-expense.dto';
 import { AccountAmountDto } from './dto/data-account-amount.dto';
-import { JwtAuthGuard } from '../m-auth/jwt.-auth.guard';
+import { ResponseBodyInterceptor } from '../response-body.interceptor';
+import { JwtAuthGuard } from '../m-auth/jwt-auth.guard';
 
 @Controller('m-operations')
 @UsePipes(new ValidationPipe())
+@UseInterceptors(ResponseBodyInterceptor)
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
 @ApiTags('Operations')
 @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: "Error", type: ErrorDto })
-// @UseGuards(JwtAuthGuard) //guard
-// @ApiBearerAuth() //swagger
-
 export class MOperationsController {
-
   constructor(private readonly mOperationsService: MOperationsService) {}
 
   @Post('/create')

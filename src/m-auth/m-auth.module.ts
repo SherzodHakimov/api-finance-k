@@ -9,11 +9,15 @@ import { JwtModule } from '@nestjs/jwt';
   providers: [MAuthService, PrismaService],
   imports: [
     JwtModule.register({
-      secret: '123456789',
+      secret: '1234qwerty',
       signOptions: {
         expiresIn: '1h',
       }
     })
+  ],
+  exports: [
+    MAuthModule,
+    JwtModule
   ]
 })
 export class MAuthModule {}
