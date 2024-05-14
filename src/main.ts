@@ -16,7 +16,7 @@ async function bootstrap() {
     // .setDescription('The cats API description')
     .setVersion('1.0')
     // .addTag('cats')
-    // .addBearerAuth()
+    //.addBearerAuth() //swagger
     .addServer('http://localhost:3000', 'Local development server')
     .addServer('http://94.228.117.48/api', 'Production server')
     .build();

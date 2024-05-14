@@ -8,21 +8,25 @@ import {
   Delete,
   HttpStatus,
   UsePipes,
-  ValidationPipe,
+  ValidationPipe, UseGuards,
 } from '@nestjs/common';
 import { MSettingsService } from './m-settings.service';
 import { CreateMSettingDto } from './dto/create-m-setting.dto';
 import { UpdateMSettingDto } from './dto/update-m-setting.dto';
-import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateMSettingOperationDto } from './dto/create-m-settong-operation.dto';
 import { DataMSettingsDto } from './dto/data-m-settings.dto';
 import { DataMSettingsOperationDto } from './dto/data-m-settings-operation.dto';
 import { ErrorDto } from 'src/shared/dto/error.dto';
+import { JwtAuthGuard } from '../m-auth/jwt.-auth.guard';
 
 @Controller('m-settings')
 @UsePipes(new ValidationPipe())
 @ApiTags('Settings')
 @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: "Error", type: ErrorDto })
+// @UseGuards(JwtAuthGuard) //guard
+// @ApiBearerAuth() //swagger
+
 export class MSettingsController {
 
   constructor(private readonly mSettingsService: MSettingsService) {}

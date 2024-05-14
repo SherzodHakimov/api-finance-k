@@ -8,19 +8,23 @@ import {
   Delete,
   UsePipes,
   ValidationPipe,
-  HttpStatus,
+  HttpStatus, UseGuards,
 } from '@nestjs/common';
 import { MUserService } from './m-user.service';
 import { CreateMUserDto } from './dto/create-m-user.dto';
 import { UpdateMUserDto } from './dto/update-m-user.dto';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { DataMUserDto } from './dto/data-m-user.dto';
 import { ErrorDto } from 'src/shared/dto/error.dto';
+import { JwtAuthGuard } from '../m-auth/jwt.-auth.guard';
 
 @Controller('m-user')
 @UsePipes(new ValidationPipe())
 @ApiTags('User')
 @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: "Error", type: ErrorDto })
+// @UseGuards(JwtAuthGuard) //guard
+// @ApiBearerAuth() //swagger
+
 export class MUserController {
   constructor(private readonly mUserService: MUserService) {}
 

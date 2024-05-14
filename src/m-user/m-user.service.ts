@@ -3,6 +3,8 @@ import { CreateMUserDto } from './dto/create-m-user.dto';
 import { UpdateMUserDto } from './dto/update-m-user.dto';
 import { PrismaService } from 'src/prisma-service';
 import { DataMUserDto } from './dto/data-m-user.dto';
+import * as bcrypt from 'bcryptjs';
+
 
 @Injectable()
 export class MUserService {
@@ -14,6 +16,8 @@ export class MUserService {
     });
 
     if (u) throw new ConflictException(['Duplicate login not allowed!']);
+
+    createMUserDto.password = await bcrypt.hash(createMUserDto.password, 10);
 
     return this.prismaService.dbm_user.create({
       data: createMUserDto,
@@ -72,6 +76,12 @@ export class MUserService {
     id: number,
     updateMUserDto: UpdateMUserDto,
   ): Promise<DataMUserDto> {
+
+    if (updateMUserDto){
+      updateMUserDto.password = await bcrypt.hash(updateMUserDto.password, 10);
+    }
+
+
     return this.prismaService.dbm_user.update({
       where: { id: +id },
       data: updateMUserDto.password

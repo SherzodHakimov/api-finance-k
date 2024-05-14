@@ -25,7 +25,7 @@ export class MUserRoleActionsService {
         set_user_role: { select: { name: true } },
         set_user_action: { select: { name: true } }
       },
-      orderBy: { id: 'asc' }
+      orderBy: { id: 'desc' }
     });
   }
 

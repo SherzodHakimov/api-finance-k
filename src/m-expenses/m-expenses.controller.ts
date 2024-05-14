@@ -8,24 +8,28 @@ import {
   Delete,
   UsePipes,
   ValidationPipe,
-  HttpStatus,
+  HttpStatus, UseGuards,
 } from '@nestjs/common';
 import { MExpensesService } from './m-expenses.service';
 import { CreateMExpenseDto } from './dto/create-m-expense.dto';
 import { UpdateMExpenseDto } from './dto/update-m-expense.dto';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ErrorDto } from '../shared/dto/error.dto';
 import { DataMExpenseDto } from './dto/data-m-expense.dto';
 import { DataMOperationPaginationDto } from '../m-operations/dto/data-m-operation-pagination.dto';
 import { DataMOperationStatusDto } from '../m-operations/dto/data-m-operation-status.dto';
 import { UpdateMOperationStatusDto } from '../m-operations/dto/update-m-operation-status.dto';
 import { PaginationItemsDto } from '../shared/dto/pagination-items.dto';
+import { JwtAuthGuard } from '../m-auth/jwt.-auth.guard';
 
 
 @Controller('m-expenses')
 @UsePipes(new ValidationPipe())
 @ApiTags('Expenses')
 @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: "Error", type: ErrorDto })
+// @UseGuards(JwtAuthGuard) //guard
+// @ApiBearerAuth() //swagger
+
 export class MExpensesController {
 
   constructor(private readonly mExpensesService: MExpensesService) {}

@@ -1,15 +1,31 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UsePipes, ValidationPipe, HttpStatus } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UsePipes,
+  ValidationPipe,
+  HttpStatus,
+  UseGuards,
+} from '@nestjs/common';
 import { MListPayerService } from './m-list-payer.service';
 import { CreateMListPayerDto } from './dto/create-m-list-payer.dto';
 import { UpdateMListPayerDto } from './dto/update-m-list-payer.dto';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { DataMListPayerDto } from './dto/data-m-list-payer.dto';
 import { ErrorDto } from 'src/shared/dto/error.dto';
+import { JwtAuthGuard } from '../m-auth/jwt.-auth.guard';
 
 @Controller('m-list-payer')
 @UsePipes(new ValidationPipe())
 @ApiTags('listPayer')
 @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: "Error", type: ErrorDto })
+// @UseGuards(JwtAuthGuard) //guard
+// @ApiBearerAuth() //swagger
+
 export class MListPayerController {
   constructor(private readonly mListPayerService: MListPayerService) {}
 

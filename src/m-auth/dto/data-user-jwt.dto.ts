@@ -25,4 +25,10 @@ export class DataUserJwtDto {
     example: 1,
   })
   user_role: number
+
+  @ApiProperty({
+    example: [1 , 2 , 3 ],
+  })
+  actions: number[]
+
 }

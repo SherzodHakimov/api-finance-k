@@ -1,15 +1,31 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UsePipes, ValidationPipe, HttpStatus } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UsePipes,
+  ValidationPipe,
+  HttpStatus,
+  UseGuards,
+} from '@nestjs/common';
 import { MListCurrencyService } from './m-list-currency.service';
 import { CreateMListCurrencyDto } from './dto/create-m-list-currency.dto';
 import { UpdateMListCurrencyDto } from './dto/update-m-list-currency.dto';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { DataMListCurrencyDto } from './dto/data-m-list-currency.dto';
 import { ErrorDto } from 'src/shared/dto/error.dto';
+import { JwtAuthGuard } from '../m-auth/jwt.-auth.guard';
 
 @Controller('m-list-currency')
 @UsePipes(new ValidationPipe())
 @ApiTags('listCurrency')
 @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: "Error", type: ErrorDto })
+// @UseGuards(JwtAuthGuard) //guard
+// @ApiBearerAuth() //swagger
+
 export class MListCurrencyController {
     constructor(private readonly mListCurrencyService: MListCurrencyService) {}
 

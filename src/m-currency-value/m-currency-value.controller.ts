@@ -8,22 +8,24 @@ import {
   Delete,
   UsePipes,
   ValidationPipe,
-  HttpStatus,
+  HttpStatus, UseGuards
 } from '@nestjs/common';
 import { MCurrencyValueService } from './m-currency-value.service';
 import { CreateMCurrencyValueDto } from './dto/create-m-currency-value.dto';
 import { UpdateMCurrencyValueDto } from './dto/update-m-currency-value.dto';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ErrorDto } from '../shared/dto/error.dto';
 import { DataMCurrencyValueDto } from './dto/data-m-currency-value.dto';
 import { PaginationItemsDto } from '../shared/dto/pagination-items.dto';
 import { DataForCheckCurrencyDto } from './dto/data-for-check-currency.dto';
-
+import { JwtAuthGuard } from '../m-auth/jwt.-auth.guard';
 
 @Controller('m-currency-value')
 @UsePipes(new ValidationPipe())
 @ApiTags('CurrencyValue')
 @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: "Error", type: ErrorDto })
+// @UseGuards(JwtAuthGuard) //guard
+// @ApiBearerAuth() //swagger
 export class MCurrencyValueController {
   constructor(private readonly mCurrencyValueService: MCurrencyValueService) {}
 
@@ -37,6 +39,7 @@ export class MCurrencyValueController {
   create(@Body() createMCurrencyValueDto: CreateMCurrencyValueDto) {
     return this.mCurrencyValueService.create(createMCurrencyValueDto);
   }
+
 
   @Get('/list')
   @ApiOperation({ summary: 'Get all items' })

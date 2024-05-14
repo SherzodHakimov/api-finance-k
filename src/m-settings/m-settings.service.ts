@@ -64,7 +64,9 @@ export class MSettingsService {
 
   // set_user_action
   async findAllUserAction(): Promise<DataMSettingsDto[]> {
-    return this.prismaService.set_user_action.findMany();
+    return this.prismaService.set_user_action.findMany({
+      orderBy: { name: 'asc' },
+    });
   }
   async createUserAction(createMSettingDto: CreateMSettingDto): Promise<DataMSettingsDto> {
     return this.prismaService.set_user_action.create({
