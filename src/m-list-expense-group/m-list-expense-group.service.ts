@@ -10,6 +10,14 @@ export class MListExpenseGroupService {
   constructor(private prismaService: PrismaService) {}
 
   async create(createMListExpenseGroupDto: CreateMListExpenseGroupDto): Promise<DataMListExpenseGroupDto> {
+
+    const r = await this.prismaService.list_expense_group.findFirst({
+      where: {name: createMListExpenseGroupDto.name.trim()}
+    });
+
+    if (r) throw new ForbiddenException(['Duplicate not allowed!'])
+
+    createMListExpenseGroupDto.name = createMListExpenseGroupDto.name.trim()
     return this.prismaService.list_expense_group.create({
       data: createMListExpenseGroupDto
     });
@@ -28,6 +36,7 @@ export class MListExpenseGroupService {
   }
 
   async update(id: number, updateMListExpenseGroupDto: UpdateMListExpenseGroupDto): Promise<DataMListExpenseGroupDto> {
+    updateMListExpenseGroupDto.name = updateMListExpenseGroupDto.name.trim()
     return this.prismaService.list_expense_group.update({
       where: { id: +id },
       data: updateMListExpenseGroupDto

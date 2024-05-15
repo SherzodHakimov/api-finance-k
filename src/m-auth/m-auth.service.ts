@@ -1,4 +1,11 @@
-import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+  Req,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma-service';
 import { ParamMAuthDto } from './dto/param-m-auth.dto';
 import { JwtService } from '@nestjs/jwt';
@@ -62,6 +69,29 @@ export class MAuthService {
     })
 
     return this.generateToken(user, roleActionArr);
+
+  }
+
+  async update(request: Request): Promise<DataTokenDto>{
+
+    try {
+      const authHeader = request.headers['authorization'];
+      const bearerToken = authHeader.split(' ')[0];
+      const token = authHeader.split(' ')[1];
+
+      if (bearerToken !== 'Bearer' || !token) {
+        throw new UnauthorizedException({message: 'Unauthorized'});
+      }
+
+      const payload = this.jwtService.decode(token);
+      delete payload.iat;
+      delete payload.exp;
+
+      return { token: this.jwtService.sign(payload) };
+
+    } catch (e){
+      throw new UnauthorizedException({message: 'Unauthorized'});
+    }
 
   }
 }

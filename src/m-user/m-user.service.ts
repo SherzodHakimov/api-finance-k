@@ -77,7 +77,7 @@ export class MUserService {
     updateMUserDto: UpdateMUserDto,
   ): Promise<DataMUserDto> {
 
-    if (updateMUserDto){
+    if (updateMUserDto.password){
       updateMUserDto.password = await bcrypt.hash(updateMUserDto.password, 10);
     }
 
