@@ -280,8 +280,14 @@ export class MOperationsService {
   async isHasAnyOperation(checkMOperationInitDto: DataToCheckMOperationInitDto): Promise<boolean> {
     const r = await this.prismaService.dbm_operation.findFirst({
       where: {
-        account_type_id: checkMOperationInitDto.account_type_id,
-        account_id: checkMOperationInitDto.account_id,
+        AND: [
+          {account_type_id: checkMOperationInitDto.account_type_id},
+          {account_id: checkMOperationInitDto.account_id},
+        ],
+        OR: [
+          {status_id: 1},
+          {status_id: 2}
+        ]
       },
     });
     return !!r;
