@@ -267,12 +267,15 @@ export class MExpensesService {
     return updateItems.count;
   }
 
-  async updateDocType(id: number, updateDocTypeDto: UpdateMDocTypeDto): Promise<UpdateMDocTypeDto> {
-   return this.prismaService.dbm_expense.update({
+  async updateDocType(id: number, updateDocTypeDto: UpdateMDocTypeDto): Promise<boolean> {
+   const u = await this.prismaService.dbm_expense.update({
      data: { payment_doc_id: updateDocTypeDto.payment_doc_id },
+     select: {payment_doc_id: true},
      where: {
        id: +id,
      }
    });
+
+   return !!u;
   }
 }

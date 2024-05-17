@@ -92,7 +92,7 @@ export class MReportsService {
                               limit 1) kurs
                       from dbm_operation o
                       where o.operation_date >= ${date_start}
-                        and o.operation_date < ${date_end}
+                        and o.operation_date <= ${date_end}
                         and o.status_id = 2) r) s) u;`
   }
 
@@ -189,7 +189,7 @@ export class MReportsService {
                               limit 1) kurs_main
                       from dbm_operation o
                           where o.operation_date >= ${date_start}
-                            and o.operation_date < ${date_end}
+                            and o.operation_date <= ${date_end}
                         and o.status_id = 2) r) s) u;`
   }
 
@@ -253,7 +253,7 @@ export class MReportsService {
                    left join list_currency c on c.id = a.currency_id
                    left join dbm_operation o on o.account_id = a.id
           where o.operation_date >= ${date_start}
-            and o.operation_date < ${date_end}
+            and o.operation_date <= ${date_end}
             and o.status_id = 2
           group by b.name, c.name, a.name) r
     group by r.bank_name, r.currency_name;`
@@ -265,7 +265,7 @@ export class MReportsService {
       throw new BadRequestException(['Date not found!'])
     }
 
-    const date_start = new Date(reportParams.date[0].split('T')[0]);
+    const date_start = new Date(reportParams.date[0]);
     const date_end = new Date(reportParams.date[1]);
 
     return this.prismaService.$queryRaw `
@@ -297,7 +297,7 @@ export class MReportsService {
                       from dbm_expense ex
                                left join list_expense_group eg on eg.id = ex.expense_group_id
                       where ex.operation_date >= ${date_start}
-                        and ex.operation_date < ${date_end}
+                        and ex.operation_date <= ${date_end}
                         and ex.status_id = 2) r) s
           group by s.id, s.name
           order by s.name;`
@@ -357,7 +357,7 @@ export class MReportsService {
           {status_id: 2 },
           {operation_date: {
               gte: date_start,
-              lt: date_end,
+              lte: date_end,
             }}
         ]
       },

@@ -130,7 +130,7 @@ export class MExpensesController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Success',
-    type: DataMExpenseDto,
+    type: Boolean,
   })
   @Patch(':id')
   updateDocType(@Param('id') id: string, @Body() updateMDocTypeDto: UpdateMDocTypeDto) {
