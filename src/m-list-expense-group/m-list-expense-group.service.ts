@@ -25,7 +25,7 @@ export class MListExpenseGroupService {
 
   async findAll(): Promise<DataMListExpenseGroupDto[]> {
     return this.prismaService.list_expense_group.findMany({
-      orderBy: { id: 'asc' }
+      orderBy: { name: 'asc' }
     });
   }
 

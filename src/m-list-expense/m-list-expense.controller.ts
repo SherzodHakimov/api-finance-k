@@ -18,6 +18,8 @@ import { DataMListExpenseDto } from './dto/data-m-list-expense.dto';
 import { ErrorDto } from 'src/shared/dto/error.dto';
 import { ResponseBodyInterceptor } from '../response-body.interceptor';
 import { JwtAuthGuard } from '../m-auth/jwt-auth.guard';
+import { DataMExpenseDto } from '../m-expenses/dto/data-m-expense.dto';
+import { PaginationItemsDto } from '../shared/dto/pagination-items.dto';
 
 
 @Controller('m-list-expense')
@@ -63,5 +65,23 @@ export class MListExpenseController {
   @ApiResponse({ status: HttpStatus.OK, description: "Success", type: DataMListExpenseDto })
   remove(@Param('id') id: string) {
     return this.mListExpenseService.remove(+id);
+  }
+
+  @Post('/list/pagination')
+  @ApiOperation({ summary: 'Get all items' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Success',
+    type: DataMExpenseDto,
+  })
+  listPagination(@Body() paginationItemsDto: PaginationItemsDto) {
+    return this.mListExpenseService.listPagination(paginationItemsDto);
+  }
+
+  @Get('/group/:id')
+  @ApiOperation({ summary: 'Get one item by ID' })
+  @ApiResponse({ status: HttpStatus.OK, description: "Success", type: DataMListExpenseDto })
+  listByGroup(@Param('id') id: string) {
+    return this.mListExpenseService.listByGroup(+id);
   }
 }

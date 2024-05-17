@@ -25,17 +25,19 @@ export class MReportsService {
     return  this.prismaService.$queryRaw `
     select sum(u.sum_start)                                         s_start,
            sum(u.sum_income)                                        inc,
+           sum(u.sum_income_proc)                                   inc_prc,
            sum(u.sum_outcome)                                       out,
            sum(u.sum_expense)                                       out_exp,
            sum(u.sum_income_perebroska)                             inc_per,
            sum(u.sum_outcome_perebroska)                            out_per,
            sum(u.sum_income_convert)                                inc_con,
            sum(u.sum_outcome_convert)                               out_con,
-           sum(u.sum_start + u.sum_income + u.sum_income_perebroska - u.sum_outcome_perebroska + sum_income_convert -
+           sum(u.sum_start + u.sum_income + u.sum_income_proc + u.sum_income_perebroska - u.sum_outcome_perebroska + sum_income_convert -
                sum_outcome_convert - u.sum_outcome - u.sum_expense) s_end
     from (select (sum(case when s.operation_direction = 1 then s.amount else 0 end) -
                   sum(case when s.operation_direction = 0 then s.amount else 0 end)) sum_start,
                  sum(0)                                                              sum_income,
+                 sum(0)                                                              sum_income_proc,
                  sum(0)                                                              sum_outcome,
                  sum(0)                                                              sum_expense,
                  sum(0)                                                              sum_income_perebroska,
@@ -65,8 +67,9 @@ export class MReportsService {
           select sum(0)                                                                                                                                                       sum_start,
                  sum(case
                          when s.operation_direction = 1 and
-                              (s.operation_id = 1 or s.operation_id = 2 or s.operation_id = 10) then s.amount
+                              (s.operation_id = 1 or s.operation_id = 2 ) then s.amount
                          else 0 end)                                                                                                                                          sum_income,
+                 sum(case when s.operation_direction = 1 and s.operation_id = 10 then s.amount else 0 end)                                                                    sum_income_proc,                         
                  sum(case when s.operation_direction = 0 and s.operation_id = 8 then s.amount else 0 end)                                                                     sum_outcome,
                  sum(case when s.operation_direction = 0 and s.operation_id = 3 then s.amount else 0 end)                                                                     sum_expense,
                  sum(case when s.operation_direction = 1 and (s.operation_id = 4 or s.operation_id = 6 or s.operation_id = 7 or s.operation_id = 9) then s.amount else 0 end) sum_income_perebroska,
@@ -105,17 +108,19 @@ export class MReportsService {
     return  this.prismaService.$queryRaw `
     select round(sum(u.sum_start), 2)                                         s_start,
            round(sum(u.sum_income), 2)                                        inc,
+           round(sum(u.sum_income_proc), 2)                                   inc_prc,
            round(sum(u.sum_outcome), 2)                                       out,
            round(sum(u.sum_expense), 2)                                       out_exp,
            round(sum(u.sum_income_perebroska), 2)                             inc_per,
            round(sum(u.sum_outcome_perebroska), 2)                            out_per,
            round(sum(u.sum_income_convert), 2)                                inc_con,
            round(sum(u.sum_outcome_convert), 2)                               out_con,
-           round(sum(u.sum_start + u.sum_income + u.sum_income_perebroska - u.sum_outcome_perebroska + sum_income_convert -
+           round(sum(u.sum_start + u.sum_income + u. sum_income_proc + u.sum_income_perebroska - u.sum_outcome_perebroska + sum_income_convert -
                sum_outcome_convert - u.sum_outcome - u.sum_expense), 2)       s_end
     from (select (sum(case when s.operation_direction = 1 then s.amount else 0 end) -
                   sum(case when s.operation_direction = 0 then s.amount else 0 end)) sum_start,
                  sum(0)                                                              sum_income,
+                 sum(0)                                                              sum_income_proc,
                  sum(0)                                                              sum_outcome,
                  sum(0)                                                              sum_expense,
                  sum(0)                                                              sum_income_perebroska,
@@ -152,8 +157,9 @@ export class MReportsService {
           select sum(0)                                                                                                                                                       sum_start,
                  sum(case
                          when s.operation_direction = 1 and
-                              (s.operation_id = 1 or s.operation_id = 2 or s.operation_id = 10) then s.amount
+                              (s.operation_id = 1 or s.operation_id = 2) then s.amount
                          else 0 end)                                                                                                                                          sum_income,
+                 sum(case when s.operation_direction = 1 and s.operation_id = 10 then s.amount else 0 end)                                                                    sum_income_proc,                         
                  sum(case when s.operation_direction = 0 and s.operation_id = 8 then s.amount else 0 end)                                                                     sum_outcome,
                  sum(case when s.operation_direction = 0 and s.operation_id = 3 then s.amount else 0 end)                                                                     sum_expense,
                  sum(case when s.operation_direction = 1 and (s.operation_id = 4 or s.operation_id = 6 or s.operation_id = 7 or s.operation_id = 9) then s.amount else 0 end) sum_income_perebroska,
@@ -201,18 +207,20 @@ export class MReportsService {
            r.currency_name                                                                                                                                                 curr_name,
            sum(r.sum_start)                                                                                                                                                s_start,
            sum(r.sum_income)                                                                                                                                               inc,
+           sum(r.sum_income_proc)                                                                                                                                          inc_prc,
            sum(r.sum_outcome)                                                                                                                                              out,
            sum(r.sum_expense)                                                                                                                                              out_exp,
            sum(r.sum_income_perebroska)                                                                                                                                    inc_per,
            sum(r.sum_outcome_perebroska)                                                                                                                                   out_per,
            sum(r.sum_income_convert)                                                                                                                                       inc_con,
            sum(r.sum_outcome_convert)                                                                                                                                      out_con,
-           sum(r.sum_start + r.sum_income + r.sum_income_perebroska - r.sum_outcome_perebroska + sum_income_convert - sum_outcome_convert - r.sum_outcome - r.sum_expense) s_end
+           sum(r.sum_start + r.sum_income + r.sum_income_proc + r.sum_income_perebroska - r.sum_outcome_perebroska + sum_income_convert - sum_outcome_convert - r.sum_outcome - r.sum_expense) s_end
     from (select b.name                                                              bank_name,
                  c.name                                                              currency_name,
                  (sum(case when o.operation_direction = 1 then o.amount else 0 end) -
                   sum(case when o.operation_direction = 0 then o.amount else 0 end)) sum_start,
                  sum(0)                                                              sum_income,
+                 sum(0)                                                              sum_income_proc,
                  sum(0)                                                              sum_outcome,
                  sum(0)                                                              sum_expense,
                  sum(0)                                                              sum_income_perebroska,
@@ -232,7 +240,8 @@ export class MReportsService {
           select b.name                                                                                                                                                       bank_name,
                  c.name                                                                                                                                                       currency_name,
                  sum(0)                                                                                                                                                       sum_start,
-                 sum(case when o.operation_direction = 1 and (o.operation_id = 1 or o.operation_id = 2 or o.operation_id = 10) then o.amount else 0 end)                      sum_income,
+                 sum(case when o.operation_direction = 1 and (o.operation_id = 1 or o.operation_id = 2) then o.amount else 0 end)                                             sum_income,
+                 sum(case when o.operation_direction = 1 and o.operation_id = 10 then o.amount else 0 end)                                                                    sum_income_proc,
                  sum(case when o.operation_direction = 0 and o.operation_id = 8 then o.amount else 0 end)                                                                     sum_outcome,
                  sum(case when o.operation_direction = 0 and o.operation_id = 3 then o.amount else 0 end)                                                                     sum_expense,
                  sum(case when o.operation_direction = 1 and (o.operation_id = 4 or o.operation_id = 6 or o.operation_id = 7 or o.operation_id = 9) then o.amount else 0 end) sum_income_perebroska,
@@ -256,7 +265,7 @@ export class MReportsService {
       throw new BadRequestException(['Date not found!'])
     }
 
-    const date_start = new Date(reportParams.date[0]);
+    const date_start = new Date(reportParams.date[0].split('T')[0]);
     const date_end = new Date(reportParams.date[1]);
 
     return this.prismaService.$queryRaw `
