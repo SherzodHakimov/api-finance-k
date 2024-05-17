@@ -7,6 +7,7 @@ import { DataMOperationStatusDto } from '../m-operations/dto/data-m-operation-st
 import { PaginationItemsDto } from '../shared/dto/pagination-items.dto';
 import { PaginationTotalsDto } from '../shared/dto/pagination-totals.dto';
 import { DataMExpenseSecondDto } from './dto/data-m-expense-second.dto';
+import { UpdateMDocTypeDto } from './dto/update-m-doc-type.dto';
 
 
 @Injectable()
@@ -264,5 +265,14 @@ export class MExpensesService {
       data: { status_id: 2 },
     });
     return updateItems.count;
+  }
+
+  async updateDocType(id: number, updateDocTypeDto: UpdateMDocTypeDto): Promise<UpdateMDocTypeDto> {
+   return this.prismaService.dbm_expense.update({
+     data: { payment_doc_id: updateDocTypeDto.payment_doc_id },
+     where: {
+       id: +id,
+     }
+   });
   }
 }

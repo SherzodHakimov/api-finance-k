@@ -20,6 +20,7 @@ import { DataMOperationStatusDto } from '../m-operations/dto/data-m-operation-st
 import { PaginationItemsDto } from '../shared/dto/pagination-items.dto';
 import { ResponseBodyInterceptor } from '../response-body.interceptor';
 import { JwtAuthGuard } from '../m-auth/jwt-auth.guard';
+import { UpdateMDocTypeDto } from './dto/update-m-doc-type.dto';
 
 @Controller('m-expenses')
 @UsePipes(new ValidationPipe())
@@ -122,5 +123,17 @@ export class MExpensesController {
   })
   confirmItems(@Body() arr: number[]) {
     return this.mExpensesService.confirmItems(arr);
+  }
+
+  @Patch('/update/doc-type/:id')
+  @ApiOperation({ summary: 'Update one item by ID' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Success',
+    type: DataMExpenseDto,
+  })
+  @Patch(':id')
+  updateDocType(@Param('id') id: string, @Body() updateMDocTypeDto: UpdateMDocTypeDto) {
+    return this.mExpensesService.updateDocType(+id, updateMDocTypeDto);
   }
 }
