@@ -11,18 +11,19 @@ import { DataMExpenseDto } from '../m-expenses/dto/data-m-expense.dto';
 @Injectable()
 export class MReportsService {
 
-  constructor(private prismaService: PrismaService) {}
+  constructor(private prismaService: PrismaService) {
+  }
 
   async mainLocal(reportParams: BetweenDateDto): Promise<DataMainReportDto> {
 
     if (reportParams.date.length < 2) {
-      throw new BadRequestException(['Date not found!'])
+      throw new BadRequestException(['Date not found!']);
     }
 
     const date_start = new Date(reportParams.date[0]);
     const date_end = new Date(reportParams.date[1]);
 
-    return  this.prismaService.$queryRaw `
+    return this.prismaService.$queryRaw`
     select sum(u.sum_start)                                         s_start,
            sum(u.sum_income)                                        inc,
            sum(u.sum_income_proc)                                   inc_prc,
@@ -93,19 +94,19 @@ export class MReportsService {
                       from dbm_operation o
                       where o.operation_date >= ${date_start}
                         and o.operation_date <= ${date_end}
-                        and o.status_id = 2) r) s) u;`
+                        and o.status_id = 2) r) s) u;`;
   }
 
   async mainConvert(reportParams: BetweenDateDto): Promise<DataMainReportDto> {
 
     if (reportParams.date.length < 2) {
-      throw new BadRequestException(['Date not found!'])
+      throw new BadRequestException(['Date not found!']);
     }
 
     const date_start = new Date(reportParams.date[0]);
     const date_end = new Date(reportParams.date[1]);
 
-    return  this.prismaService.$queryRaw `
+    return this.prismaService.$queryRaw`
     select round(sum(u.sum_start), 2)                                         s_start,
            round(sum(u.sum_income), 2)                                        inc,
            round(sum(u.sum_income_proc), 2)                                   inc_prc,
@@ -190,19 +191,19 @@ export class MReportsService {
                       from dbm_operation o
                           where o.operation_date >= ${date_start}
                             and o.operation_date <= ${date_end}
-                        and o.status_id = 2) r) s) u;`
+                        and o.status_id = 2) r) s) u;`;
   }
 
   async mainAll(reportParams: BetweenDateDto): Promise<DataMainAllReportDto> {
 
     if (reportParams.date.length < 2) {
-      throw new BadRequestException(['Date not found!'])
+      throw new BadRequestException(['Date not found!']);
     }
 
     const date_start = new Date(reportParams.date[0]);
     const date_end = new Date(reportParams.date[1]);
 
-    return  this.prismaService.$queryRaw `
+    return this.prismaService.$queryRaw`
     select r.bank_name,
            r.currency_name                                                                                                                                                 curr_name,
            sum(r.sum_start)                                                                                                                                                s_start,
@@ -256,19 +257,19 @@ export class MReportsService {
             and o.operation_date <= ${date_end}
             and o.status_id = 2
           group by b.name, c.name, a.name) r
-    group by r.bank_name, r.currency_name;`
+    group by r.bank_name, r.currency_name;`;
   }
 
   async mainExpenses(reportParams: BetweenDateDto): Promise<DataMainExpenseReportDto> {
 
     if (reportParams.date.length < 2) {
-      throw new BadRequestException(['Date not found!'])
+      throw new BadRequestException(['Date not found!']);
     }
 
     const date_start = new Date(reportParams.date[0]);
     const date_end = new Date(reportParams.date[1]);
 
-    return this.prismaService.$queryRaw `
+    return this.prismaService.$queryRaw`
     select s.id,
        s.name,
        round(sum(s.amount_local), 2) amount_local,
@@ -300,19 +301,19 @@ export class MReportsService {
                         and ex.operation_date <= ${date_end}
                         and ex.status_id = 2) r) s
           group by s.id, s.name
-          order by s.name;`
+          order by s.name;`;
   }
 
-  async currencyValues(reportParams: BetweenDateDto): Promise<DataMainCurrencyValuesDto>{
+  async currencyValues(reportParams: BetweenDateDto): Promise<DataMainCurrencyValuesDto> {
 
     if (reportParams.date.length < 2) {
-      throw new BadRequestException(['Date not found!'])
+      throw new BadRequestException(['Date not found!']);
     }
 
     // const date_start = new Date(reportParams.date[0]);
     const date_end = new Date(reportParams.date[1]);
 
-    return this.prismaService.$queryRaw `
+    return this.prismaService.$queryRaw`
     select distinct dcv.ids,
                     (lc1.name || ' - ' || lc2.name) currencies,
                     (select cv.buy_value
@@ -333,17 +334,17 @@ export class MReportsService {
                      limit 1) sell_value
     from dbm_currency_value dcv
              left join list_currency lc1 on lc1.id = dcv.currency_1_id
-             left join list_currency lc2 on lc2.id = dcv.currency_2_id`
+             left join list_currency lc2 on lc2.id = dcv.currency_2_id`;
   }
 
-  async expenseList(reportParams: BetweenDateIdDto): Promise<DataMExpenseDto[]>{
+  async expenseList(reportParams: BetweenDateIdDto): Promise<DataMExpenseDto[]> {
 
     if (reportParams.date.length < 2) {
-      throw new BadRequestException(['Date not found!'])
+      throw new BadRequestException(['Date not found!']);
     }
 
     if (!reportParams.id) {
-      throw new BadRequestException(['ID not found!'])
+      throw new BadRequestException(['ID not found!']);
     }
 
     const date_start = new Date(reportParams.date[0]);
@@ -378,41 +379,76 @@ export class MReportsService {
 
     return this.prismaService.dbm_expense.findMany({
       where: {
-        AND: whereObj
+        AND: whereObj,
       },
       include: {
-        list_expense_group: {select: {name: true}},
-        list_expense: {select: {name: true}},
-        set_payment_doc: {select: {name: true}},
-        list_measure: {select: {name: true, name_short: true}},
-        set_account_type: {select: {name: true}},
-        list_currency: {select: {name: true}},
-        set_operation_status: {select: {name: true}},
-        list_payer: {select: {name: true}},
-        dbm_user: {select: {name1: true, name2: true}},
+        list_expense_group: { select: { name: true } },
+        list_expense: { select: { name: true } },
+        set_payment_doc: { select: { name: true } },
+        list_measure: { select: { name: true, name_short: true } },
+        set_account_type: { select: { name: true } },
+        list_currency: { select: { name: true } },
+        set_operation_status: { select: { name: true } },
+        list_payer: { select: { name: true } },
+        dbm_user: { select: { name1: true, name2: true } },
       },
       orderBy: {
-        operation_date: 'asc'
-      }
-    })
+        operation_date: 'asc',
+      },
+    });
 
   }
 
-  async expenseListByGroup(reportParams: BetweenDateIdDto): Promise<DataMainExpenseReportDto> {
+  async expenseListGroup(reportParams: BetweenDateIdDto): Promise<DataMainExpenseReportDto> {
 
     if (reportParams.date.length < 2) {
-      throw new BadRequestException(['Date not found!'])
+      throw new BadRequestException(['Date not found!']);
     }
 
-    if (!reportParams.id) {
-      throw new BadRequestException(['ID not found!'])
-    }
+    // if (!reportParams.id) {
+    //   throw new BadRequestException(['ID not found!'])
+    // }
 
     const date_start = new Date(reportParams.date[0]);
     const date_end = new Date(reportParams.date[1]);
     const id = reportParams.id;
 
-    return this.prismaService.$queryRaw `
+    if (!reportParams.id || reportParams.id === 0) {
+      return this.prismaService.$queryRaw`
+    select s.id,
+       s.name,
+       round(sum(s.amount_local), 2) amount_local,
+       round(sum(s.amount_convert), 2) amount_convert
+          from (select r.expense_group_id                                                                            id,
+                       r.name,
+                       (case when r.kurs IS NULL then r.amount else (r.amount * r.kurs) end)                         amount_local,
+                       (case when r.kurs IS NULL then r.amount / kurs_main else (r.amount * r.kurs) / kurs_main end) amount_convert
+                from (select ex.expense_group_id,
+                             eg.name,
+                             amount,
+                             (select (cv.buy_value + cv.sell_value) / 2 kurs
+                              from dbm_currency_value cv
+                                       left join list_currency lc on lc.id = cv.currency_1_id
+                              where cv.value_date <= ex.operation_date
+                                and cv.currency_1_id = ex.currency_id
+                              order by cv.value_date desc
+                              limit 1) kurs,
+                             (select (cv.buy_value + cv.sell_value) / 2 kurs
+                              from dbm_currency_value cv
+                                       left join list_currency lc on lc.id = cv.currency_1_id
+                              where cv.value_date <= ex.operation_date
+                                and lc.currency_type_id = 2
+                              order by cv.value_date desc
+                              limit 1) kurs_main
+                      from dbm_expense ex
+                               left join list_expense_group eg on eg.id = ex.expense_group_id
+                      where ex.operation_date >= ${date_start}
+                        and ex.operation_date <= ${date_end}
+                        and ex.status_id = 2) r) s
+          group by s.id, s.name
+          order by s.name;`;
+    } else {
+      return this.prismaService.$queryRaw`
     select s.id,
        s.name,
        round(sum(s.amount_local), 2) amount_local,
@@ -445,6 +481,7 @@ export class MReportsService {
                         and ex.payer_id = ${id}
                         and ex.status_id = 2) r) s
           group by s.id, s.name
-          order by s.name;`
+          order by s.name;`;
+    }
   }
 }

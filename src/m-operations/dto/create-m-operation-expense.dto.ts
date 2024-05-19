@@ -1,4 +1,4 @@
-import { IsNumber, IsOptional, IsString, MaxLength } from 'class-validator';
+import { IsNumber, IsObject, IsOptional, IsString, MaxLength } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateMOperationExpenseDto {
@@ -97,5 +97,20 @@ export class CreateMOperationExpenseDto {
   })
   operation_id: number;
 
-
+  @IsObject()
+  @IsOptional()
+  @ApiPropertyOptional({
+    example: {
+      names: ['#name'],
+      expense_group_id: 1,
+      expense_id: 1,
+      payer_id: 1
+    }
+  })
+  tags: {
+    names: string[]
+    expense_group_id: number
+    expense_id: number
+    payer_id: number
+  }
 }

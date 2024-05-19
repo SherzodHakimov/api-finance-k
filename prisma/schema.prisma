@@ -170,6 +170,7 @@ model list_expense {
   name               String             @db.VarChar(100)
   expense_group_id   Int
   status_id          Int
+  dba_tags           dba_tags[]
   dbm_expense        dbm_expense[]
   list_expense_group list_expense_group @relation(fields: [expense_group_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   set_list_status    set_list_status    @relation(fields: [status_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -180,6 +181,7 @@ model list_expense {
 model list_expense_group {
   id           Int            @id @default(autoincrement())
   name         String         @db.VarChar(100)
+  dba_tags     dba_tags[]
   dbm_expense  dbm_expense[]
   list_expense list_expense[]
 
@@ -199,6 +201,7 @@ model list_payer {
   id              Int             @id @default(autoincrement())
   name            String          @db.VarChar(100)
   status_id       Int
+  dba_tags        dba_tags[]
   dbm_expense     dbm_expense[]
   set_list_status set_list_status @relation(fields: [status_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
@@ -289,6 +292,28 @@ model set_user_status {
   id       Int        @id @default(autoincrement())
   name     String     @db.VarChar(100)
   dbm_user dbm_user[]
+
+  @@index([id])
+}
+
+model dba_tags {
+  id                 Int                @id @default(autoincrement())
+  tag_id             Int
+  expense_group_id   Int
+  expense_id         Int
+  payer_id           Int
+  list_expense_group list_expense_group @relation(fields: [expense_group_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  list_expense       list_expense       @relation(fields: [expense_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  list_payer         list_payer         @relation(fields: [payer_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  dbm_tags           dbm_tags           @relation(fields: [tag_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([id, tag_id, expense_group_id, expense_id, payer_id])
+}
+
+model dbm_tags {
+  id       Int        @id @default(autoincrement())
+  name     String     @db.VarChar(100)
+  dba_tags dba_tags[]
 
   @@index([id])
 }

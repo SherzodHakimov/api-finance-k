@@ -192,4 +192,16 @@ export class MOperationsController {
   confirmItems(@Body() arr: number[]) {
     return this.mOperationsService.confirmItems(arr);
   }
+
+
+  @Post('/get-tags')
+  @ApiOperation({ summary: 'Get tags array' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Success',
+    type: String,
+  })
+  getTags(@Body() str: {name: string}) {
+    return this.mOperationsService.getTags(str);
+  }
 }

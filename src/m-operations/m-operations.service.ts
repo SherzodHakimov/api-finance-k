@@ -227,7 +227,7 @@ export class MOperationsService {
 
   async updateStatus(id: number, updateMOperationStatusDto: UpdateMOperationStatusDto): Promise<DataMOperationStatusDto> {
 
-    let contr_id: number | null = null
+    let contr_id: number | null = null;
     const [expense, oper_in, oper_out] = await this.prismaService.$transaction([
       this.prismaService.dba_expense_operation.findFirst({
         where: { outcome_operation_id: +id },
@@ -240,7 +240,7 @@ export class MOperationsService {
       }),
     ]);
 
-    if (expense){
+    if (expense) {
       contr_id = expense.income_operation_id;
       await this.prismaService.dbm_expense.update({
         where: { id: expense.income_operation_id },
@@ -248,7 +248,7 @@ export class MOperationsService {
       });
     }
 
-    if(oper_in) {
+    if (oper_in) {
       contr_id = oper_in.outcome_operation_id;
       await this.prismaService.dbm_operation.update({
         where: { id: oper_in.outcome_operation_id },
@@ -256,7 +256,7 @@ export class MOperationsService {
       });
     }
 
-    if (oper_out){
+    if (oper_out) {
       contr_id = oper_out.income_operation_id;
       await this.prismaService.dbm_operation.update({
         where: { id: oper_out.income_operation_id },
@@ -274,20 +274,20 @@ export class MOperationsService {
       },
     });
 
-    return Object.assign(execute_update, {contr_id});
+    return Object.assign(execute_update, { contr_id });
   }
 
   async isHasAnyOperation(checkMOperationInitDto: DataToCheckMOperationInitDto): Promise<boolean> {
     const r = await this.prismaService.dbm_operation.findFirst({
       where: {
         AND: [
-          {account_type_id: checkMOperationInitDto.account_type_id},
-          {account_id: checkMOperationInitDto.account_id},
+          { account_type_id: checkMOperationInitDto.account_type_id },
+          { account_id: checkMOperationInitDto.account_id },
         ],
         OR: [
-          {status_id: 1},
-          {status_id: 2}
-        ]
+          { status_id: 1 },
+          { status_id: 2 },
+        ],
       },
     });
     return !!r;
@@ -491,7 +491,50 @@ export class MOperationsService {
     ];
   }
 
+  async createTags(tagsArr: string[]): Promise<any> {
+
+    const newTags: { name: string }[] = [];
+    tagsArr.forEach((el) => {
+      newTags.push({ name: el });
+    });
+
+    return this.prismaService.dbm_tags.createMany({
+      data: newTags
+    });
+  }
+
   async createExpense(createMOperationExpenseDto: CreateMOperationExpenseDto): Promise<[DataMOperationDoubleDts, DataMOperationDoubleExpenseDto]> {
+
+    //TAGS
+    if (createMOperationExpenseDto.tags) {
+      const tags = await this.prismaService.dbm_tags.findMany({
+        select: {
+          id: true,
+          name: true,
+        },
+        where: {
+          name: {
+            in: createMOperationExpenseDto.tags.names,
+          },
+        },
+      });
+
+      if (tags.length > 0) {
+
+        const filteredTags: string[] = [];
+        tags.forEach(tag => {
+          filteredTags.push(tag.name);
+        });
+        createMOperationExpenseDto.tags.names = createMOperationExpenseDto.tags.names.filter(f => !filteredTags.includes(f));
+
+        const createdTags = await this.createTags(createMOperationExpenseDto.tags.names);
+        console.log(createdTags);
+      } else {
+        const createdTags = await this.createTags(createMOperationExpenseDto.tags.names);
+        console.log(createdTags);
+      }
+    }
+
 
     // PREPARE DATA
     const dataUni = {
@@ -606,37 +649,37 @@ export class MOperationsService {
 
     const [expense, oper_in, oper_out] = await this.prismaService.$transaction([
       this.prismaService.dba_expense_operation.findMany({
-        where: { outcome_operation_id: {in: arr} },
+        where: { outcome_operation_id: { in: arr } },
       }),
       this.prismaService.dba_transfer_operation.findMany({
-        where: { income_operation_id: {in: arr} },
+        where: { income_operation_id: { in: arr } },
       }),
       this.prismaService.dba_transfer_operation.findMany({
-        where: { outcome_operation_id: {in: arr} },
+        where: { outcome_operation_id: { in: arr } },
       }),
     ]);
 
 
-    if (expense.length > 0){
-      const contr_arr_expense = [...expense.map(item => item.income_operation_id)]
+    if (expense.length > 0) {
+      const contr_arr_expense = [...expense.map(item => item.income_operation_id)];
       await this.prismaService.dbm_expense.updateMany({
-        where: { id: {in: contr_arr_expense } },
+        where: { id: { in: contr_arr_expense } },
         data: { status_id: 2 },
       });
     }
 
-    if(oper_in.length > 0) {
-      const contr_arr_oper_in = [...oper_in.map(item => item.outcome_operation_id)]
+    if (oper_in.length > 0) {
+      const contr_arr_oper_in = [...oper_in.map(item => item.outcome_operation_id)];
       await this.prismaService.dbm_operation.updateMany({
-        where: { id: {in: contr_arr_oper_in } },
+        where: { id: { in: contr_arr_oper_in } },
         data: { status_id: 2 },
       });
     }
 
-    if (oper_out.length > 0){
-      const contr_arr_oper_out = [...oper_out.map(item => item.income_operation_id)]
+    if (oper_out.length > 0) {
+      const contr_arr_oper_out = [...oper_out.map(item => item.income_operation_id)];
       await this.prismaService.dbm_operation.updateMany({
-        where: { id: {in: contr_arr_oper_out } },
+        where: { id: { in: contr_arr_oper_out } },
         data: { status_id: 2 },
       });
     }
@@ -650,5 +693,23 @@ export class MOperationsService {
       data: { status_id: 2 },
     });
     return updateItems.count;
+  }
+
+  async getTags(str: {name: string}): Promise<string[]> {
+    const tags = await this.prismaService.dbm_tags.findMany({
+      select: {
+        name: true
+      },
+      where: {
+        name: {
+          contains: str.name ,
+          mode: 'insensitive'
+        },
+      }
+    })
+
+    return tags.map(r => {
+      return r.name
+    });
   }
 }

@@ -73,10 +73,10 @@ export class MReportsController {
     return this.mReportsService.expenseList(reportParams);
   }
 
-  @Post('/expense-group-list')
+  @Post('/expense-list-group')
   @ApiOperation({ summary: 'Get report' })
   @ApiResponse({ status: HttpStatus.OK, description: "Success", type: DataMainExpenseReportDto })
-  expenseListByGroup(@Body() reportParams: BetweenDateIdDto) {
-    return this.mReportsService.expenseListByGroup(reportParams);
+  expenseListGroup(@Body() reportParams: BetweenDateIdDto) {
+    return this.mReportsService.expenseListGroup(reportParams);
   }
 }

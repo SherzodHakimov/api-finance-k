@@ -30,11 +30,18 @@ import { JwtAuthGuard } from '../m-auth/jwt-auth.guard';
 export class MDashboardController {
   constructor(private readonly mDashboardService: MDashboardService) {}
 
-  @Post('/expenses-currency-type-converted')
+  @Post('/expense-group-expense')
   @ApiOperation({ summary: 'Get report' })
   @ApiResponse({ status: HttpStatus.OK, description: "Success", type: DataMainExpenseReportDto })
-  expensesByCurrencyTypeConverted(@Body() reportParams: BetweenDateDto) {
-    return this.mDashboardService.expensesByCurrencyTypeConverted(reportParams);
+  expenseListByExpenseGroup(@Body() reportParams: BetweenDateDto) {
+    return this.mDashboardService.expenseListByExpenseGroup(reportParams);
+  }
+
+  @Post('/expense-group-payer')
+  @ApiOperation({ summary: 'Get report' })
+  @ApiResponse({ status: HttpStatus.OK, description: "Success", type: DataMainExpenseReportDto })
+  expenseListByPayer(@Body() reportParams: BetweenDateDto) {
+    return this.mDashboardService.expenseListByPayer(reportParams);
   }
 
   @Get('/amount-currency-type')
@@ -44,17 +51,11 @@ export class MDashboardController {
     return this.mDashboardService.amountByCurrencyType();
   }
 
-  @Get('/amount-account-currency-type')
+  @Get('/amount-account-type')
   @ApiOperation({ summary: 'Get dashboard' })
   @ApiResponse({ status: HttpStatus.OK, description: "Success", type: DataAmountAccountTypeDto })
-  amountByAccountCurrencyType() {
-    return this.mDashboardService.amountByAccountCurrencyType();
+  amountByAccountType() {
+    return this.mDashboardService.amountByAccountType();
   }
 
-  @Get('/amount-account-type-converted')
-  @ApiOperation({ summary: 'Get dashboard' })
-  @ApiResponse({ status: HttpStatus.OK, description: "Success", type: DataAmountAccountTypeCurrencyDto })
-  amountByAccountTypeConverted() {
-    return this.mDashboardService.amountByAccountTypeConverted();
-  }
 }
