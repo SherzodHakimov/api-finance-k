@@ -1,6 +1,6 @@
 import {
   Body,
-  Controller,
+  Controller, Get,
   HttpStatus,
   Post,
   UseGuards,
@@ -78,5 +78,12 @@ export class MReportsController {
   @ApiResponse({ status: HttpStatus.OK, description: "Success", type: DataMainExpenseReportDto })
   expenseListGroup(@Body() reportParams: BetweenDateIdDto) {
     return this.mReportsService.expenseListGroup(reportParams);
+  }
+
+  @Get('/check-currency')
+  @ApiOperation({ summary: 'Check currency for report' })
+  @ApiResponse({ status: HttpStatus.OK, description: "Success", type: Array })
+  checkCurrency() {
+    return this.mReportsService.checkCurrency();
   }
 }

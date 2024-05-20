@@ -19,9 +19,10 @@ export class MAuthService {
   constructor(
     private prismaService: PrismaService,
     private jwtService: JwtService,
-  ) {}
+  ) {
+  }
 
-  private generateToken(user: DataMUserDto, actions: number[]){
+  private generateToken(user: DataMUserDto, actions: number[]) {
     const payload: DataUserJwtDto = {
       id: user.id,
       login: user.login,
@@ -35,43 +36,55 @@ export class MAuthService {
 
   }
 
-  async login(paramMAuthDto: ParamMAuthDto): Promise<DataTokenDto>{
+  async login(paramMAuthDto: ParamMAuthDto): Promise<DataTokenDto> {
 
     const user = await this.prismaService.dbm_user.findFirst({
       where: {
-        login: paramMAuthDto.login
+        login: paramMAuthDto.login,
       },
       include: {
         set_user_role: { select: { name: true } },
         set_user_status: { select: { name: true } },
-      }
-    })
+      },
+    });
 
-    if (!user) throw new NotFoundException(['User not found!'])
-    if (user.status_id !== 1) throw new ForbiddenException(['User blocked!'])
+    if (!user) throw new NotFoundException(['User not found!']);
+    if (user.status_id !== 1) throw new ForbiddenException(['User blocked!']);
 
     const passwordEquals = await bcrypt.compare(paramMAuthDto.password, user.password);
-    if (!passwordEquals) throw new BadRequestException(['Password wrong!'])
+    if (!passwordEquals) throw new BadRequestException(['Password wrong!']);
 
-    const roleAction = await this.prismaService.dba_user_roles.findMany({
-      where: {
-        user_role: user.user_role
+    const roleActionArr = [];
+    if (user.user_role) {
+      const roleAction = await this.prismaService.dba_user_roles.findMany({
+        where: {
+          user_role: user.user_role,
+        },
+        select: {
+          action_id: true,
+        },
+      });
+
+      roleAction.forEach(el => {
+        roleActionArr.push(el.action_id);
+      });
+
+    }
+
+    await this.prismaService.dbm_user.update({
+      data: {
+        last_auth_at: new Date(),
       },
-      select:{
-        action_id: true
-      }
-    })
-
-    const roleActionArr = []
-    roleAction.forEach(el => {
-      roleActionArr.push(el.action_id);
-    })
+      where: {
+        id: user.id,
+      },
+    });
 
     return this.generateToken(user, roleActionArr);
 
   }
 
-  async update(request: Request): Promise<DataTokenDto>{
+  async update(request: Request): Promise<DataTokenDto> {
 
     try {
       const authHeader = request.headers['authorization'];
@@ -79,7 +92,7 @@ export class MAuthService {
       const token = authHeader.split(' ')[1];
 
       if (bearerToken !== 'Bearer' || !token) {
-        throw new UnauthorizedException({message: 'Unauthorized'});
+        throw new UnauthorizedException({ message: 'Unauthorized' });
       }
 
       const payload = this.jwtService.decode(token);
@@ -88,8 +101,8 @@ export class MAuthService {
 
       return { token: this.jwtService.sign(payload) };
 
-    } catch (e){
-      throw new UnauthorizedException({message: 'Unauthorized'});
+    } catch (e) {
+      throw new UnauthorizedException({ message: 'Unauthorized' });
     }
 
   }

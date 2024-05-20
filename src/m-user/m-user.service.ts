@@ -18,7 +18,9 @@ export class MUserService {
     if (u) throw new ConflictException(['Duplicate login not allowed!']);
 
     createMUserDto.password = await bcrypt.hash(createMUserDto.password, 10);
-
+    createMUserDto.login = createMUserDto.login.trim();
+    createMUserDto.name1 = createMUserDto.name1.trim()
+    createMUserDto.name2 = createMUserDto.name2.trim()
     return this.prismaService.dbm_user.create({
       data: createMUserDto,
       select: {
@@ -82,6 +84,9 @@ export class MUserService {
     }
 
 
+    updateMUserDto.login = updateMUserDto.login.trim()
+    updateMUserDto.name1 = updateMUserDto.name1.trim()
+    updateMUserDto.name2 = updateMUserDto.name2.trim()
     return this.prismaService.dbm_user.update({
       where: { id: +id },
       data: updateMUserDto.password

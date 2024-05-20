@@ -11,6 +11,7 @@ export class MListCurrencyService {
 
   async create(createMListCurrencyDto: CreateMListCurrencyDto): Promise<DataMListCurrencyDto> {
 
+    createMListCurrencyDto.name = createMListCurrencyDto.name.trim();
     if (createMListCurrencyDto.currency_type_id === 1 || createMListCurrencyDto.currency_type_id === 2) {
       const checkLocal = await this.prismaService.list_currency.findFirst({
         where: { currency_type_id: createMListCurrencyDto.currency_type_id },
@@ -47,6 +48,7 @@ export class MListCurrencyService {
 
   async update(id: number, updateMListCurrencyDto: UpdateMListCurrencyDto): Promise<DataMListCurrencyDto> {
 
+    updateMListCurrencyDto.name = updateMListCurrencyDto.name.trim();
     if (updateMListCurrencyDto.currency_type_id === 1 || updateMListCurrencyDto.currency_type_id === 2) {
       const checkLocal = await this.prismaService.list_currency.findFirst({
         where: { currency_type_id: updateMListCurrencyDto.currency_type_id },

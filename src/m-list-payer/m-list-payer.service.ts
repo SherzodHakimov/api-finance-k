@@ -9,6 +9,7 @@ export class MListPayerService {
   constructor(private prismaService: PrismaService) {}
   
    async create(createMListPayerDto: CreateMListPayerDto): Promise<DataMListPayerDto> {
+    createMListPayerDto.name = createMListPayerDto.name.trim();
     return this.prismaService.list_payer.create({
       data: createMListPayerDto,
       include: {
@@ -22,7 +23,7 @@ export class MListPayerService {
       include: {
         set_list_status: { select: { name: true } }
       },
-      orderBy: { id: 'asc' }
+      orderBy: { name: 'asc' }
     });
   }
 
@@ -36,6 +37,7 @@ export class MListPayerService {
   }
 
   async update(id: number, updateMListPayerDto: UpdateMListPayerDto): Promise<DataMListPayerDto> {
+    updateMListPayerDto.name = updateMListPayerDto.name.trim();
     return this.prismaService.list_payer.update({
       where: { id: +id },
       data: updateMListPayerDto,

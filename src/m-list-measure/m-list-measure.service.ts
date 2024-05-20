@@ -10,6 +10,8 @@ export class MListMeasureService {
   constructor(private prismaService: PrismaService) {}
   
   async create(createMListMeasureDto: CreateMListMeasureDto): Promise<DataMListMeasureDto> {
+    createMListMeasureDto.name = createMListMeasureDto.name.trim();
+    createMListMeasureDto.name_short = createMListMeasureDto.name_short.trim();
     return this.prismaService.list_measure.create({
       data: createMListMeasureDto
     });
@@ -17,7 +19,7 @@ export class MListMeasureService {
 
   async findAll(): Promise<DataMListMeasureDto[]> {
     return this.prismaService.list_measure.findMany({
-      orderBy: { id: 'asc' }
+      orderBy: { name: 'asc' }
     });
   }
 
@@ -28,6 +30,8 @@ export class MListMeasureService {
   }
 
   async update(id: number, updateMListMeasureDto: UpdateMListMeasureDto): Promise<DataMListMeasureDto> {
+    updateMListMeasureDto.name = updateMListMeasureDto.name.trim();
+    updateMListMeasureDto.name_short = updateMListMeasureDto.name_short.trim();
     return this.prismaService.list_measure.update({
       where: { id: +id },
       data: updateMListMeasureDto

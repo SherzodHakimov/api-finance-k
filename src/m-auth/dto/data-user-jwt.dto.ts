@@ -24,7 +24,7 @@ export class DataUserJwtDto {
   @ApiProperty({
     example: 1,
   })
-  user_role: number
+  user_role?: number | null
 
   @ApiProperty({
     example: [1 , 2 , 3 ],

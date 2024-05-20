@@ -204,4 +204,16 @@ export class MOperationsController {
   getTags(@Body() str: {name: string}) {
     return this.mOperationsService.getTags(str);
   }
+
+
+  @Get('/get-operation/:id')
+  @ApiOperation({ summary: 'Change operation status by ID' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Success',
+    type: DataMOperationDto,
+  })
+  getOperationInfo(@Param('id') id: string) {
+    return this.mOperationsService.getOperationInfo(+id);
+  }
 }

@@ -10,6 +10,8 @@ export class MListBankService {
   constructor(private prismaService: PrismaService) {}
   
   async create(createMListsBankDto: CreateMListBankDto): Promise<DataMListBankDto> {
+
+    createMListsBankDto.name = createMListsBankDto.name.trim();
     return this.prismaService.list_bank.create({
       data: createMListsBankDto
     });
@@ -17,7 +19,7 @@ export class MListBankService {
 
   async findAll(): Promise<DataMListBankDto[]> {
     return this.prismaService.list_bank.findMany({
-      orderBy: { id: 'asc' }
+      orderBy: { name: 'asc' }
     });
   }
 
@@ -28,6 +30,8 @@ export class MListBankService {
   }
 
   async update(id: number, updateMListsBankDto: UpdateMListBankDto): Promise<DataMListBankDto> {
+
+    updateMListsBankDto.name = updateMListsBankDto.name.trim();
     return this.prismaService.list_bank.update({
       where: { id: +id },
       data: updateMListsBankDto

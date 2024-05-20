@@ -13,6 +13,7 @@ export class MListExpenseService {
   constructor(private prismaService: PrismaService) {}
   
   async create(createMListExpenseDto: CreateMListExpenseDto): Promise<DataMListExpenseDto> {
+    createMListExpenseDto.name = createMListExpenseDto.name.trim();
     return this.prismaService.list_expense.create({
       data: createMListExpenseDto,
       include: {
@@ -43,6 +44,7 @@ export class MListExpenseService {
   }
 
   async update(id: number, updateMListExpenseDto: UpdateMListExpenseDto): Promise<DataMListExpenseDto> {
+    updateMListExpenseDto.name = updateMListExpenseDto.name.trim()
     return this.prismaService.list_expense.update({
       where: { id: +id },
       data: updateMListExpenseDto,

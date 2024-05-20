@@ -712,4 +712,27 @@ export class MOperationsService {
       return r.name
     });
   }
+
+  async getOperationInfo(id: number){
+  const operation = await this.prismaService.dba_expense_operation.findFirst({
+      where: {
+        income_operation_id: +id
+      }
+    })
+
+    return this.prismaService.dbm_operation.findFirst({
+      where: {
+        id: operation.outcome_operation_id
+      },
+      include: {
+        set_operation: { select: { name: true } },
+        list_account: { select: { name: true } },
+        set_account_type: { select: { name: true } },
+        list_currency: { select: { name: true } },
+        set_operation_status: { select: { name: true } },
+        dbm_user: { select: { name1: true, name2: true } },
+      }
+    })
+
+  }
 }

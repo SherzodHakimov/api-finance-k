@@ -484,4 +484,94 @@ export class MReportsService {
           order by s.name;`;
     }
   }
+
+  async checkCurrency(): Promise<string[] | null>{
+
+  // GET DISTINCT CURRENCY ID FROM EXPENSE OPERATION
+  const ex = await this.prismaService.dbm_expense.findMany({
+      select: {
+        currency_id: true
+      },
+      distinct: ['currency_id'],
+      where: {
+        status_id: {
+          in: [1, 2]
+        }
+      }
+    })
+
+    // GET DISTINCT CURRENCY ID FROM OPERATION
+    const op = await this.prismaService.dbm_operation.findMany({
+      select: {
+        currency_id: true
+      },
+      distinct: ['currency_id'],
+      where: {
+        status_id: {
+          in: [1, 2]
+        }
+      }
+    })
+
+    // GET DISTINCT CURRENCY ID FROM CURRENCY VALUES
+    const cr1 = await this.prismaService.dbm_currency_value.findMany({
+      select: {
+        currency_1_id: true
+      },
+      distinct: ['currency_1_id']
+    })
+    const cr2 = await this.prismaService.dbm_currency_value.findMany({
+      select: {
+        currency_2_id: true
+      },
+      distinct: ['currency_2_id']
+    })
+
+    // GET FROM OPERATION AND EXPENSE CURRENCY
+    const operation = []
+    ex.forEach(el => {
+      operation.push(el.currency_id)
+    })
+    op.forEach(el => {
+      operation.push(el.currency_id)
+    })
+    const uniqueOperation = operation.filter((item, index) => operation.indexOf(item) === index);
+
+    // GET CURRENCY FROM CURRENCY VALUES
+    const currency = []
+    cr1.forEach(el => {
+      currency.push(el.currency_1_id)
+    })
+    cr2.forEach(el => {
+      currency.push(el.currency_2_id)
+    })
+
+    // REMOVE DUPLICATE
+    const uniqueCurrency = currency.filter((item, index) => currency.indexOf(item) === index);
+
+    // COMPARE CURRENCY IDS
+    const findCurrency = uniqueOperation.filter(item => !uniqueCurrency.includes(item))
+
+    if (findCurrency.length > 0){
+      // IF FIND NEW CURRENCY GET NAMES
+      const currencyNames = await this.prismaService.list_currency.findMany({
+        select: {
+          name: true
+        },
+        where: {
+          id: {
+            in: findCurrency
+          }
+        }
+      });
+      const response = []
+      currencyNames.forEach(el => {
+        response.push(el.name)
+      })
+      return response;
+    } else {
+      return null
+    }
+  }
+
 }
