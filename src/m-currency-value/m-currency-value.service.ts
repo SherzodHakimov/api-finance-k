@@ -62,7 +62,7 @@ export class MCurrencyValueService {
         list_currency_dbm_currency_value_currency_2_idTolist_currency: {select: {name: true}},
         dbm_user: {select: {name1: true, name2: true}},
       },
-      orderBy: { id: 'desc'}
+      orderBy: { value_date: 'desc'}
       });
 
     return this.configResponseData(query);

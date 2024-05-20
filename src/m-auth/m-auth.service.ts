@@ -3,7 +3,6 @@ import {
   ForbiddenException,
   Injectable,
   NotFoundException,
-  Req,
   UnauthorizedException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma-service';
