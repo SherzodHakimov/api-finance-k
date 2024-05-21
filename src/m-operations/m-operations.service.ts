@@ -713,8 +713,9 @@ export class MOperationsService {
     });
   }
 
-  async getOperationInfo(id: number){
-  const operation = await this.prismaService.dba_expense_operation.findFirst({
+  async getOperationOutComeInfo(id: number){
+
+    const operation = await this.prismaService.dba_transfer_operation.findFirst({
       where: {
         income_operation_id: +id
       }
@@ -730,6 +731,55 @@ export class MOperationsService {
         set_account_type: { select: { name: true } },
         list_currency: { select: { name: true } },
         set_operation_status: { select: { name: true } },
+        dbm_user: { select: { name1: true, name2: true } },
+      }
+    })
+
+  }
+
+  async getOperationIncomeInfo(id: number){
+    const operation = await this.prismaService.dba_transfer_operation.findFirst({
+      where: {
+        outcome_operation_id: +id
+      }
+    })
+
+    return this.prismaService.dbm_operation.findFirst({
+      where: {
+        id: operation.income_operation_id
+      },
+      include: {
+        set_operation: { select: { name: true } },
+        list_account: { select: { name: true } },
+        set_account_type: { select: { name: true } },
+        list_currency: { select: { name: true } },
+        set_operation_status: { select: { name: true } },
+        dbm_user: { select: { name1: true, name2: true } },
+      }
+    })
+
+  }
+
+  async getOperationExpenseInfo(id: number){
+    const operation = await this.prismaService.dba_expense_operation.findFirst({
+      where: {
+        outcome_operation_id: +id
+      }
+    })
+
+    return this.prismaService.dbm_expense.findFirst({
+      where: {
+        id: operation.income_operation_id
+      },
+      include: {
+        list_expense_group: { select: { name: true } },
+        list_expense: { select: { name: true } },
+        set_payment_doc: { select: { name: true } },
+        list_measure: { select: { name: true, name_short: true } },
+        set_account_type: { select: { name: true } },
+        list_currency: { select: { name: true } },
+        set_operation_status: { select: { name: true } },
+        list_payer: { select: { name: true } },
         dbm_user: { select: { name1: true, name2: true } },
       }
     })

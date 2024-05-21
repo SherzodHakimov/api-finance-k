@@ -28,6 +28,7 @@ import { CreateMOperationExpenseDto } from './dto/create-m-operation-expense.dto
 import { AccountAmountDto } from './dto/data-account-amount.dto';
 import { ResponseBodyInterceptor } from '../response-body.interceptor';
 import { JwtAuthGuard } from '../m-auth/jwt-auth.guard';
+import { DataMOperationExpenseDto } from './dto/data-m-operation-expense.dto';
 
 @Controller('m-operations')
 @UsePipes(new ValidationPipe())
@@ -206,14 +207,36 @@ export class MOperationsController {
   }
 
 
-  @Get('/get-operation/:id')
+  @Get('/get-outcome-operation/:id')
   @ApiOperation({ summary: 'Change operation status by ID' })
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Success',
     type: DataMOperationDto,
   })
-  getOperationInfo(@Param('id') id: string) {
-    return this.mOperationsService.getOperationInfo(+id);
+  getOperationOutComeInfo(@Param('id') id: string) {
+    return this.mOperationsService.getOperationOutComeInfo(+id);
+  }
+
+  @Get('/get-income-operation/:id')
+  @ApiOperation({ summary: 'Change operation status by ID' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Success',
+    type: DataMOperationDto,
+  })
+  getOperationIncomeInfo(@Param('id') id: string) {
+    return this.mOperationsService.getOperationIncomeInfo(+id);
+  }
+
+  @Get('/get-expense-operation/:id')
+  @ApiOperation({ summary: 'Change operation status by ID' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Success',
+    type: DataMOperationExpenseDto,
+  })
+  getOperationExpenseInfo(@Param('id') id: string) {
+    return this.mOperationsService.getOperationExpenseInfo(+id);
   }
 }
