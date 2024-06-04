@@ -10,6 +10,12 @@ export class MDashboardService {
 
   constructor(private prismaService: PrismaService) {}
 
+  configDate(reportDates: string[]): any[]{
+    const date_start = new Date(reportDates[0].split('T')[0]);
+    const date_end = new Date(new Date(reportDates[1].split('T')[0]).getTime() + 86400000 - 1);
+    return [date_start, date_end];
+  }
+
   // EXPENSE LIST GROUPED BY EXPENSE GROUP AND WITH CONVERTED VALUE
   async expenseListByExpenseGroup(reportParams: BetweenDateDto): Promise<DataMainExpenseReportDto> {
 
@@ -17,8 +23,9 @@ export class MDashboardService {
       throw new BadRequestException(['Date not found!'])
     }
 
-    const date_start = new Date(reportParams.date[0]);
-    const date_end = new Date(reportParams.date[1]);
+    const dateParams = this.configDate(reportParams.date);
+    const date_start = dateParams[0];
+    const date_end = dateParams[1];
 
     return this.prismaService.$queryRaw `
     select 
@@ -63,43 +70,44 @@ export class MDashboardService {
       throw new BadRequestException(['Date not found!'])
     }
 
-    const date_start = new Date(reportParams.date[0]);
-    const date_end = new Date(reportParams.date[1]);
+    const dateParams = this.configDate(reportParams.date);
+    const date_start = dateParams[0];
+    const date_end = dateParams[1];
 
     return this.prismaService.$queryRaw `
-select
-       s.id,
-       s.name,
-       round(sum(s.amount_local), 2) amount_local,
-       round(sum(s.amount_convert), 2) amount_convert
-          from (select r.payer_id                                                                            id,
-                       r.name,
-                       (case when r.kurs IS NULL then r.amount else (r.amount * r.kurs) end)                         amount_local,
-                       (case when r.kurs IS NULL then r.amount / kurs_main else (r.amount * r.kurs) / kurs_main end) amount_convert
-                from (select ex.payer_id,
-                             eg.name,
-                             amount,
-                             (select (cv.buy_value + cv.sell_value) / 2 kurs
-                              from dbm_currency_value cv
-                                       left join list_currency lc on lc.id = cv.currency_1_id
-                              where cv.value_date <= ex.operation_date
-                                and cv.currency_1_id = ex.currency_id
-                              order by cv.value_date desc
-                              limit 1) kurs,
-                             (select (cv.buy_value + cv.sell_value) / 2 kurs
-                              from dbm_currency_value cv
-                                       left join list_currency lc on lc.id = cv.currency_1_id
-                              where cv.value_date <= ex.operation_date
-                                and lc.currency_type_id = 2
-                              order by cv.value_date desc
-                              limit 1) kurs_main
-                      from dbm_expense ex
-                               left join list_payer eg on eg.id = ex.payer_id
-                      where ex.operation_date >= ${date_start}
-                        and ex.operation_date <= ${date_end}
-                        and ex.status_id = 2) r) s
-          group by s.id, s.name
-          order by s.name;`
+    select
+           s.id,
+           s.name,
+           round(sum(s.amount_local), 2) amount_local,
+           round(sum(s.amount_convert), 2) amount_convert
+              from (select r.payer_id                                                                            id,
+                           r.name,
+                           (case when r.kurs IS NULL then r.amount else (r.amount * r.kurs) end)                         amount_local,
+                           (case when r.kurs IS NULL then r.amount / kurs_main else (r.amount * r.kurs) / kurs_main end) amount_convert
+                    from (select ex.payer_id,
+                                 eg.name,
+                                 amount,
+                                 (select (cv.buy_value + cv.sell_value) / 2 kurs
+                                  from dbm_currency_value cv
+                                           left join list_currency lc on lc.id = cv.currency_1_id
+                                  where cv.value_date <= ex.operation_date
+                                    and cv.currency_1_id = ex.currency_id
+                                  order by cv.value_date desc
+                                  limit 1) kurs,
+                                 (select (cv.buy_value + cv.sell_value) / 2 kurs
+                                  from dbm_currency_value cv
+                                           left join list_currency lc on lc.id = cv.currency_1_id
+                                  where cv.value_date <= ex.operation_date
+                                    and lc.currency_type_id = 2
+                                  order by cv.value_date desc
+                                  limit 1) kurs_main
+                          from dbm_expense ex
+                                   left join list_payer eg on eg.id = ex.payer_id
+                          where ex.operation_date >= ${date_start}
+                            and ex.operation_date <= ${date_end}
+                            and ex.status_id = 2) r) s
+              group by s.id, s.name
+              order by s.name;`
   }
 
   // SUM AMOUNT BY CURRENCY

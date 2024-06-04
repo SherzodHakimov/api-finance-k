@@ -14,14 +14,21 @@ export class MReportsService {
   constructor(private prismaService: PrismaService) {
   }
 
+  configDate(reportDates: string[]): any[]{
+    const date_start = new Date(reportDates[0].split('T')[0]);
+    const date_end = new Date(new Date(reportDates[1].split('T')[0]).getTime() + 86400000 - 1);
+    return [date_start, date_end];
+  }
+
   async mainLocal(reportParams: BetweenDateDto): Promise<DataMainReportDto> {
 
     if (reportParams.date.length < 2) {
       throw new BadRequestException(['Date not found!']);
     }
 
-    const date_start = new Date(reportParams.date[0]);
-    const date_end = new Date(reportParams.date[1]);
+    const dateParams = this.configDate(reportParams.date);
+    const date_start = dateParams[0];
+    const date_end = dateParams[1];
 
     return this.prismaService.$queryRaw`
     select sum(u.sum_start)                                         s_start,
@@ -103,8 +110,9 @@ export class MReportsService {
       throw new BadRequestException(['Date not found!']);
     }
 
-    const date_start = new Date(reportParams.date[0]);
-    const date_end = new Date(reportParams.date[1]);
+    const dateParams = this.configDate(reportParams.date);
+    const date_start = dateParams[0];
+    const date_end = dateParams[1];
 
     return this.prismaService.$queryRaw`
     select round(sum(u.sum_start), 2)                                         s_start,
@@ -200,8 +208,9 @@ export class MReportsService {
       throw new BadRequestException(['Date not found!']);
     }
 
-    const date_start = new Date(reportParams.date[0]);
-    const date_end = new Date(reportParams.date[1]);
+    const dateParams = this.configDate(reportParams.date);
+    const date_start = dateParams[0];
+    const date_end = dateParams[1];
 
     return this.prismaService.$queryRaw`
     select r.bank_name,
@@ -266,8 +275,9 @@ export class MReportsService {
       throw new BadRequestException(['Date not found!']);
     }
 
-    const date_start = new Date(reportParams.date[0]);
-    const date_end = new Date(reportParams.date[1]);
+    const dateParams = this.configDate(reportParams.date);
+    const date_start = dateParams[0];
+    const date_end = dateParams[1];
 
     return this.prismaService.$queryRaw`
     select s.id,
@@ -310,8 +320,9 @@ export class MReportsService {
       throw new BadRequestException(['Date not found!']);
     }
 
-    // const date_start = new Date(reportParams.date[0]);
-    const date_end = new Date(reportParams.date[1]);
+    const dateParams = this.configDate(reportParams.date);
+    // const date_start = dateParams[0];
+    const date_end = dateParams[1];
 
     return this.prismaService.$queryRaw`
     select distinct dcv.ids,
@@ -347,8 +358,9 @@ export class MReportsService {
       throw new BadRequestException(['ID not found!']);
     }
 
-    const date_start = new Date(reportParams.date[0]);
-    const date_end = new Date(reportParams.date[1]);
+    const dateParams = this.configDate(reportParams.date);
+    const date_start = dateParams[0];
+    const date_end = dateParams[1];
     const id = reportParams.id;
 
     let whereObj;
@@ -409,8 +421,9 @@ export class MReportsService {
     //   throw new BadRequestException(['ID not found!'])
     // }
 
-    const date_start = new Date(reportParams.date[0]);
-    const date_end = new Date(reportParams.date[1]);
+    const dateParams = this.configDate(reportParams.date);
+    const date_start = dateParams[0];
+    const date_end = dateParams[1];
     const id = reportParams.id;
 
     if (!reportParams.id || reportParams.id === 0) {
