@@ -101,7 +101,13 @@ export class MOperationsService {
 
     // FILTER
     const whereObj = [];
+    let comment_tag = null;
     if (dataMOperationPaginationDto.filter) {
+
+      comment_tag = dataMOperationPaginationDto.filter[4].value
+      dataMOperationPaginationDto.filter.pop();
+
+
       dataMOperationPaginationDto.filter.forEach(el => {
         const keyNames = el.key.split('.');
         const arr = [];
@@ -143,6 +149,16 @@ export class MOperationsService {
           lte: new Date(dataMOperationPaginationDto.date[1]), // End of date range
         },
       });
+    }
+
+    // COMMENT FILTER
+    if(comment_tag){
+      whereObj.push({
+        comment: {
+          contains: '#'+ comment_tag ,
+          mode: 'insensitive'
+        },
+      })
     }
     // console.log(JSON.stringify(whereObj));
 
@@ -711,6 +727,14 @@ export class MOperationsService {
     return tags.map(r => {
       return r.name
     });
+  }
+
+  async getTagList(): Promise<any[]> {
+    return this.prismaService.dbm_tags.findMany({
+      orderBy: {
+        name: 'asc'
+      }
+    })
   }
 
   async getOperationOutComeInfo(id: number){

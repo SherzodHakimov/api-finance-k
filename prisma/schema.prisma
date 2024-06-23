@@ -289,9 +289,10 @@ model set_user_role {
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model set_user_status {
-  id       Int        @id @default(autoincrement())
-  name     String     @db.VarChar(100)
-  dbm_user dbm_user[]
+  id           Int            @id @default(autoincrement())
+  name         String         @db.VarChar(100)
+  dbm_bot_user dbm_bot_user[]
+  dbm_user     dbm_user[]
 
   @@index([id])
 }
@@ -314,6 +315,80 @@ model dbm_tags {
   id       Int        @id @default(autoincrement())
   name     String     @db.VarChar(100)
   dba_tags dba_tags[]
+
+  @@index([id])
+}
+
+model dbm_bot_payment_bills {
+  id           Int          @id @default(autoincrement())
+  user_id      Int
+  file         String       @db.VarChar(200)
+  amount       Decimal      @db.Decimal
+  comment      String?      @db.VarChar(200)
+  confirmed    Int          @default(0)
+  created_at   DateTime     @default(now()) @db.Timestamp(6)
+  dbm_bot_user dbm_bot_user @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([id, user_id])
+}
+
+model dbm_bot_score {
+  id                     Int                    @id @default(autoincrement())
+  user_id                Int
+  user_position_id       Int
+  check_list_id          Int
+  score                  Decimal                @db.Decimal
+  created_at             DateTime               @default(now()) @db.Timestamp(6)
+  list_bot_check_list    list_bot_check_list    @relation(fields: [check_list_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  dbm_bot_user           dbm_bot_user           @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  list_bot_user_position list_bot_user_position @relation(fields: [user_position_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([id, user_id, user_position_id, check_list_id])
+}
+
+model dbm_bot_user {
+  id                     Int                     @id @default(autoincrement())
+  name1                  String                  @db.VarChar(100)
+  name2                  String                  @db.VarChar(100)
+  phone                  String                  @db.VarChar(15)
+  user_position_id       Int
+  user_role_id           Int
+  status_id              Int
+  created_at             DateTime                @default(now()) @db.Timestamp(6)
+  dbm_bot_payment_bills  dbm_bot_payment_bills[]
+  dbm_bot_score          dbm_bot_score[]
+  set_user_status        set_user_status         @relation(fields: [status_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  list_bot_user_position list_bot_user_position  @relation(fields: [user_position_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  list_bot_user_roles    list_bot_user_roles     @relation(fields: [user_role_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([id, user_position_id, user_role_id, status_id])
+}
+
+model list_bot_check_list {
+  id                     Int                    @id @default(autoincrement())
+  name                   String                 @db.VarChar(100)
+  user_position_id       Int
+  dbm_bot_score          dbm_bot_score[]
+  list_bot_user_position list_bot_user_position @relation(fields: [user_position_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([id])
+}
+
+model list_bot_user_position {
+  id                  Int                   @id @default(autoincrement())
+  name                String                @db.VarChar(200)
+  show                Int                   @default(1)
+  dbm_bot_score       dbm_bot_score[]
+  dbm_bot_user        dbm_bot_user[]
+  list_bot_check_list list_bot_check_list[]
+
+  @@index([id])
+}
+
+model list_bot_user_roles {
+  id           Int            @id @default(autoincrement())
+  name         String         @db.VarChar(100)
+  dbm_bot_user dbm_bot_user[]
 
   @@index([id])
 }

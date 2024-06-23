@@ -135,7 +135,12 @@ export class MExpensesService {
 
     // FILTER
     const whereObj = [];
+    let comment_tag = null;
     if (paginationItemsDto.filter) {
+
+      comment_tag = paginationItemsDto.filter[6].value
+      paginationItemsDto.filter.pop();
+
       paginationItemsDto.filter.forEach(el => {
         const keyNames = el.key.split('.');
         const arr = [];
@@ -176,6 +181,16 @@ export class MExpensesService {
           lte: new Date(paginationItemsDto.date[1]), // End of date range
         },
       });
+    }
+
+    // COMMENT FILTER
+    if(comment_tag){
+      whereObj.push({
+        comment: {
+          contains: '#' + comment_tag ,
+          mode: 'insensitive'
+        },
+      })
     }
     // console.log(JSON.stringify(whereObj));
 

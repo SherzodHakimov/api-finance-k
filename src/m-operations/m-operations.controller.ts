@@ -29,6 +29,7 @@ import { AccountAmountDto } from './dto/data-account-amount.dto';
 import { ResponseBodyInterceptor } from '../response-body.interceptor';
 import { JwtAuthGuard } from '../m-auth/jwt-auth.guard';
 import { DataMOperationExpenseDto } from './dto/data-m-operation-expense.dto';
+import { DataMOperationTagList } from './dto/data-m-operation-tag-list.dto';
 
 @Controller('m-operations')
 @UsePipes(new ValidationPipe())
@@ -200,10 +201,21 @@ export class MOperationsController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Success',
-    type: String,
+    type: [String],
   })
   getTags(@Body() str: {name: string}) {
     return this.mOperationsService.getTags(str);
+  }
+
+  @Get('/get-tag-list')
+  @ApiOperation({ summary: 'Get tag list' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Success',
+    type: DataMOperationTagList,
+  })
+  getTagList() {
+    return this.mOperationsService.getTagList();
   }
 
 

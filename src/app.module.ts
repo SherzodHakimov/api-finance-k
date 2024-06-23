@@ -18,13 +18,19 @@ import { MCurrencyValueModule } from './m-currency-value/m-currency-value.module
 import { MReportsModule } from './m-reports/m-reports.module';
 import { MDashboardModule } from './m-dashboard/m-dashboard.module';
 import { MAuthModule } from './m-auth/m-auth.module';
-
+import { MTelegramBotModule } from './m-telegram-bot/m-telegram-bot.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import * as path from 'path';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       envFilePath: `.${process.env.NODE_ENV}.env`,
     }),
+    // ServeStaticModule.forRoot({
+    //   rootPath: path.resolve(__dirname, '../', 'static')
+    // }),
+    MTelegramBotModule,
     MAuthModule,
     MDashboardModule,
     MReportsModule,
