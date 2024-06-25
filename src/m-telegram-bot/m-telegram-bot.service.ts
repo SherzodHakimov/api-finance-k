@@ -85,6 +85,9 @@ export class MTelegramBotService {
       where: {
         status_id: 1,
       },
+      orderBy: {
+        list_bot_user_position: {name: 'asc'}
+      }
     });
   }
 
@@ -135,13 +138,13 @@ export class MTelegramBotService {
         user_id: el.user_id,
         name: user_data.name1 + ' ' + user_data.name2,
         position: position_data.name,
-        avg: Number(el._avg.score),
+        avg: Math.round(Number(el._avg.score) * Math.pow(10, 1)) / Math.pow(10, 1),
         sum: Number(el._sum.score),
         count: Number(el._count.score),
       });
     });
 
-    return res;
+    return res.sort((a, b) => a.name.localeCompare(b.name));
   }
 
   async getScore(dataMTelegramBotSanaIdDto: DataMTelegramBotSanaIdDto): Promise<DataMTelegramBotAvgDto> {
@@ -184,7 +187,7 @@ export class MTelegramBotService {
       user_id: id,
       name: user.name1 + ' ' + user.name2,
       position: user.list_bot_user_position.name,
-      avg: Number(total._avg.score),
+      avg: Math.round(Number(total._avg.score) * Math.pow(10, 1)) / Math.pow(10, 1),
       count: Number(total._count.score),
       sum: Number(total._sum.score),
     };
@@ -252,6 +255,9 @@ export class MTelegramBotService {
       where: {
         confirmed: 0,
       },
+      orderBy:{
+        created_at: 'desc'
+      }
     });
 
     const user = await this.prismaService.dbm_bot_user.findMany();
@@ -274,8 +280,7 @@ export class MTelegramBotService {
       });
     });
 
-    return res;
-
+    return res.sort((a, b) => b.created_at - a.created_at);
   }
 
   async getConfirmedBillList(dataMTelegramBotSanaDto: DataMTelegramBotSanaDto): Promise<DataMTelegramBotBillDto[]> {
@@ -295,6 +300,9 @@ export class MTelegramBotService {
           lte: lastDay,
         },
       },
+      orderBy:{
+        created_at: 'desc'
+      }
     });
 
     const user = await this.prismaService.dbm_bot_user.findMany();
@@ -317,7 +325,7 @@ export class MTelegramBotService {
       });
     });
 
-    return res;
+    return res.sort((a, b) => b.created_at - a.created_at);
   }
 
   async updateBill(id: number, updateMTelegramBotBillDto: UpdateMTelegramBotBillDto): Promise<DataMTelegramBotBillDto> {
@@ -373,6 +381,10 @@ export class MTelegramBotService {
       where: {
         OR: [{ status_id: 1 }, { status_id: 2 }],
       },
+      orderBy: [
+        { set_user_status: {name: 'asc'}},
+        { list_bot_user_position: {name: 'asc' }},
+      ]
     });
   }
 
