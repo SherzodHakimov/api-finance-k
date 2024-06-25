@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { ConflictException, ForbiddenException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma-service';
 import { CreateMTelegramBotScoreDto } from './dto/create-m-telegram-bot-score.dto';
 import { DataMTelegramBotAvgDto } from './dto/data-m-telegram-bot-avg.dto';
@@ -16,6 +16,10 @@ import { DataMTelegramBotBillDto } from './dto/data-m-telegram-bot-bill.dto';
 import { DataMTelegramBotFileDto } from './dto/data-m-telegram-bot-file.dto';
 import { UpdateMTelegramBotBillDto } from './dto/update-m-telegram-bot-bill.dto';
 import { DataMTelegramBotBase64Dto } from './dto/data-m-telegram-bot-base64.dto';
+import { CreateMTelegramBotUserDto } from './dto/create-m-telegram-bot-user.dto';
+import { UpdateMTelegramBotUserDataDto } from './dto/update-m-telegram-bot-user-data.dto';
+import { UpdateMTelegramBotUserStatusDto } from './dto/update-m-telegram-bot-user-status.dto';
+import { UpdateMTelegramBotUserPhoneDto } from './dto/update-m-telegram-bot-user-phone.dto';
 
 
 @Injectable()
@@ -316,16 +320,16 @@ export class MTelegramBotService {
     return res;
   }
 
-  async updateBill(id: number, updateMTelegramBotBillDto: UpdateMTelegramBotBillDto):Promise<DataMTelegramBotBillDto> {
+  async updateBill(id: number, updateMTelegramBotBillDto: UpdateMTelegramBotBillDto): Promise<DataMTelegramBotBillDto> {
     const bill = await this.prismaService.dbm_bot_payment_bills.update({
       data: updateMTelegramBotBillDto,
       include: {
         dbm_bot_user: { select: { name1: true, name2: true } },
       },
       where: {
-        id: id
-      }
-    })
+        id: id,
+      },
+    });
 
     const user = await this.prismaService.dbm_bot_user.findMany();
     const position = await this.prismaService.list_bot_user_position.findMany();
@@ -352,11 +356,127 @@ export class MTelegramBotService {
     const fileExt = filename.split('.').pop();
 
     try {
-      return {file: fs.readFileSync(filePath, { encoding: 'base64' }), ext: fileExt};
+      return { file: fs.readFileSync(filePath, { encoding: 'base64' }), ext: fileExt };
     } catch (error) {
-      throw new NotFoundException(['File not found!'])
+      throw new NotFoundException(['File not found!']);
     }
 
+  }
+
+  async getUsers(): Promise<DataMTelegramStaffDto[]> {
+    return this.prismaService.dbm_bot_user.findMany({
+      include: {
+        list_bot_user_position: { select: { name: true } },
+        list_bot_user_roles: { select: { name: true } },
+        set_user_status: { select: { name: true } },
+      },
+      where: {
+        OR: [{ status_id: 1 }, { status_id: 2 }],
+      },
+    });
+  }
+
+  async setUser(createMTelegramBotUserDto: CreateMTelegramBotUserDto): Promise<DataMTelegramStaffDto> {
+
+    const user = await this.prismaService.dbm_bot_user.findFirst({
+      where: {
+        phone: createMTelegramBotUserDto.phone,
+      },
+    });
+
+    if (user) throw new ConflictException(['User phone exist!']);
+
+    createMTelegramBotUserDto.status_id = 1;
+
+    return this.prismaService.dbm_bot_user.create({
+      include: {
+        list_bot_user_position: { select: { name: true } },
+        list_bot_user_roles: { select: { name: true } },
+        set_user_status: { select: { name: true } },
+      },
+      data: createMTelegramBotUserDto,
+    });
+  }
+
+  async updateUserData(id: number, updateMTelegramBotUserDataDto: UpdateMTelegramBotUserDataDto): Promise<DataMTelegramStaffDto> {
+    return this.prismaService.dbm_bot_user.update({
+      include: {
+        list_bot_user_position: { select: { name: true } },
+        list_bot_user_roles: { select: { name: true } },
+        set_user_status: { select: { name: true } },
+      },
+      data: updateMTelegramBotUserDataDto,
+      where: {
+        id: id,
+      },
+    });
+  }
+
+  async updateUserStatus(id: number, updateMTelegramBotUserStatusDto: UpdateMTelegramBotUserStatusDto): Promise<DataMTelegramStaffDto> {
+    return this.prismaService.dbm_bot_user.update({
+      include: {
+        list_bot_user_position: { select: { name: true } },
+        list_bot_user_roles: { select: { name: true } },
+        set_user_status: { select: { name: true } },
+      },
+      data: updateMTelegramBotUserStatusDto,
+      where: {
+        id: id,
+      },
+    });
+  }
+
+  async updateUserPhone(id: number, updateMTelegramBotUserPhoneDto: UpdateMTelegramBotUserPhoneDto): Promise<DataMTelegramStaffDto> {
+
+    const user = await this.prismaService.dbm_bot_user.findFirst({
+      where: {
+        phone: updateMTelegramBotUserPhoneDto.phone,
+      },
+    });
+
+    if (user) throw new ConflictException(['User phone exist!']);
+
+    return this.prismaService.dbm_bot_user.update({
+      include: {
+        list_bot_user_position: { select: { name: true } },
+        list_bot_user_roles: { select: { name: true } },
+        set_user_status: { select: { name: true } },
+      },
+      data: updateMTelegramBotUserPhoneDto,
+      where: {
+        id: id,
+      },
+    });
+  }
+
+  async removeUser(id: number): Promise<DataMTelegramStaffDto> {
+
+    const bill = await this.prismaService.dbm_bot_payment_bills.findFirst({
+      where: {
+        user_id: id,
+      },
+    });
+
+    if (bill) throw new ForbiddenException(['Delete not allowed!']);
+
+    const score = await this.prismaService.dbm_bot_score.findFirst({
+      where: {
+        user_id: id,
+      },
+    });
+
+    if (score) throw new ForbiddenException(['Delete not allowed!']);
+
+    return this.prismaService.dbm_bot_user.delete({
+      include: {
+        list_bot_user_position: { select: { name: true } },
+        list_bot_user_roles: { select: { name: true } },
+        set_user_status: { select: { name: true } },
+      },
+      where: {
+        id: id
+      }
+    })
   }
 
   // create(createMTelegramBotDto: CreateMTelegramBotDto) {

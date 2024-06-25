@@ -1,4 +1,4 @@
-import { Controller, Get, Param, HttpStatus, UsePipes, ValidationPipe, Body, Post, UseInterceptors, UploadedFile, Patch} from '@nestjs/common';
+import { Controller, Get, Param, HttpStatus, UsePipes, ValidationPipe, Body, Post, UseInterceptors, UploadedFile, Patch, Delete } from '@nestjs/common';
 import { MTelegramBotService } from './m-telegram-bot.service';
 
 import { ApiBody, ApiConsumes, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -18,6 +18,10 @@ import { CreateMTelegramBotBillDto } from './dto/create-m-telegram-bot-bill.dto'
 import { DataMTelegramBotFileDto } from './dto/data-m-telegram-bot-file.dto';
 import { UpdateMTelegramBotBillDto } from './dto/update-m-telegram-bot-bill.dto';
 import { DataMTelegramBotBase64Dto } from './dto/data-m-telegram-bot-base64.dto';
+import { CreateMTelegramBotUserDto } from './dto/create-m-telegram-bot-user.dto';
+import { UpdateMTelegramBotUserDataDto } from './dto/update-m-telegram-bot-user-data.dto';
+import { UpdateMTelegramBotUserStatusDto } from './dto/update-m-telegram-bot-user-status.dto';
+import { UpdateMTelegramBotUserPhoneDto } from './dto/update-m-telegram-bot-user-phone.dto';
 
 
 @Controller('m-telegram-bot')
@@ -50,7 +54,7 @@ export class MTelegramBotController {
   }
 
   @Get('/position-check-list/:id')
-  @ApiOperation({ summary: 'Get position check list' })
+  @ApiOperation({ summary: 'Get position check list by ID' })
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Success',
@@ -104,7 +108,7 @@ export class MTelegramBotController {
     return this.mTelegramBotService.getScore(dataMTelegramBotSanaIdDto);
   }
 
-  @Post('upload')
+  @Post('bill/upload')
   @ApiOperation({ summary: 'Upload file' })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -163,7 +167,7 @@ export class MTelegramBotController {
   }
 
   @Patch('bill/update-confirm/:id')
-  @ApiOperation({ summary: 'Update bill confirmed status' })
+  @ApiOperation({ summary: 'Update bill confirmed status by ID' })
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Success',
@@ -182,6 +186,72 @@ export class MTelegramBotController {
   })
   getFile(@Param('filename') filename: string) {
     return this.mTelegramBotService.getFile(filename)
+  }
+
+  @Get('user/list')
+  @ApiOperation({ summary: 'Get all users' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Success',
+    type: [DataMTelegramStaffDto],
+  })
+  getUsers() {
+    return this.mTelegramBotService.getUsers()
+  }
+
+  @Post('/user/create')
+  @ApiOperation({ summary: 'Create new user' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Success',
+    type: DataMTelegramStaffDto,
+  })
+  setUser(@Body() createMTelegramBotUserDto: CreateMTelegramBotUserDto) {
+    return this.mTelegramBotService.setUser(createMTelegramBotUserDto);
+  }
+
+  @Patch('user/update/data/:id')
+  @ApiOperation({ summary: 'Update user data by ID' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Success',
+    type: DataMTelegramStaffDto,
+  })
+  updateUserData(@Param('id') id: string, @Body() updateMTelegramBotUserDataDto: UpdateMTelegramBotUserDataDto) {
+    return this.mTelegramBotService.updateUserData(+id, updateMTelegramBotUserDataDto);
+  }
+
+  @Patch('user/update/status/:id')
+  @ApiOperation({ summary: 'Update user status by ID' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Success',
+    type: DataMTelegramStaffDto,
+  })
+  updateUserStatus(@Param('id') id: string, @Body() updateMTelegramBotUserStatusDto: UpdateMTelegramBotUserStatusDto) {
+    return this.mTelegramBotService.updateUserStatus(+id, updateMTelegramBotUserStatusDto);
+  }
+
+  @Patch('user/update/phone/:id')
+  @ApiOperation({ summary: 'Update user phone by ID' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Success',
+    type: DataMTelegramStaffDto,
+  })
+  updateUserPhone(@Param('id') id: string, @Body() updateMTelegramBotUserPhoneDto: UpdateMTelegramBotUserPhoneDto) {
+    return this.mTelegramBotService.updateUserPhone(+id, updateMTelegramBotUserPhoneDto);
+  }
+
+  @Delete('user/remove/:id')
+  @ApiOperation({ summary: 'Delete user by ID' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Success',
+    type: DataMTelegramStaffDto,
+  })
+  removeUser(@Param('id') id: string) {
+    return this.mTelegramBotService.removeUser(+id);
   }
 
   // @Post()
