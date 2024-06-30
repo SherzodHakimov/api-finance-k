@@ -14,6 +14,7 @@ export class MReportsService {
   constructor(private prismaService: PrismaService) {
   }
 
+
   configDate(reportDates: string[]): any[]{
     const date_start = new Date(reportDates[0].split('T')[0]);
     const date_end = new Date(new Date(reportDates[1].split('T')[0]).getTime() + 86400000 - 1);

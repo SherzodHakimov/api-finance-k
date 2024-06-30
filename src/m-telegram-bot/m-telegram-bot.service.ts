@@ -20,6 +20,8 @@ import { CreateMTelegramBotUserDto } from './dto/create-m-telegram-bot-user.dto'
 import { UpdateMTelegramBotUserDataDto } from './dto/update-m-telegram-bot-user-data.dto';
 import { UpdateMTelegramBotUserStatusDto } from './dto/update-m-telegram-bot-user-status.dto';
 import { UpdateMTelegramBotUserPhoneDto } from './dto/update-m-telegram-bot-user-phone.dto';
+import { CreateMTelegramBotBonusDtoDto } from './dto/create-m-telegram-bot-bonus.dto';
+import { DataMTelegramBotBonusDto } from './dto/data-m-telegrem-bot-bonus.dto';
 
 
 @Injectable()
@@ -86,8 +88,8 @@ export class MTelegramBotService {
         status_id: 1,
       },
       orderBy: {
-        list_bot_user_position: {name: 'asc'}
-      }
+        list_bot_user_position: { name: 'asc' },
+      },
     });
   }
 
@@ -105,15 +107,14 @@ export class MTelegramBotService {
   async getScoreList(dataMTelegramBotSanaDto: DataMTelegramBotSanaDto): Promise<DataMTelegramBotAvgDto[]> {
 
     const sana = dataMTelegramBotSanaDto.sana.split('.');
-    const firstDay = new Date(Number(sana[2]), Number(sana[1]) - 1, Number(sana[0]));
-    const lastDay = new Date(firstDay.getFullYear(), firstDay.getMonth() + 1, 0);
+    const q = this.getMonthStartAndEndDates(`${sana[2]}-${sana[1]}-${sana[0]}`);
 
     const total = await this.prismaService.dbm_bot_score.groupBy({
       by: ['user_id'],
       where: {
         created_at: {
-          gte: firstDay,
-          lte: lastDay,
+          gte: q.firstDay,
+          lte: q.lastDay,
         },
       },
       _avg: {
@@ -151,16 +152,15 @@ export class MTelegramBotService {
 
     const id = dataMTelegramBotSanaIdDto.user_id;
     const sana = dataMTelegramBotSanaIdDto.sana.split('.');
-    const firstDay = new Date(Number(sana[2]), Number(sana[1]) - 1, Number(sana[0]));
-    const lastDay = new Date(firstDay.getFullYear(), firstDay.getMonth() + 1, 0);
+    const q = this.getMonthStartAndEndDates(`${sana[2]}-${sana[1]}-${sana[0]}`);
 
     // SUM ITEM
     const total = await this.prismaService.dbm_bot_score.aggregate({
       where: {
         user_id: id,
         created_at: {
-          gte: firstDay,
-          lte: lastDay,
+          gte: q.firstDay,
+          lte: q.lastDay,
         },
       },
       _avg: {
@@ -255,9 +255,9 @@ export class MTelegramBotService {
       where: {
         confirmed: 0,
       },
-      orderBy:{
-        created_at: 'desc'
-      }
+      orderBy: {
+        created_at: 'desc',
+      },
     });
 
     const user = await this.prismaService.dbm_bot_user.findMany();
@@ -286,8 +286,7 @@ export class MTelegramBotService {
   async getConfirmedBillList(dataMTelegramBotSanaDto: DataMTelegramBotSanaDto): Promise<DataMTelegramBotBillDto[]> {
 
     const sana = dataMTelegramBotSanaDto.sana.split('.');
-    const firstDay = new Date(Number(sana[2]), Number(sana[1]) - 1, Number(sana[0]));
-    const lastDay = new Date(firstDay.getFullYear(), firstDay.getMonth() + 1, 0);
+    const q = this.getMonthStartAndEndDates(`${sana[2]}-${sana[1]}-${sana[0]}`);
 
     const bills = await this.prismaService.dbm_bot_payment_bills.findMany({
       include: {
@@ -296,13 +295,107 @@ export class MTelegramBotService {
       where: {
         confirmed: 1,
         created_at: {
-          gte: firstDay,
-          lte: lastDay,
+          gte: q.firstDay,
+          lte: q.lastDay,
         },
       },
-      orderBy:{
-        created_at: 'desc'
-      }
+      orderBy: {
+        created_at: 'desc',
+      },
+    });
+
+    const user = await this.prismaService.dbm_bot_user.findMany();
+    const position = await this.prismaService.list_bot_user_position.findMany();
+
+    const res = [];
+    bills.forEach(el => {
+      const user_data = user.find(f => f.id === el.user_id);
+      const position_data = position.find(f => f.id === user_data.user_position_id);
+      res.push({
+        id: el.id,
+        user_id: el.user_id,
+        name: el.dbm_bot_user.name1 + ' ' + el.dbm_bot_user.name2,
+        position: position_data.name,
+        file: el.file,
+        amount: Number(el.amount),
+        comment: el.comment,
+        confirmed: el.confirmed,
+        created_at: el.created_at,
+      });
+    });
+
+    return res.sort((a, b) => b.created_at - a.created_at);
+  }
+
+  async removeBill(id: number): Promise<DataMTelegramBotBillDto> {
+
+    const confirmedBill = await this.prismaService.dbm_bot_payment_bills.findFirst({
+      where: {
+        id: id,
+        confirmed: 1,
+      },
+    });
+
+    if (confirmedBill) throw new ForbiddenException(['Delete not allowed!']);
+
+    const existBill = await this.prismaService.dbm_bot_payment_bills.findFirst({
+      where: {
+        id: id,
+        confirmed: 0,
+      },
+    });
+
+    if (!existBill) throw new NotFoundException(['Bill not found!']);
+
+
+    const bill = await this.prismaService.dbm_bot_payment_bills.delete({
+      include: {
+        dbm_bot_user: { select: { name1: true, name2: true } },
+      },
+      where: {
+        id: id,
+      },
+    });
+
+    const user = await this.prismaService.dbm_bot_user.findMany();
+    const position = await this.prismaService.list_bot_user_position.findMany();
+
+    const user_data = user.find(f => f.id === bill.user_id);
+    const position_data = position.find(f => f.id === user_data.user_position_id);
+
+    return {
+      id: bill.id,
+      user_id: bill.user_id,
+      name: bill.dbm_bot_user.name1 + ' ' + bill.dbm_bot_user.name2,
+      position: position_data.name,
+      file: bill.file,
+      amount: Number(bill.amount),
+      comment: bill.comment,
+      confirmed: bill.confirmed,
+      created_at: bill.created_at,
+    };
+
+  }
+
+  async getUserUnconfirmedBillList(id: number): Promise<DataMTelegramBotBillDto[]> {
+
+    const q = this.getMonthStartAndEndDates();
+
+    const bills = await this.prismaService.dbm_bot_payment_bills.findMany({
+      include: {
+        dbm_bot_user: { select: { name1: true, name2: true } },
+      },
+      where: {
+        user_id: id,
+        confirmed: 0,
+        created_at: {
+          gte: q.firstDay,
+          lte: q.lastDay,
+        },
+      },
+      orderBy: {
+        created_at: 'desc',
+      },
     });
 
     const user = await this.prismaService.dbm_bot_user.findMany();
@@ -382,9 +475,9 @@ export class MTelegramBotService {
         OR: [{ status_id: 1 }, { status_id: 2 }],
       },
       orderBy: [
-        { set_user_status: {name: 'asc'}},
-        { list_bot_user_position: {name: 'asc' }},
-      ]
+        { set_user_status: { name: 'asc' } },
+        { list_bot_user_position: { name: 'asc' } },
+      ],
     });
   }
 
@@ -486,10 +579,133 @@ export class MTelegramBotService {
         set_user_status: { select: { name: true } },
       },
       where: {
-        id: id
-      }
-    })
+        id: id,
+      },
+    });
   }
+
+  async setBonus(createMTelegramBotBonusDtoDto: CreateMTelegramBotBonusDtoDto): Promise<DataMTelegramBotBonusDto> {
+
+    const q = this.getQuarterStartAndEndDates();
+
+    const bonus = await this.prismaService.dbm_bot_bonus.findFirst({
+      where: {
+        created_at: {
+          gte: q.firstDay,
+          lte: q.lastDay,
+        },
+        user_id: createMTelegramBotBonusDtoDto.user_id,
+      },
+    });
+
+    if (bonus) throw new ForbiddenException(['Bonus exist!']);
+
+    return this.prismaService.dbm_bot_bonus.create({
+      data: createMTelegramBotBonusDtoDto,
+      include: {
+        dbm_bot_user: { select: { id: true, name1: true, name2: true } },
+      },
+    });
+  }
+
+  async getBonus(id: number): Promise<DataMTelegramBotBonusDto> {
+
+    const q = this.getQuarterStartAndEndDates();
+
+    const bonus = await this.prismaService.dbm_bot_bonus.findFirst({
+      include: {
+        dbm_bot_user: { select: { id: true, name1: true, name2: true } },
+      },
+      where: {
+        created_at: {
+          gte: q.firstDay,
+          lte: q.lastDay,
+        },
+        user_id: id,
+      },
+    });
+
+    if (!bonus) throw new NotFoundException(['Bonus not found!']);
+
+    return bonus;
+  }
+
+  async getBonusList(dataMTelegramBotSanaDto: DataMTelegramBotSanaDto): Promise<DataMTelegramBotBonusDto[]> {
+
+    const sana = dataMTelegramBotSanaDto.sana.split('.');
+    const q = this.getMonthStartAndEndDates(`${sana[2]}-${sana[1]}-${sana[0]}`);
+
+    return this.prismaService.dbm_bot_bonus.findMany({
+      include: {
+        dbm_bot_user: { select: { id: true, name1: true, name2: true } },
+      },
+      where: {
+        created_at: {
+          gte: q.firstDay,
+          lte: q.lastDay,
+        },
+      },
+    });
+
+  }
+
+  getQuarterStartAndEndDates(sDate?: string | null) {
+    const today = sDate ? new Date(sDate) : new Date();
+    const currentMonth = today.getMonth() + 1; // getMonth() is zero-based
+    let startMonth, endMonth;
+
+    if (currentMonth >= 1 && currentMonth <= 3) {
+      startMonth = 0; // January
+      endMonth = 2; // March
+    } else if (currentMonth >= 4 && currentMonth <= 6) {
+      startMonth = 3; // April
+      endMonth = 5; // June
+    } else if (currentMonth >= 7 && currentMonth <= 9) {
+      startMonth = 6; // July
+      endMonth = 8; // September
+    } else {
+      startMonth = 9; // October
+      endMonth = 11; // December
+    }
+
+    const startDate = new Date(today.getFullYear(), startMonth, 1);
+    const endDate = new Date(today.getFullYear(), endMonth + 1, 0); // 0th day of the next month gives the last day of the current month
+
+    const formatDate = (date) => {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    };
+
+    return {
+      firstDay: new Date(formatDate(startDate)),
+      lastDay: new Date(new Date(formatDate(endDate)).getTime() + 86400000 - 1),
+    };
+  }
+
+  getMonthStartAndEndDates(sDate?: string | null) {
+
+    const today = sDate ? new Date(sDate) : new Date();
+
+    const getMonth = today.getMonth();
+
+    const startDate = new Date(today.getFullYear(), getMonth, 1);
+    const endDate = new Date(today.getFullYear(), getMonth + 1, 0);
+
+    const formatDate = (date) => {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    };
+
+    return {
+      firstDay: new Date(formatDate(startDate)),
+      lastDay: new Date(new Date(formatDate(endDate)).getTime() + 86400000 - 1),
+    };
+  }
+
 
   // create(createMTelegramBotDto: CreateMTelegramBotDto) {
   //   return 'This action adds a new mTelegramBot';

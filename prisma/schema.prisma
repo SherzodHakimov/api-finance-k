@@ -355,6 +355,7 @@ model dbm_bot_user {
   user_role_id           Int
   status_id              Int
   created_at             DateTime                @default(now()) @db.Timestamp(6)
+  dbm_bot_bonus          dbm_bot_bonus[]
   dbm_bot_payment_bills  dbm_bot_payment_bills[]
   dbm_bot_score          dbm_bot_score[]
   set_user_status        set_user_status         @relation(fields: [status_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -391,4 +392,13 @@ model list_bot_user_roles {
   dbm_bot_user dbm_bot_user[]
 
   @@index([id])
+}
+
+model dbm_bot_bonus {
+  id           Int          @id @default(autoincrement())
+  user_id      Int
+  created_at   DateTime     @default(now()) @db.Timestamp(6)
+  dbm_bot_user dbm_bot_user @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([id, user_id])
 }

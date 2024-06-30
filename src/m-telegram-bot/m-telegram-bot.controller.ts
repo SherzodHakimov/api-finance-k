@@ -22,6 +22,8 @@ import { CreateMTelegramBotUserDto } from './dto/create-m-telegram-bot-user.dto'
 import { UpdateMTelegramBotUserDataDto } from './dto/update-m-telegram-bot-user-data.dto';
 import { UpdateMTelegramBotUserStatusDto } from './dto/update-m-telegram-bot-user-status.dto';
 import { UpdateMTelegramBotUserPhoneDto } from './dto/update-m-telegram-bot-user-phone.dto';
+import { DataMTelegramBotBonusDto } from './dto/data-m-telegrem-bot-bonus.dto';
+import { CreateMTelegramBotBonusDtoDto } from './dto/create-m-telegram-bot-bonus.dto';
 
 
 @Controller('m-telegram-bot')
@@ -75,14 +77,14 @@ export class MTelegramBotController {
     return this.mTelegramBotService.getStaffList();
   }
 
-  @Post('/set-score')
+  @Post('/score/set')
   @ApiOperation({ summary: 'Create new score' })
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Success',
     type: DataMTelegramBotScoreDto,
   })
-  create(@Body() createMTelegramBotScoreDto: CreateMTelegramBotScoreDto) {
+  setScore(@Body() createMTelegramBotScoreDto: CreateMTelegramBotScoreDto) {
     return this.mTelegramBotService.setScore(createMTelegramBotScoreDto);
   }
 
@@ -165,6 +167,29 @@ export class MTelegramBotController {
   getConfirmedBillList(@Body() dataMTelegramBotSanaDto: DataMTelegramBotSanaDto) {
     return this.mTelegramBotService.getConfirmedBillList(dataMTelegramBotSanaDto);
   }
+
+  @Get('/bill/user/unconfirmed/:id')
+  @ApiOperation({ summary: 'Get unconfirmed user bill list' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Success',
+    type: [DataMTelegramBotBillDto],
+  })
+  getUserUnconfirmedBillList(@Param('id') id: string) {
+    return this.mTelegramBotService.getUserUnconfirmedBillList(+id);
+  }
+
+  @Delete('bill/remove/:id')
+  @ApiOperation({ summary: 'Delete bill by ID' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Success',
+    type: DataMTelegramBotBillDto,
+  })
+  removeBill(@Param('id') id: string) {
+    return this.mTelegramBotService.removeBill(+id);
+  }
+
 
   @Patch('bill/update-confirm/:id')
   @ApiOperation({ summary: 'Update bill confirmed status by ID' })
@@ -253,6 +278,41 @@ export class MTelegramBotController {
   removeUser(@Param('id') id: string) {
     return this.mTelegramBotService.removeUser(+id);
   }
+
+  @Post('/bonus/set')
+  @ApiOperation({ summary: 'Create new bonus' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Success',
+    type: DataMTelegramBotBonusDto,
+  })
+  setBonus(@Body() createMTelegramBotBonusDtoDto: CreateMTelegramBotBonusDtoDto) {
+    return this.mTelegramBotService.setBonus(createMTelegramBotBonusDtoDto);
+  }
+
+  @Get('/bonus/:id')
+  @ApiOperation({ summary: 'Get staff bonus by ID' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Success',
+    type: DataMTelegramBotBonusDto,
+  })
+  getBonus(@Param('id') id: string) {
+    return this.mTelegramBotService.getBonus(+id);
+  }
+
+  @Post('/bonus/list')
+  @ApiOperation({ summary: 'Get bonus list' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Success',
+    type: [DataMTelegramBotBonusDto],
+  })
+  getBonusList(@Body() dataMTelegramBotSanaDto: DataMTelegramBotSanaDto) {
+    return this.mTelegramBotService.getBonusList(dataMTelegramBotSanaDto)
+  }
+
+
 
   // @Post()
   // create(@Body() createMTelegramBotDto: CreateMTelegramBotDto) {
