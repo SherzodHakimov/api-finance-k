@@ -633,7 +633,7 @@ export class MTelegramBotService {
   async getBonusList(dataMTelegramBotSanaDto: DataMTelegramBotSanaDto): Promise<DataMTelegramBotBonusDto[]> {
 
     const sana = dataMTelegramBotSanaDto.sana.split('.');
-    const q = this.getMonthStartAndEndDates(`${sana[2]}-${sana[1]}-${sana[0]}`);
+    const q = this.getQuarterStartAndEndDates(`${sana[2]}-${sana[1]}-${sana[0]}`);
 
     return this.prismaService.dbm_bot_bonus.findMany({
       include: {
